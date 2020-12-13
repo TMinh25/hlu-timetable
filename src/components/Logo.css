@@ -1,0 +1,39 @@
+.app-logo-container {
+	display: flex;
+}
+
+.app-logo-container p {
+	font-size: 13px;
+	margin: 0;
+}
+
+.app-logo {
+	height: 30px;
+	pointer-events: none;
+	user-select: none;
+}
+
+.app-logo-loading {
+	height: 90px;
+	pointer-events: none;
+	user-select: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.app-logo {
+		animation: app-logo-spin infinite 10s linear;
+	}
+
+	.app-logo-loading {
+		animation: app-logo-spin infinite 1s ease-in-out;
+	}
+}
+
+@keyframes app-logo-spin {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
