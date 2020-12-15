@@ -5,6 +5,8 @@
 .app-logo-container p {
 	font-size: 13px;
 	margin: 0;
+	user-select: none;
+	color: white;
 }
 
 .app-logo {
