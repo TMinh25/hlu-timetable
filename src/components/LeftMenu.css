@@ -1,12 +1,24 @@
 .left-menu {
 	flex: 2;
+	background-color: #0d1117;
 	border-right: 1px solid #161b22;
 	padding: 20px 10px;
 }
 
-.hide-left-menu{
-  /* visibility: hidden; */
-  display: none;
+.show-left-menu {
+	overflow: hidden;
+	transition: 0.25s ease;
+}
+
+.hide-left-menu {
+	max-width: 0;
+	padding: 0;
+	overflow: hidden;
+	transition: 0.25s ease;
+}
+
+.hide-left-menu > * {
+	display: none;
 }
 
 .calendar {
@@ -16,7 +28,7 @@
 	color: white;
 	border: none;
 	border-radius: 5px;
-	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 .calendar .react-calendar__tile,

@@ -13,15 +13,22 @@ class NavBar extends React.Component {
 
 	render() {
 		return (
-			<nav className="navbar">
-				<span className="navbar-mainmenu" onClick={this.props.onHamburgerClick}>
-					<i class="fas fa-bars"></i>
-				</span>
-				<Logo
-					style={this.props.onLogoClick && {cursor: "pointer"}}
-					to={this.props.to}
-				/>
-			</nav>
+			<>
+				<nav className="navbar">
+					{this.props.showHamburger && (
+						<span
+							className="navbar-mainmenu"
+							onClick={this.props.onHamburgerClick}
+						>
+							<i className="fas fa-bars"></i>
+						</span>
+					)}
+					<Logo
+						style={this.props.onLogoClick && {cursor: "pointer"}}
+						to={this.props.to}
+					/>
+				</nav>
+			</>
 		);
 	}
 }

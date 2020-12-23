@@ -15,12 +15,18 @@ class LeftMenu extends React.Component {
 
 	handleOnCreateClick() {}
 
+	componentDidUpdate() {
+		console.log(this.props.visible);
+	}
+
 	render() {
 		return (
 			<>
 				<div
 					className={
-						this.props.visible ? "left-menu" : "left-menu hide-left-menu"
+						this.props.visible
+							? "left-menu show-left-menu"
+							: "left-menu hide-left-menu"
 					}
 				>
 					<LinkButton to="/new">
@@ -32,11 +38,19 @@ class LeftMenu extends React.Component {
 						value={this.props.calendarValue}
 						className={["calendar"]}
 						locale="vi-VN"
-						nextLabel={<i class="fas fa-angle-right" />}
-						next2Label={<i class="fas fa-angle-double-right" />}
-						prevLabel={<i class="fas fa-angle-left" />}
-						prev2Label={<i class="fas fa-angle-double-left" />}
+						nextLabel={<i className="fas fa-angle-right" />}
+						next2Label={<i className="fas fa-angle-double-right" />}
+						prevLabel={<i className="fas fa-angle-left" />}
+						prev2Label={<i className="fas fa-angle-double-left" />}
 					/>
+
+					<LinkButton to="/new">
+						<div>Quản lý phân công giảng dạy</div>
+					</LinkButton>
+
+					<LinkButton to="/teacher-time-table">
+						<div>Thời khóa biểu của giảng viên</div>
+					</LinkButton>
 				</div>
 			</>
 		);

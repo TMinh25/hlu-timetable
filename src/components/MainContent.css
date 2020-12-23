@@ -1,3 +1,29 @@
 .main-content {
 	flex: 8;
+	padding: 20px 10px;
 }
+
+table, th, td {
+  border: 1px solid white;
+  border-collapse: collapse;
+	text-align: center;
+}
+
+td {
+	font-size: 2.1vmin;
+	height: 25px;
+}
+
+#time-table__table {
+	width: 100%;
+}
+/* 
+#myTable {
+    transform:rotate(270deg);
+}
+
+#myTable td {
+	transform: rotate(-270deg);
+	width: 30px;
+	height: 90px;
+} */

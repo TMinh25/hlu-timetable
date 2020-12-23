@@ -1,5 +1,6 @@
 .app-logo-container {
 	display: flex;
+	width: 100%;
 }
 
 .app-logo-container p {

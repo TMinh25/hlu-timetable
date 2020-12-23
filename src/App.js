@@ -9,6 +9,8 @@ import "react-calendar/dist/Calendar.css";
 // import components
 import Home from "./components/screens/Home";
 import NewTimeTable from "./components/screens/NewTimeTable";
+import TeacherTimeTable from "./components/screens/TeacherTimeTable";
+import TableDragSelect from "react-table-drag-select";
 
 class App extends React.Component {
 	render() {
@@ -17,7 +19,12 @@ class App extends React.Component {
 				<Router>
 					<Switch>
 						<Route name="home" path="/" exact component={Home} />
-						<Route name="home" path="/new" component={NewTimeTable} />
+						<Route name="new" path="/new" component={NewTimeTable} />
+						<Route
+							name="teacher-time-table"
+							path="/teacher-time-table"
+							component={TeacherTimeTable}
+						/>
 					</Switch>
 				</Router>
 			</>
