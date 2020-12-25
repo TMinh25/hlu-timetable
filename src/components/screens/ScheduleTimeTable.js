@@ -6,9 +6,9 @@ import LeftMenu from "../LeftMenu";
 import Muuri from "muuri";
 
 // import styles
-import "./TeacherTimeTable.css";
+import "./ScheduleTimeTable.css";
 
-const TeacherTimeTable = () => {
+const ScheduleTimeTable = () => {
 	const [leftMenuVisible, setLeftMenuVisible] = React.useState(true);
 
 	const handleHamburgerClick = () => {
@@ -23,7 +23,7 @@ const TeacherTimeTable = () => {
 		var columnGrids = [];
 
 		// Init the column grids so we can drag those items around.
-		itemContainers.forEach(function (container) {
+		itemContainers.forEach((container) => {
 			var grid = new Muuri(container, {
 				items: ".board-item",
 				dragEnabled: true,
@@ -56,8 +56,8 @@ const TeacherTimeTable = () => {
 					item.getElement().style.height = "";
 					item.getGrid().refreshItems([item]);
 				});
-			// .on("dragEnd", function (item, event) {
-			// 	console.log(item, event);
+			// .on("dragEnd", (item, event) => {
+			// 	// console.log(item, event);
 			// 	for (const column of columns) {
 			// 		var lessonCount = 0;
 			// 		for (const child of column.children) {
@@ -65,7 +65,7 @@ const TeacherTimeTable = () => {
 			// 			lessonCount += parseInt(child.getAttribute("data-lessonCount"));
 			// 			// console.log(child);
 			// 		}
-			// 		// console.log(lessonCount);
+			// 		console.log(lessonCount);
 			// 	}
 			// });
 
@@ -500,4 +500,4 @@ const TeacherTimeTable = () => {
 	);
 };
 
-export default TeacherTimeTable;
+export default ScheduleTimeTable;

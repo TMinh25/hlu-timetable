@@ -9,7 +9,8 @@ class NewTimeTable extends React.Component {
 			<>
 				<NavBar to="/" />
 				<main>
-					<h1>new</h1>
+					<h1>Hãy bắt đầu tạo thời khóa biểu mới!</h1>
+					<div>Đầu tiên hãy chọn thời gian của kì học của bạn</div>
 				</main>
 			</>
 		);

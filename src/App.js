@@ -10,7 +10,8 @@ import "react-calendar/dist/Calendar.css";
 import Home from "./components/screens/Home";
 import NewTimeTable from "./components/screens/NewTimeTable";
 import TeacherTimeTable from "./components/screens/TeacherTimeTable";
-import TableDragSelect from "react-table-drag-select";
+import AllocateManagement from "./components/screens/AllocateManagement";
+import ScheduleTimeTable from "./components/screens/ScheduleTimeTable";
 
 class App extends React.Component {
 	render() {
@@ -24,6 +25,16 @@ class App extends React.Component {
 							name="teacher-time-table"
 							path="/teacher-time-table"
 							component={TeacherTimeTable}
+						/>
+						<Route
+							name="allocate-manage"
+							path="/allocate-manage"
+							component={AllocateManagement}
+						/>
+						<Route
+							name="schedule-timetable"
+							path="/schedule-timetable"
+							component={ScheduleTimeTable}
 						/>
 					</Switch>
 				</Router>
