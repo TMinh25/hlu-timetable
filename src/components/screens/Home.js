@@ -25,17 +25,11 @@ const Home = () => {
 		setLeftMenuVisible((prev) => !prev);
 	};
 
-	// render() {
 	return (
 		<>
-			<NavBar to="/" onHamburgerClick={handleHamburgerClick} showHamburger={true} />
-			<main className="content">
-				<LeftMenu visible={leftMenuVisible} />
-				<MainContent />
-			</main>
+			<MainContent />
 		</>
 	);
-	// }
 };
 
 export default Home;

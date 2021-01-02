@@ -1,49 +1,35 @@
-.App {
-	text-align: center;
-}
-
-.App-header {
-	background-color: #0d1117;
+.loading {
 	min-height: 100%;
 	display: flex;
-	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	font-size: calc(10px + 2vmin);
-	color: white;
 }
-
 
 /* Cells that can be interacted with */
 .table-drag-select td.cell-enabled {
-  color: #806E52;
-  background-color: #FBF1E8;
-}
-
-/* Cells that cannot be interacted with */
-.table-drag-select td.cell-disabled {
-  /* Put yer css here */
+	color: #806e52;
+	background-color: #fbf1e8;
 }
 
 /* Cells that have been selected */
 .table-drag-select td.cell-selected {
-  background-color: #FBD5D4;
+	background-color: #fbd5d4;
 }
 
 /* Cells that are in the process of being selected */
 .table-drag-select td.cell-being-selected {
-  background-color: #EACA96;
+	background-color: #eaca96;
 }
 
 /* Cells in first row */
 .table-drag-select tr:first-child td {
-  /* Remove empty space at top of table */
-  border-top: 0;
-  line-height: 1rem;
+	/* Remove empty space at top of table */
+	border-top: 0;
+	line-height: 1rem;
 }
 
 /* Cells in first column */
 .table-drag-select td:first-child {
-  /* Consume less whitespace */
-  width: 3rem;
+	/* Consume less whitespace */
+	width: 3rem;
 }

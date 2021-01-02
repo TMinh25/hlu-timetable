@@ -1209,10 +1209,10 @@
   resolved "https://registry.yarnpkg.com/@firebase/auth-types/-/auth-types-0.10.1.tgz#7815e71c9c6f072034415524b29ca8f1d1770660"
   integrity sha512-/+gBHb1O9x/YlG7inXfxff/6X3BPZt4zgBv4kql6HEmdzNQCodIRlEYnI+/da+lN+dha7PjaFH7C7ewMmfV7rw==
 
-"@firebase/auth@0.16.0":
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/@firebase/auth/-/auth-0.16.0.tgz#2b65e015f4c1cbcd83da4303984ba984d67a4a45"
-  integrity sha512-1d8WvbGCCaTMZXqevjrkrFzP6FFvFORHBUByQc5xVpDty+kQxIayeWxUqyEuwGm57BrQ1fUwveH2G9a4DGarCQ==
+"@firebase/auth@0.16.1":
+  version "0.16.1"
+  resolved "https://registry.yarnpkg.com/@firebase/auth/-/auth-0.16.1.tgz#8b0c9a9c6ab29694ea6d7f467d91b9d3dd22fce8"
+  integrity sha512-7juD7D/kaxNti/xa5G+ZGJJs+bdJUWOW0MlNBtXwiG+TjMh69EDmwJnQmmc9h/32QVvXt1qo1OGWOoMMpF/2Gg==
   dependencies:
     "@firebase/auth-types" "0.10.1"
 
@@ -1249,10 +1249,10 @@
   resolved "https://registry.yarnpkg.com/@firebase/firestore-types/-/firestore-types-2.1.0.tgz#ad406c6fd7f0eae7ea52979f712daa0166aef665"
   integrity sha512-jietErBWihMvJkqqEquQy5GgoEwzHnMXXC/TsVoe9FPysXm1/AeJS12taS7ZYvenAtyvL/AEJyKrRKRh4adcJQ==
 
-"@firebase/firestore@2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@firebase/firestore/-/firestore-2.1.0.tgz#eda6f7ea5a6c3091b7beb405e254fb852cb9ff3b"
-  integrity sha512-CKzZdht5ECpOGsfxOfeea7rXFTeR/wR7Lbh12TQI7Ru4CfhfdMBQPw9gs4wBX+WyKifp18Fz/bjP8Lly5RgNMg==
+"@firebase/firestore@2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@firebase/firestore/-/firestore-2.1.1.tgz#e19040faf858cc00cb3b7609945fe490182b36b3"
+  integrity sha512-mcKp8psdKSxujaGjyfmt/thlTG5Gk+gFdJbkx4DnGO1PsJG4H5mE0wG//7tOH7DGeRCAmiagjKhA8nQlf/UNCg==
   dependencies:
     "@firebase/component" "0.1.21"
     "@firebase/firestore-types" "2.1.0"
@@ -1756,6 +1756,16 @@
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha1-p3c2C1s5oaLlEG+OhY8v0tBgxXA=
+
+"@reach/router@^1.3.4":
+  version "1.3.4"
+  resolved "https://registry.yarnpkg.com/@reach/router/-/router-1.3.4.tgz#d2574b19370a70c80480ed91f3da840136d10f8c"
+  integrity sha512-+mtn9wjlB9NN2CNnnC/BRYtwdKBfSyyasPYraNAyvaV1occr/5NnB4CVzjEZipNHwYebQwcndGUmpFzxAUoqSA==
+  dependencies:
+    create-react-context "0.3.0"
+    invariant "^2.2.3"
+    prop-types "^15.6.1"
+    react-lifecycles-compat "^3.0.4"
 
 "@rollup/plugin-node-resolve@^7.1.1":
   version "7.1.3"
@@ -2819,6 +2829,14 @@ autoprefixer@^9.6.1:
     num2fraction "^1.2.2"
     postcss "^7.0.32"
     postcss-value-parser "^4.1.0"
+
+avataaars@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/avataaars/-/avataaars-1.2.1.tgz#8e2e968dbd7f558876f1f18f56973e7aa47afbec"
+  integrity sha512-4MmcXx3EKGwkKqEtVRiKxM08MMib2KYC1o5DcotpLUVuoe5EkWNuhJVB2JAH753II4VzMK7fO2EA5rf5QirPQg==
+  dependencies:
+    lodash "^4.17.4"
+    prop-types "^15.6.0"
 
 aws-sign2@~0.7.0:
   version "0.7.0"
@@ -3938,7 +3956,7 @@ create-react-class@^15.6.0:
     loose-envify "^1.3.1"
     object-assign "^4.1.1"
 
-create-react-context@^0.3.0:
+create-react-context@0.3.0, create-react-context@^0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/create-react-context/-/create-react-context-0.3.0.tgz#546dede9dc422def0d3fc2fe03afe0bc0f4f7d8c"
   integrity sha512-dNldIoSuNSvlTJ7slIKC/ZFGKexBMBrrcc+TTe1NdmROnaASuLPvqpwj9v4XS4uXZ8+YPu0sNmShX2rXI5LNsw==
@@ -4415,6 +4433,11 @@ detect-port-alt@1.1.6:
   dependencies:
     address "^1.0.1"
     debug "^2.6.0"
+
+dialog-polyfill@^0.4.7:
+  version "0.4.10"
+  resolved "https://registry.yarnpkg.com/dialog-polyfill/-/dialog-polyfill-0.4.10.tgz#c4ea68a0deed4abb59a6a2a025c548b278cd532e"
+  integrity sha512-j5yGMkP8T00UFgyO+78OxiN5vC5dzRQF3BEio+LhNvDbyfxWBsi3sfPArDm54VloaJwy2hm3erEiDWqHRC8rzw==
 
 diff-sequences@^26.6.2:
   version "26.6.2"
@@ -5431,17 +5454,17 @@ find-up@^3.0.0:
   dependencies:
     locate-path "^3.0.0"
 
-firebase@^8.2.0:
-  version "8.2.0"
-  resolved "https://registry.yarnpkg.com/firebase/-/firebase-8.2.0.tgz#fb8416dcb2e917c75cd1e876168673db31b315dd"
-  integrity sha512-+xmFd6/E9dZC3OC16lPll5ql5tCi/CHu/iu66OAqZZwriwnxZTp48uQp5Rk/YiOkl19iyf9jzPx5NX3NXpXXbA==
+firebase@^8.2.1:
+  version "8.2.1"
+  resolved "https://registry.yarnpkg.com/firebase/-/firebase-8.2.1.tgz#fd8eb523a4ca424030d8eb21c2795aa3c1d1031d"
+  integrity sha512-u2dvRIbyHZ2g0dziHKwXvMBubTSf+fgJcijXyy7fXcFFPd3wbDaGlHz7Sc6saOnlJtzZAYmvZUXaIxnStKOOXg==
   dependencies:
     "@firebase/analytics" "0.6.2"
     "@firebase/app" "0.6.13"
     "@firebase/app-types" "0.6.1"
-    "@firebase/auth" "0.16.0"
+    "@firebase/auth" "0.16.1"
     "@firebase/database" "0.8.1"
-    "@firebase/firestore" "2.1.0"
+    "@firebase/firestore" "2.1.1"
     "@firebase/functions" "0.6.1"
     "@firebase/installations" "0.4.19"
     "@firebase/messaging" "0.7.3"
@@ -5450,6 +5473,14 @@ firebase@^8.2.0:
     "@firebase/remote-config" "0.1.30"
     "@firebase/storage" "0.4.2"
     "@firebase/util" "0.3.4"
+
+firebaseui@^4.1.0:
+  version "4.7.1"
+  resolved "https://registry.yarnpkg.com/firebaseui/-/firebaseui-4.7.1.tgz#8e0303d9f733e16b0bfbfa24001ab8bd4bc98038"
+  integrity sha512-wDdo3LLnh9sV1dDKyNgn4M7cKecILosvqvtQE1SUum/R+eXLdN1q1ZRKZ2Lp6ZyP0XDAHrotssS4vJNh4OdwuQ==
+  dependencies:
+    dialog-polyfill "^0.4.7"
+    material-design-lite "^1.2.0"
 
 flat-cache@^2.0.1:
   version "2.0.1"
@@ -6316,6 +6347,13 @@ internal-slot@^1.0.2:
     es-abstract "^1.17.0-next.1"
     has "^1.0.3"
     side-channel "^1.0.2"
+
+invariant@^2.2.3:
+  version "2.2.4"
+  resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
+  integrity sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==
+  dependencies:
+    loose-envify "^1.0.0"
 
 ip-regex@^2.1.0:
   version "2.1.0"
@@ -7528,7 +7566,7 @@ lodash.uniq@^4.5.0:
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
   integrity sha1-0CJTc662Uq3BvILklFM5qEJ1R3M=
 
-"lodash@>=3.5 <5", lodash@^4.17.11, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.20, lodash@^4.17.5:
+"lodash@>=3.5 <5", lodash@^4.17.11, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.20, lodash@^4.17.4, lodash@^4.17.5:
   version "4.17.20"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.20.tgz#b44a9b6297bcb698f1c51a3545a2b3b368d59c52"
   integrity sha512-PlhdFcillOINfeV7Ni6oF1TAEayyZBoZ8bcshTHqOYJYlrqzRK5hagpagky5o4HfCzzd1TRkXPMFq6cKk9rGmA==
@@ -7616,6 +7654,11 @@ map-visit@^1.0.0:
   integrity sha1-7Nyo8TFE5mDxtb1B8S80edmN+48=
   dependencies:
     object-visit "^1.0.0"
+
+material-design-lite@^1.2.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/material-design-lite/-/material-design-lite-1.3.0.tgz#d004ce3fee99a1eeb74a78b8a325134a5f1171d3"
+  integrity sha1-0ATOP+6Zoe63Sni4oyUTSl8RcdM=
 
 md5.js@^1.3.4:
   version "1.3.5"
@@ -9667,6 +9710,13 @@ react-error-overlay@^6.0.8:
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-6.0.8.tgz#474ed11d04fc6bda3af643447d85e9127ed6b5de"
   integrity sha512-HvPuUQnLp5H7TouGq3kzBeioJmXms1wHy9EGjz2OURWBp4qZO6AfGEcnxts1D/CbwPLRAgTMPCEgYhA3sEM4vw==
 
+react-firebaseui@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/react-firebaseui/-/react-firebaseui-4.1.0.tgz#fbd8381432b53b58ce56ee86df81e2a6e40af7b6"
+  integrity sha512-Y5pAom+W6/R5xZeF4xdvYiP7tObo7GDGWra1Pf2td+FxhtXtGQXQTKdW5Rs4js5zIuN0A3fApZzO+3sa1MHl9Q==
+  dependencies:
+    firebaseui "^4.1.0"
+
 react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
@@ -9676,6 +9726,11 @@ react-is@^17.0.1:
   version "17.0.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.1.tgz#5b3531bd76a645a4c9fb6e693ed36419e3301339"
   integrity sha512-NAnt2iGDXohE5LI7uBnLnqvLQMtzhkiAOLXTmv+qnF9Ky7xAPcX8Up/xWIhxvLVGJvuLiNc4xQLtuqDRzb4fSA==
+
+react-lifecycles-compat@^3.0.4:
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
+  integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
 
 react-onclickoutside@^6.9.0:
   version "6.9.0"

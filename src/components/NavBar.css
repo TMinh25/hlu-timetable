@@ -2,6 +2,7 @@
 	background-color: #161b22;
 	color: #f0f0f0;
 	display: flex;
+	flex-direction: row;
 	height: 50px;
 	width: 100%;
 	padding: 0 10px;
@@ -29,4 +30,100 @@
 
 .navbar-mainmenu:hover {
 	background-color: #242c36;
+}
+
+.sign-in-container {
+	/* push element and element behind it
+	to the far right in flex display */
+	margin-left: auto;
+	cursor: pointer;
+	justify-content: center;
+	align-items: center;
+}
+
+.avatar-container {
+	height: 41px;
+	width: 41px;
+	border-radius: 100%;
+	user-select: none;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	transition: 0.2s all;
+}
+
+.avatar-container:hover {
+	background-color: #454f5e;
+	transition: 0.2s all;
+}
+
+.avatar-container > img {
+	width: 88%;
+	height: 88%;
+	margin: auto;
+	border-radius: 100px;
+}
+
+.big-avatar-container {
+	width: 100%;
+	min-height: 130px;
+}
+
+.big-avatar-container > img {
+	display: block;
+	margin: auto;
+	width: 50%;
+	height: auto;
+	border-radius: 1000px;
+}
+
+#nav__module {
+	position: absolute;
+	display: relative;
+	min-width: 300px;
+	width: 20%;
+	right: 10px;
+	top: 55px;
+	padding: 20px;
+	background-color: #161b22;
+	border-radius: 5px;
+	justify-content: center;
+	align-items: center;
+	z-index: 999;
+	/* show module */
+	opacity: 1;
+	pointer-events: all;
+	transition: opacity 0.1s;
+}
+
+#nav__module.hide {
+	/* hide module */
+	/* visibility: hidden; */
+	opacity: 0;
+	user-select: none;
+	pointer-events: none;
+	transition: opacity 1s;
+}
+
+.display-name {
+	font-size: 20px;
+}
+
+.display-email {
+	font-size: 16px;
+	color: #e6e3e3;
+}
+
+#module-info-sect {
+	padding: 10px 0 20px;
+	text-align: center;
+}
+
+#module-info-sect::after {
+	content: "";
+	display: block;
+	height: 0.5px;
+	width: 100%;
+	margin-top: 20px;
+	background: rgb(202, 202, 202);
 }

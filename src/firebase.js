@@ -1,4 +1,6 @@
-import * as firebase from "firebase";
+import firebase from "firebase/app";
+import "firebase/auth";
+import "firebase/database";
 
 var firebaseConfig = {
 	apiKey: "AIzaSyAvou0hUxm9CUqZUN7pRmq6ooHDqHy52x0",
@@ -11,3 +13,39 @@ var firebaseConfig = {
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
+export const auth = firebase.auth();
+export const database = firebase.database().ref();
+
+// change the loged in user
+export const signInWithGoogle = () => {
+	var googleAuthProvider = new firebase.auth.GoogleAuthProvider();
+	googleAuthProvider.setCustomParameters({
+		prompt: "select_account",
+	});
+	auth.signInWithRedirect(googleAuthProvider);
+};
+
+// sign out current user
+export const signOut = () => {
+	auth
+		.signOut()
+		.then(() => {
+			// Sign-out successful.
+			console.log("Sign-out successful.");
+		})
+		.catch((err) => {
+			// An error happened.
+			console.log("Sign-out unsuccessful: " + err);
+		});
+};
+
+// write notes in database
+export const writeNote = (values) => {
+	database.child("note").push(
+		values,
+		// failed to write data
+		(err) => {
+			console.warn("failed to write data to firebase: " + err.message);
+		}
+	);
+};

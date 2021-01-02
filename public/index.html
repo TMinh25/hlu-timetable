@@ -36,12 +36,36 @@
 		<!-- normalize css -->
 		<link rel="stylesheet" href="./normalize.css" />
 
-		<!-- redips table drag -->
-		<script type="text/javascript" src="./redips-drag-min.js"></script>
 		<title>Hạ Long University</title>
+
+		<style>
+			.preloader {
+				display: flex;
+				justify-content: center;
+			}
+
+			.rotate {
+				animation: rotation 1s infinite linear;
+			}
+
+			.loader-hide {
+				display: none;
+			}
+
+			@keyframes rotation {
+				from {
+					transform: rotate(0deg);
+				}
+
+				to {
+					transform: rotate(359deg);
+				}
+			}
+		</style>
 	</head>
-	<body onload="REDIPS.drag.init()">
+	<body>
 		<noscript>You need to enable JavaScript to run this app.</noscript>
+
 		<div id="root"></div>
 		<!--
       This HTML file is a template.

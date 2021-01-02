@@ -1,20 +1,12 @@
 import React from "react";
 
 // import components
-import NavBar from "../NavBar";
-import LeftMenu from "../LeftMenu";
 import Muuri from "muuri";
 
 // import styles
 import "./ScheduleTimeTable.css";
 
 const ScheduleTimeTable = () => {
-	const [leftMenuVisible, setLeftMenuVisible] = React.useState(true);
-
-	const handleHamburgerClick = () => {
-		setLeftMenuVisible((prev) => !prev);
-	};
-
 	React.useEffect(() => {
 		var dragContainer = document.querySelector(".drag-container");
 		var itemContainers = [].slice.call(
@@ -73,429 +65,411 @@ const ScheduleTimeTable = () => {
 		});
 	}, []);
 
-	var columns = document.getElementsByClassName("board-column-content");
+	// var columns = document.getElementsByClassName("board-column-content");
 
-	const BoardItem = ({subject, teacher, lessonCount}) => {
-		const [height, setHeight] = React.useState();
+	// const BoardItem = ({subject, teacher, lessonCount}) => {
+	// 	const [height, setHeight] = React.useState();
 
-		React.useEffect(() => setHeight(lessonCount * 30), []);
+	// 	React.useEffect(() => setHeight(lessonCount * 30), []);
 
-		return (
-			<div
-				className="board-item"
-				style={{height: `${height}px`}}
-				data-lessonCount={lessonCount}
-			>
-				<div className="board-item-content">
-					<span className="board-item-content-subject">{subject}</span>
-					<br />
-					<span className="board-item-content-teacher">{teacher}</span>
-				</div>
-			</div>
-		);
-	};
+	// 	return (
+	// 		<div
+	// 			className="board-item"
+	// 			style={{height: `${height}px`}}
+	// 			data-lessonCount={lessonCount}
+	// 		>
+	// 			<div className="board-item-content">
+	// 				<span className="board-item-content-subject">{subject}</span>
+	// 				<br />
+	// 				<span className="board-item-content-teacher">{teacher}</span>
+	// 			</div>
+	// 		</div>
+	// 	);
+	// };
 
 	return (
 		<>
-			<NavBar
-				to="/"
-				showHamburger={true}
-				onHamburgerClick={handleHamburgerClick}
-			/>
-			<main className="content">
-				<LeftMenu visible={leftMenuVisible} showScheduler={true} />
-				<div className="main-content">
-					<div className="board">
-						<div className="board-column mon">
-							<div className="board-column-container">
-								<div className="board-column-header">Thứ 2</div>
-								<div className="board-column-content-wrapper">
-									<div className="board-column-content">
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>1
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>2
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>3
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>4
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>5
-											</div>
+			<div className="main-content">
+				<div className="board">
+					<div className="board-column mon">
+						<div className="board-column-container">
+							<div className="board-column-header">Thứ 2</div>
+							<div className="board-column-content-wrapper">
+								<div className="board-column-content">
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>1
 										</div>
 									</div>
-									<div className="board-column-content">
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>1
-											</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>2
 										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>2
-											</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>3
 										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>3
-											</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>4
 										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>4
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>5
-											</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>5
 										</div>
 									</div>
 								</div>
-							</div>
-						</div>
-						<div className="board-column tue">
-							<div className="board-column-container">
-								<div className="board-column-header">Thứ 3</div>
-								<div className="board-column-content-wrapper">
-									<div className="board-column-content">
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>1
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>2
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>3
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>4
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>5
-											</div>
+								<div className="board-column-content">
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>1
 										</div>
 									</div>
-									<div className="board-column-content">
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>1
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>2
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>3
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>4
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>5
-											</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>2
 										</div>
 									</div>
-								</div>
-							</div>
-						</div>
-						<div className="board-column wed">
-							<div className="board-column-container">
-								<div className="board-column-header">Thứ 4</div>
-								<div className="board-column-content-wrapper">
-									<div className="board-column-content">
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>1
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>2
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>3
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>4
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>5
-											</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>3
 										</div>
 									</div>
-									<div className="board-column-content">
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>1
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>2
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>3
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>4
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>5
-											</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>4
 										</div>
 									</div>
-								</div>
-							</div>
-						</div>
-						<div className="board-column thu">
-							<div className="board-column-container">
-								<div className="board-column-header">Thứ 5</div>
-								<div className="board-column-content-wrapper">
-									<div className="board-column-content">
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>1
-											</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>5
 										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>2
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>3
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>4
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>5
-											</div>
-										</div>
-									</div>
-									<div className="board-column-content">
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>1
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>2
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>3
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>4
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>5
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div className="board-column fri">
-							<div className="board-column-container">
-								<div className="board-column-header">Thứ 6</div>
-								<div className="board-column-content-wrapper">
-									<div className="board-column-content">
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>1
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>2
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>3
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>4
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>5
-											</div>
-										</div>
-									</div>
-									<div className="board-column-content">
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>1
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>2
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>3
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>4
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>5
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div className="board-column sat">
-							<div className="board-column-container">
-								<div className="board-column-header">Thứ 7</div>
-								<div className="board-column-content-wrapper">
-									<div className="board-column-content">
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>1
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>2
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>3
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>4
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>5
-											</div>
-										</div>
-									</div>
-									<div className="board-column-content">
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>1
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>2
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>3
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>4
-											</div>
-										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>5
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div className="board-column sun">
-							<div className="board-column-container">
-								<div className="board-column-header">
-									<span>Chủ Nhật</span>
-								</div>
-								<div className="board-column-content-wrapper">
-									<div className="board-column-content">
-										<BoardItem subject="abc" teacher="abc" />
-										<BoardItem subject="abc" teacher="abc" />
-										<BoardItem subject="abc" teacher="abc" />
-										<BoardItem subject="abc" teacher="abc" />
-										<BoardItem subject="abc" teacher="abc" />
-									</div>
-									<div className="board-column-content">
-										<BoardItem subject="abc" teacher="abc" />
-										<BoardItem subject="abc" teacher="abc" />
-										<BoardItem subject="abc" teacher="abc" />
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
+					<div className="board-column tue">
+						<div className="board-column-container">
+							<div className="board-column-header">Thứ 3</div>
+							<div className="board-column-content-wrapper">
+								<div className="board-column-content">
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>1
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>2
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>3
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>4
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>5
+										</div>
+									</div>
+								</div>
+								<div className="board-column-content">
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>1
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>2
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>3
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>4
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>5
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div className="board-column wed">
+						<div className="board-column-container">
+							<div className="board-column-header">Thứ 4</div>
+							<div className="board-column-content-wrapper">
+								<div className="board-column-content">
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>1
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>2
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>3
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>4
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>5
+										</div>
+									</div>
+								</div>
+								<div className="board-column-content">
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>1
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>2
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>3
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>4
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>5
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div className="board-column thu">
+						<div className="board-column-container">
+							<div className="board-column-header">Thứ 5</div>
+							<div className="board-column-content-wrapper">
+								<div className="board-column-content">
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>1
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>2
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>3
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>4
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>5
+										</div>
+									</div>
+								</div>
+								<div className="board-column-content">
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>1
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>2
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>3
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>4
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>5
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div className="board-column fri">
+						<div className="board-column-container">
+							<div className="board-column-header">Thứ 6</div>
+							<div className="board-column-content-wrapper">
+								<div className="board-column-content">
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>1
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>2
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>3
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>4
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>5
+										</div>
+									</div>
+								</div>
+								<div className="board-column-content">
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>1
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>2
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>3
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>4
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>5
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div className="board-column sat">
+						<div className="board-column-container">
+							<div className="board-column-header">Thứ 7</div>
+							<div className="board-column-content-wrapper">
+								<div className="board-column-content">
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>1
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>2
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>3
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>4
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>5
+										</div>
+									</div>
+								</div>
+								<div className="board-column-content">
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>1
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>2
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>3
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>4
+										</div>
+									</div>
+									<div className="board-item">
+										<div className="board-item-content">
+											<span>Item #</span>5
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div className="board-column sun">
+						<div className="board-column-container">
+							<div className="board-column-header">
+								<span>Chủ Nhật</span>
+							</div>
+							<div className="board-column-content-wrapper">
+								<div className="board-column-content"></div>
+								<div className="board-column-content"></div>
+							</div>
+						</div>
+					</div>
 				</div>
-			</main>
+			</div>
 		</>
 	);
 };

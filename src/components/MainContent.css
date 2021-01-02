@@ -1,11 +1,22 @@
-.main-content {
+.main-container {
 	flex: 8;
-	padding: 20px 10px;
+	outline: none;
+	/* width: 80%; */
+	/* height: 100%; */
 }
 
-table, th, td {
-  border: 1px solid white;
-  border-collapse: collapse;
+.main-content {
+	padding: 20px 10px;
+	flex: 1;
+	height: 100%;
+	background-color: #06090f;
+}
+
+table,
+th,
+td {
+	border: 1px solid white;
+	border-collapse: collapse;
 	text-align: center;
 }
 

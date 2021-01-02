@@ -6,10 +6,8 @@ class Loading extends React.Component {
 	render() {
 		return (
 			<>
-				<div className="App">
-					<header className="App-header">
+				<div className="loading">
 						<img src={logo} className="app-logo-loading" alt="logo" />
-					</header>
 				</div>
 			</>
 		);

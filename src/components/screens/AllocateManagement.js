@@ -102,113 +102,105 @@ const AllocateManagement = () => {
 
 	return (
 		<>
-			<NavBar
-				to="/"
-				showHamburger={true}
-				onHamburgerClick={handleHamburgerClick}
-			/>
-			<main className="content">
-				<LeftMenu visible={leftMenuVisible} />
-				<div className="main-content">
-					<div class="drag-container"></div>
-					<div class="board">
-						<div class="board-column todo">
-							<div class="board-column-container">
-								<div class="board-column-header">Todo</div>
-								<div class="board-column-content-wrapper">
-									<div class="board-column-content">
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>1
-											</div>
+			<div className="main-content">
+				<div class="drag-container"></div>
+				<div class="board">
+					<div class="board-column todo">
+						<div class="board-column-container">
+							<div class="board-column-header">Todo</div>
+							<div class="board-column-content-wrapper">
+								<div class="board-column-content">
+									<div class="board-item">
+										<div class="board-item-content">
+											<span>Item #</span>1
 										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>2
-											</div>
+									</div>
+									<div class="board-item">
+										<div class="board-item-content">
+											<span>Item #</span>2
 										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>3
-											</div>
+									</div>
+									<div class="board-item">
+										<div class="board-item-content">
+											<span>Item #</span>3
 										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>4
-											</div>
+									</div>
+									<div class="board-item">
+										<div class="board-item-content">
+											<span>Item #</span>4
 										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>5
-											</div>
+									</div>
+									<div class="board-item">
+										<div class="board-item-content">
+											<span>Item #</span>5
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-						<div class="board-column working">
-							<div class="board-column-container">
-								<div class="board-column-header">Working</div>
-								<div class="board-column-content-wrapper">
-									<div class="board-column-content">
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>6
-											</div>
+					</div>
+					<div class="board-column working">
+						<div class="board-column-container">
+							<div class="board-column-header">Working</div>
+							<div class="board-column-content-wrapper">
+								<div class="board-column-content">
+									<div class="board-item">
+										<div class="board-item-content">
+											<span>Item #</span>6
 										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>7
-											</div>
+									</div>
+									<div class="board-item">
+										<div class="board-item-content">
+											<span>Item #</span>7
 										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>8
-											</div>
+									</div>
+									<div class="board-item">
+										<div class="board-item-content">
+											<span>Item #</span>8
 										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>9
-											</div>
+									</div>
+									<div class="board-item">
+										<div class="board-item-content">
+											<span>Item #</span>9
 										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>10
-											</div>
+									</div>
+									<div class="board-item">
+										<div class="board-item-content">
+											<span>Item #</span>10
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-						<div class="board-column done">
-							<div class="board-column-container">
-								<div class="board-column-header">Done</div>
-								<div class="board-column-content-wrapper">
-									<div class="board-column-content">
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>11
-											</div>
+					</div>
+					<div class="board-column done">
+						<div class="board-column-container">
+							<div class="board-column-header">Done</div>
+							<div class="board-column-content-wrapper">
+								<div class="board-column-content">
+									<div class="board-item">
+										<div class="board-item-content">
+											<span>Item #</span>11
 										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>12
-											</div>
+									</div>
+									<div class="board-item">
+										<div class="board-item-content">
+											<span>Item #</span>12
 										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>13
-											</div>
+									</div>
+									<div class="board-item">
+										<div class="board-item-content">
+											<span>Item #</span>13
 										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>14
-											</div>
+									</div>
+									<div class="board-item">
+										<div class="board-item-content">
+											<span>Item #</span>14
 										</div>
-										<div class="board-item">
-											<div class="board-item-content">
-												<span>Item #</span>15
-											</div>
+									</div>
+									<div class="board-item">
+										<div class="board-item-content">
+											<span>Item #</span>15
 										</div>
 									</div>
 								</div>
@@ -216,7 +208,7 @@ const AllocateManagement = () => {
 						</div>
 					</div>
 				</div>
-			</main>
+			</div>
 		</>
 	);
 };
