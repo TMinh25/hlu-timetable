@@ -77,7 +77,7 @@ const NewTimeTable = () => {
 										<span
 											onClick={() => {
 												// console.log(id);
-												userRef(currentUser.uidf)
+												userRef(currentUser.uid)
 													.child(`note/${id}`)
 													.remove((err) => {
 														if (err) {
