@@ -1,24 +1,31 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 
 // import components
-import {writeNote, database} from "../../firebase";
+import {writeNote, database, userRef} from "../../firebase";
+import {UserContext} from "../../providers/UserProvider";
 
 const NewTimeTable = () => {
+	const currentUser = useContext(UserContext);
+
 	const [values, setValues] = useState({
 		id: "",
 		note: "",
 	});
-
 	const [noteObjects, setNoteObjects] = useState({});
-	const [currentID, setCurrentID] = useState();
 
 	useEffect(() => {
-		database.child("note").on("value", (snapshot) => {
-			if (snapshot.val() != null) {
-				setNoteObjects({...snapshot.val()});
-			}
-		});
-	}, []); // similar to componentDidMount()
+		if (!!currentUser) {
+			userRef(currentUser.uid)
+				.child("note")
+				.on("value", (snapshot) => {
+					if (snapshot.val() != null) {
+						setNoteObjects({...snapshot.val()});
+					} else {
+						setNoteObjects({});
+					}
+				});
+		}
+	}, [currentUser]); // similar to componentDidMount()
 
 	const handleInputChange = (e) => {
 		var {name, value} = e.target;
@@ -30,12 +37,14 @@ const NewTimeTable = () => {
 
 	const handleOnSubmit = (e) => {
 		e.preventDefault();
-		writeNote(values);
+		writeNote(currentUser.uid, values);
 	};
 
-	useEffect(() => {
-		console.log(noteObjects);
-	}, [noteObjects]);
+	// useEffect(() => {
+	// 	if (!!currentUser) {
+	// 		console.log(currentUser.uid);
+	// 	}
+	// }, [currentUser]);
 
 	return (
 		<>
@@ -67,11 +76,14 @@ const NewTimeTable = () => {
 										{noteObjects[id].id}, {noteObjects[id].note}
 										<span
 											onClick={() => {
-												database.child("note/" + id).remove((err) => {
-													if (err) {
-														console.warn("failed to remove: " + err);
-													}
-												});
+												// console.log(id);
+												userRef(currentUser.uidf)
+													.child(`note/${id}`)
+													.remove((err) => {
+														if (err) {
+															console.warn("failed to remove: " + err);
+														}
+													});
 											}}
 											style={{
 												color: "red",

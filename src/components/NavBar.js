@@ -18,14 +18,17 @@ const NavBar = ({onLogoClick, onHamburgerClick, showHamburger}) => {
 		setShowModule((prevState) => !prevState);
 	};
 
-	useEffect(() => {
-		console.log(showModule);
-	}, [showModule]);
+	// useEffect(() => {
+	// 	console.log(showModule);
+	// }, [showModule]);
 
 	// hide NavModule on mount
 	useEffect(() => {
 		setShowModule(false);
-	}, []);
+		if (!user) {
+			setShowModule(false);
+		}
+	}, [user]);
 
 	const NavModule = (props) => {
 		// click outside to close module method
@@ -81,15 +84,17 @@ const NavBar = ({onLogoClick, onHamburgerClick, showHamburger}) => {
 				<div className="sign-in-container">
 					{!!user ? (
 						<>
-							<div className="avatar-container" onClick={() => toggleModule()}>
-								<img
-									src={
-										user.photoURL ||
-										"https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"
-									}
-									alt="avatar"
-								/>
-							</div>
+							{/* <div className="avatar-container" onClick={() => toggleModule()}> */}
+							<img
+								className="nav-avatar"
+								src={
+									user.photoURL ||
+									"https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"
+								}
+								alt="avatar"
+								onClick={() => toggleModule()}
+							/>
+							{/* </div> */}
 						</>
 					) : (
 						<>

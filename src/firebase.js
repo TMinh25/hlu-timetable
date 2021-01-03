@@ -14,7 +14,9 @@ var firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 export const auth = firebase.auth();
-export const database = firebase.database().ref();
+export var database = firebase.database();
+
+export const userRef = (userID) => database.ref(userID);
 
 // change the loged in user
 export const signInWithGoogle = () => {
@@ -22,7 +24,7 @@ export const signInWithGoogle = () => {
 	googleAuthProvider.setCustomParameters({
 		prompt: "select_account",
 	});
-	auth.signInWithRedirect(googleAuthProvider);
+	auth.signInWithPopup(googleAuthProvider);
 };
 
 // sign out current user
@@ -40,12 +42,16 @@ export const signOut = () => {
 };
 
 // write notes in database
-export const writeNote = (values) => {
-	database.child("note").push(
-		values,
-		// failed to write data
-		(err) => {
-			console.warn("failed to write data to firebase: " + err.message);
-		}
-	);
+export const writeNote = (uid, values) => {
+	userRef(uid)
+		.child(`note`)
+		.push(
+			values,
+			// failed to write data
+			(err) => {
+				if (err) {
+					console.warn("failed to write data to firebase: " + err.message);
+				}
+			}
+		);
 };
