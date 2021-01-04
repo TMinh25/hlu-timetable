@@ -1,0 +1,65 @@
+.date-picker__section {
+	display: flex;
+}
+
+input.sem-name__input {
+	width: 100%;
+	text-align: center;
+	padding: 10px 20px;
+	margin-top: 10px;
+	border: none;
+	border-radius: 2px;
+	color: #cccccc;
+	background-color: #41474d;
+	border-bottom: 2px solid transparent;
+	transition: 0.2s all;
+}
+
+input.sem-name__input:hover {
+	border-bottom: 2px solid #2176cc;
+	transition: 0.2s all;
+}
+
+div.picker_span {
+	display: flex;
+	flex-direction: column;
+	padding: 15px 30px;
+	background-color: #2a3138;
+	border-radius: 2px;
+	margin: 20px 0;
+	/* text-align: center; */
+	cursor: pointer;
+	border-bottom: 3px solid transparent;
+	transition: all 0.2s;
+}
+
+div.picker_span:hover {
+	border-bottom: 3px solid #2176cc;
+	transition: all 0.2s;
+}
+
+div.picker_span > span {
+	display: block;
+}
+
+span.label__new:first-child {
+	color: #cccccc;
+	font-size: 2vmin;
+}
+
+div.picker_span > span:last-child {
+	font-size: calc(2vmin + 5px);
+}
+
+.to-text {
+	transform: translateY(25px);
+	margin: 20px;
+}
+
+.new__date-picker {
+	flex: 1;
+}
+
+.calendar__main {
+	width: 100%;
+}

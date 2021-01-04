@@ -10,14 +10,16 @@ import "react-calendar/dist/Calendar.css";
 import NavBar from "./NavBar";
 import LeftMenu from "./LeftMenu";
 
+// import screens
 import Home from "./screens/Home";
-import NewTimeTable from "./screens/NewTimeTable";
+import New from "./screens/New";
 import TeacherTimeTable from "./screens/TeacherTimeTable";
 import ScheduleTimeTable from "./screens/ScheduleTimeTable";
 import ManageAssignments from "./screens/management/ManageAssignments";
 import ManageFacultiesClasses from "./screens/management/ManageFacultiesClasses";
 import ManageLecture from "./screens/management/ManageLectures";
 import ManageSubjects from "./screens/management/ManageSubjects";
+import Note from "./screens/Note";
 import NotFound from "./screens/NotFound";
 
 const Application = () => {
@@ -34,7 +36,8 @@ const Application = () => {
 				<LeftMenu visible={leftMenuVisible} showScheduler={true} />
 				<Router className="main-container">
 					<Home path="/" />
-					<NewTimeTable path="new" />
+					{/* <Note path="note/:noteId" /> */}
+					<New path="new" />
 					<TeacherTimeTable path="teacher-time-table" />
 					<ScheduleTimeTable path="schedule-timetable" />
 					<ManageAssignments path="mng-assignments" />

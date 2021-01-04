@@ -19,30 +19,32 @@ const LeftMenu = ({
 	return (
 		<>
 			<div
-				className={
-					visible ? "left-menu show-left-menu" : "left-menu hide-left-menu"
-				}
+				className={`left-menu ${visible ? "show-left-menu" : "hide-left-menu"}`}
 			>
+				<LinkButton to="/new" className="new">
+					<div>Thời khóa biểu mới</div>
+				</LinkButton>
+
 				<DropDownHoverButton
 					children="Quản lý đào tạo"
 					item1={
 						<>
-							Khoa & Lớp <i className="fas fa-chalkboard-teacher" />
-						</>
-					}
-					item1Link="mng-faculties-classes"
-					item2={
-						<>
 							Nhân sự <i className="fas fa-users" />
 						</>
 					}
-					item2Link="mng-lectures"
-					item3={
+					item1Link="mng-lectures"
+					item2={
 						<>
 							Môn học <i className="fas fa-book" />
 						</>
 					}
-					item3Link="mng-subjects"
+					item2Link="mng-subjects"
+					item3={
+						<>
+							Khoa & Lớp <i className="fas fa-chalkboard-teacher" />
+						</>
+					}
+					item3Link="mng-faculties-classes"
 					item4={
 						<>
 							Phân công giảng dạy <i className="fas fa-graduation-cap" />
@@ -50,14 +52,11 @@ const LeftMenu = ({
 					}
 					item4Link="mng-assignments"
 				/>
-				<LinkButton to="/new">
-					<div>Tạo thời khóa biểu mới</div>
-				</LinkButton>
 
 				<Calendar
 					onChange={calendarOnChange}
 					value={calendarValue}
-					className={["calendar"]}
+					className={["calendar calendar__left-menu"]}
 					locale="vi-VN"
 					nextLabel={<i className="fas fa-angle-right" />}
 					next2Label={<i className="fas fa-angle-double-right" />}

@@ -3,8 +3,8 @@ html {
 	color: white;
 	--scrollbarBG: #0d1117;
 	--thumbBG: #f0f0f0;
-	height: 100%;
-	width: 100%;
+	min-height: 100%;
+	/* width: 100%; */
 }
 
 body {
@@ -12,17 +12,15 @@ body {
 		monospace;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	height: 100%;
+	height: 100vh;
 	/* height: calc(100% - 50px); */
+
+	scrollbar-width: thin;
+	scrollbar-color: var(--thumbBG) var(--scrollbarBG);
 }
 
 body::-webkit-scrollbar {
 	width: 11px;
-}
-
-body {
-	scrollbar-width: thin;
-	scrollbar-color: var(--thumbBG) var(--scrollbarBG);
 }
 
 body::-webkit-scrollbar-track {
@@ -39,6 +37,7 @@ main {
 	display: flex;
 	padding-top: 50px;
 	width: 100%;
-	height: 100%;
+	/* height: 100%; */
+	min-height: 100vh;
 	background-color: #06090f;
 }

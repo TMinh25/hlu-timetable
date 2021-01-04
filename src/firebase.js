@@ -42,9 +42,9 @@ export const signOut = () => {
 };
 
 // write notes in database
-export const writeNote = (uid, values) => {
+export const writeNewSemester = (uid, values) => {
 	userRef(uid)
-		.child(`note`)
+		.child(`semester`)
 		.push(
 			values,
 			// failed to write data

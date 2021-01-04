@@ -5,7 +5,7 @@
 	background-color: #21262d;
 	border: 1px solid #30363d;
 	font-size: 2vmin;
-	transition: 0.25s all;
+	transition: 0.15s all;
 	color: white;
 	margin-bottom: 10px;
 	cursor: pointer;
@@ -15,10 +15,18 @@
 .button:hover {
 	border-color: #656270;
 	background-color: #252a31;
-	transition: 0.25s all;
+	transition: 0.15s all;
 	-webkit-box-shadow: inset 0px 0px 3px 1px rgba(44, 44, 44, 0.8);
 	-moz-box-shadow: inset 0px 0px 3px 1px rgba(44, 44, 44, 0.8);
 	box-shadow: inset 0px 0px 3px 1px rgba(44, 44, 44, 0.8);
+}
+
+.new:hover {
+	border-color: #2ea043;
+	background-color: #238636;
+	-webkit-box-shadow: inset 0px 0px 3px 1px rgba(94, 94, 94, 0.8);
+	-moz-box-shadow: inset 0px 0px 3px 1px rgba(94, 94, 94, 0.8);
+	box-shadow: inset 0px 0px 3px 1px rgba(94, 94, 94, 0.8);
 }
 
 .sign-out {
@@ -54,7 +62,7 @@
 	display: flex;
 	position: relative;
 	perspective: 1000px;
-	z-index: 100;
+	z-index: 10;
 	cursor: pointer;
 }
 

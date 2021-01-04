@@ -8,7 +8,7 @@ import "./Button.css";
 export const LinkButton = (props) => {
 	return (
 		<>
-			<Link to={props.to} className="button">
+			<Link to={props.to} className={`button ${props.className}`}>
 				{props.children}
 			</Link>
 		</>
@@ -18,7 +18,12 @@ export const LinkButton = (props) => {
 export const Button = (props) => {
 	return (
 		<>
-			<button className={`button ${props.className}`} onClick={props.onClick}>
+			<button
+				style={props.style}
+				type={props.type}
+				className={`button ${props.className}`}
+				onClick={props.onClick}
+			>
 				{props.children}
 			</button>
 		</>
