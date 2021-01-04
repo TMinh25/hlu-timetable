@@ -33,7 +33,7 @@ class UserProvider extends Component {
 				this.setUser(userAuth);
 				userRef(userAuth.uid)
 					.child("loged-history/")
-					.push({"loged in": new Date().toString()}, (err) => {
+					.set({"loged in": new Date().toString()}, (err) => {
 						if (err) {
 							console.warn("failed to write data to firebase: " + err.message);
 						}

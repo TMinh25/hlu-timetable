@@ -1,0 +1,45 @@
+{
+  "classes": {
+    "MÃ LỚP": {
+      "class-name": "TÊN LỚP",
+      "timetable": {
+        "t2": ["tiết 1", "tiết 2", "tiết 3", "tiết 4", "tiết 5", "tiết 6", "tiết 7", "tiết 8", "tiết 9", "tiết 10"], 
+        "t3": ["tiết 1", "tiết 2", "tiết 3", "tiết 4", "tiết 5", "tiết 6", "tiết 7", "tiết 8", "tiết 9", "tiết 10"], 
+        "t4": ["tiết 1", "tiết 2", "tiết 3", "tiết 4", "tiết 5", "tiết 6", "tiết 7", "tiết 8", "tiết 9", "tiết 10"], 
+        "t5": ["tiết 1", "tiết 2", "tiết 3", "tiết 4", "tiết 5", "tiết 6", "tiết 7", "tiết 8", "tiết 9", "tiết 10"], 
+        "t6": ["tiết 1", "tiết 2", "tiết 3", "tiết 4", "tiết 5", "tiết 6", "tiết 7", "tiết 8", "tiết 9", "tiết 10"], 
+        "t7": ["tiết 1", "tiết 2", "tiết 3", "tiết 4", "tiết 5", "tiết 6", "tiết 7", "tiết 8", "tiết 9", "tiết 10"], 
+        "CN": ["tiết 1", "tiết 2", "tiết 3", "tiết 4", "tiết 5", "tiết 6", "tiết 7", "tiết 8", "tiết 9", "tiết 10"]
+      },
+      "__comment__": "null là không có tiết"
+    }
+  },
+  "faculties": {
+    "MÃ KHOA": {
+      "faculty-name": "TÊN KHOA"
+    }
+  },
+  "subjects": {
+    "MÃ MÔN HỌC": {
+      "subject-name": "TÊN MÔN HỌC",
+      "credit": 2, 
+      "periods": 30
+    }
+  },
+  "teachers": {
+    "MÃ GIẢNG VIÊN": {
+      "teacher-name": "TÊN GIẢNG VIÊN",
+      "email": "EMAIL GIẢNG VIÊN",
+      "faculty": "GIẢNG VIÊN THUỘC KHOA NÀO, null LÀ KHÔNG THUỘC VỀ KHOA NÀO"
+    }
+  },
+  "assignments": {
+    "MÃ GIẢNG VIÊN": {
+      "__comment__" : "mã phân công được dùng trong thời khóa biểu",
+      "MÃ PHÂN CÔNG": {
+        "subject-id": "MÃ MÔN HỌC",
+        "class-teaching": "LỚP DẠY"
+      }
+    }
+  }
+}

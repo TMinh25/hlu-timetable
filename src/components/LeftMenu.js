@@ -3,7 +3,7 @@ import Calendar from "react-calendar";
 import PropTypes from "prop-types";
 
 // import components
-import {LinkButton} from "./Button";
+import {LinkButton, DropDownHoverButton} from "./Button";
 
 // import styles
 import "./LeftMenu.css";
@@ -23,6 +23,33 @@ const LeftMenu = ({
 					visible ? "left-menu show-left-menu" : "left-menu hide-left-menu"
 				}
 			>
+				<DropDownHoverButton
+					children="Quản lý đào tạo"
+					item1={
+						<>
+							Khoa & Lớp <i className="fas fa-chalkboard-teacher" />
+						</>
+					}
+					item1Link="mng-faculties-classes"
+					item2={
+						<>
+							Nhân sự <i className="fas fa-users" />
+						</>
+					}
+					item2Link="mng-lectures"
+					item3={
+						<>
+							Môn học <i className="fas fa-book" />
+						</>
+					}
+					item3Link="mng-subjects"
+					item4={
+						<>
+							Phân công giảng dạy <i className="fas fa-graduation-cap" />
+						</>
+					}
+					item4Link="mng-assignments"
+				/>
 				<LinkButton to="/new">
 					<div>Tạo thời khóa biểu mới</div>
 				</LinkButton>
@@ -38,10 +65,6 @@ const LeftMenu = ({
 					prev2Label={<i className="fas fa-angle-double-left" />}
 				/>
 
-				<LinkButton to="/allocate-manage">
-					<div>Quản lý phân công giảng dạy</div>
-				</LinkButton>
-
 				<LinkButton to="/teacher-time-table">
 					<div>Thời khóa biểu của giảng viên</div>
 				</LinkButton>
@@ -49,6 +72,7 @@ const LeftMenu = ({
 				<LinkButton to="/schedule-timetable">
 					<div>Chỉnh sửa thời khóa biểu</div>
 				</LinkButton>
+
 				{showScheduler && (
 					<>
 						<div className="board-column-header">Thứ 2</div>

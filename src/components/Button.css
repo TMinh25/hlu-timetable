@@ -9,6 +9,7 @@
 	color: white;
 	margin-bottom: 10px;
 	cursor: pointer;
+	user-select: none;
 }
 
 .button:hover {
@@ -45,4 +46,125 @@
 	font-size: 16px;
 	color: #78b5f7;
 	border-radius: 100px;
+}
+
+/* drop down button */
+
+.dropdown-button {
+	display: flex;
+	position: relative;
+	perspective: 1000px;
+	z-index: 100;
+	cursor: pointer;
+}
+
+.dropdown-button:hover .dropdown_menu li {
+	display: block;
+}
+
+.dropdown_menu {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	width: 100%;
+	perspective: 1000px;
+	z-index: -1;
+	border-radius: 2px;
+	overflow: hidden;
+}
+
+.dropdown_item > i {
+	width: 20px;
+	justify-content: center;
+	align-items: center;
+}
+
+.dropdown_item {
+	font-family: inherit;
+	text-align: right;
+	display: none;
+	color: #fff;
+	background-color: #21262d;
+	padding: 10px 20px;
+	font-size: calc(2vmin + 3px);
+	opacity: 0;
+}
+.dropdown_item:hover {
+	/* border-color: #656270; */
+	background-color: #383f47;
+	transition: 0.25s all;
+	-webkit-box-shadow: 0px 0px 3px 1px rgba(44, 44, 44, 0.8);
+	-moz-box-shadow: 0px 0px 3px 1px rgba(44, 44, 44, 0.8);
+	box-shadow: 0px 0px 3px 1px rgba(44, 44, 44, 0.8);
+}
+
+.dropdown_menu .dropdown_item {
+	transform-origin: top center;
+}
+.dropdown_menu .dropdown_item-1 {
+	animation: rotateX 300ms 40ms ease-in-out forwards;
+}
+.dropdown_menu .dropdown_item-2 {
+	animation: rotateX 300ms 80ms ease-in-out forwards;
+}
+.dropdown_menu .dropdown_item-3 {
+	animation: rotateX 300ms 120ms ease-in-out forwards;
+}
+.dropdown_menu .dropdown_item-4 {
+	animation: rotateX 300ms 200ms ease-in-out forwards;
+}
+.dropdown_menu .dropdown_item-5 {
+	animation: rotateX 300ms 240ms ease-in-out forwards;
+}
+@-moz-keyframes rotateX {
+	0% {
+		opacity: 0;
+		transform: rotateX(-90deg);
+	}
+	50% {
+		transform: rotateX(-20deg);
+	}
+	100% {
+		opacity: 1;
+		transform: rotateX(0deg);
+	}
+}
+@-webkit-keyframes rotateX {
+	0% {
+		opacity: 0;
+		transform: rotateX(-90deg);
+	}
+	50% {
+		transform: rotateX(-20deg);
+	}
+	100% {
+		opacity: 1;
+		transform: rotateX(0deg);
+	}
+}
+@-o-keyframes rotateX {
+	0% {
+		opacity: 0;
+		transform: rotateX(-90deg);
+	}
+	50% {
+		transform: rotateX(-20deg);
+	}
+	100% {
+		opacity: 1;
+		transform: rotateX(0deg);
+	}
+}
+@keyframes rotateX {
+	0% {
+		opacity: 0;
+		transform: rotateX(-90deg);
+	}
+	50% {
+		transform: rotateX(-20deg);
+	}
+	100% {
+		opacity: 1;
+		transform: rotateX(0deg);
+	}
 }

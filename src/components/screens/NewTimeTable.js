@@ -48,62 +48,67 @@ const NewTimeTable = () => {
 
 	return (
 		<>
-			<h1>Hãy bắt đầu tạo thời khóa biểu mới!</h1>
-			<div>Đầu tiên hãy chọn thời gian của kì học của bạn</div>
-			<form onSubmit={handleOnSubmit}>
-				<input
-					name="id"
-					value={values.id}
-					placeholder="id"
-					onChange={handleInputChange}
-				/>
-				<input
-					name="note"
-					value={values.note}
-					placeholder="note"
-					onChange={handleInputChange}
-				/>
-				<button>save</button>
-			</form>
+			{!!currentUser ? (
+				<>
+					<h1>Hãy bắt đầu tạo thời khóa biểu mới!</h1>
+					<div>Đầu tiên hãy chọn thời gian của kì học của bạn</div>
+					<form onSubmit={handleOnSubmit}>
+						<input
+							name="id"
+							value={values.id}
+							placeholder="id"
+							onChange={handleInputChange}
+						/>
+						<input
+							name="note"
+							value={values.note}
+							placeholder="note"
+							onChange={handleInputChange}
+						/>
+						<button type="submit">save</button>
+					</form>
 
-			<div>
-				{!!Object.keys(noteObjects).length ? (
-					<ol>
-						{Object.keys(noteObjects).map((id) => {
-							return (
-								<>
-									<li key={id}>
-										{noteObjects[id].id}, {noteObjects[id].note}
-										<span
-											onClick={() => {
-												// console.log(id);
-												userRef(currentUser.uid)
-													.child(`note/${id}`)
-													.remove((err) => {
-														if (err) {
-															console.warn("failed to remove: " + err);
-														}
-													});
-											}}
-											style={{
-												color: "red",
-												backgroundColor: "white",
-												cursor: "pointer",
-											}}
-										>
-											x
-										</span>
-									</li>
-								</>
-							);
-						})}
-					</ol>
-				) : (
 					<div>
-						<h1>No note yet!</h1>
+						{!!noteObjects ? (
+							<ol>
+								{Object.keys(noteObjects).map((id) => {
+									return (
+										<>
+											<li key={id}>
+												{noteObjects[id].id}, {noteObjects[id].note}
+												<span
+													onClick={() => {
+														userRef(currentUser.uid)
+															.child(`note/${id}`)
+															.remove((err) => {
+																if (err) {
+																	console.warn("failed to remove: " + err);
+																}
+															});
+													}}
+													style={{
+														color: "red",
+														backgroundColor: "white",
+														cursor: "pointer",
+													}}
+												>
+													x
+												</span>
+											</li>
+										</>
+									);
+								})}
+							</ol>
+						) : (
+							<div>
+								<h1>No note yet!</h1>
+							</div>
+						)}
 					</div>
-				)}
-			</div>
+				</>
+			) : (
+				<div>Đăng nhập để tiếp tục</div>
+			)}
 		</>
 	);
 };

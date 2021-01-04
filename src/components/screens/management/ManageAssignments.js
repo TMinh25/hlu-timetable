@@ -1,14 +1,12 @@
 import React from "react";
 
 // import components
-import NavBar from "../NavBar";
-import LeftMenu from "../LeftMenu";
 import Muuri from "muuri";
 
 // import styles
-import "./AllocateManagement.css";
+import "./ManageAssignments.css";
 
-const AllocateManagement = () => {
+const ManageAssignments = () => {
 	const [leftMenuVisible, setLeftMenuVisible] = React.useState(true);
 
 	const handleHamburgerClick = () => {
@@ -213,4 +211,4 @@ const AllocateManagement = () => {
 	);
 };
 
-export default AllocateManagement;
+export default ManageAssignments;
