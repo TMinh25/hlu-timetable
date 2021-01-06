@@ -15,7 +15,8 @@ input.sem-name__input {
 	transition: 0.2s all;
 }
 
-input.sem-name__input:hover {
+input.sem-name__input:hover,
+input.sem-name__input:focus {
 	border-bottom: 2px solid #2176cc;
 	transition: 0.2s all;
 }

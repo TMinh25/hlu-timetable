@@ -10,6 +10,7 @@
 
 .show-left-menu {
 	overflow: hidden;
+	min-width: 300px;
 	transition: 0.25s ease;
 }
 

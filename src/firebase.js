@@ -13,6 +13,7 @@ var firebaseConfig = {
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
+//  setPersistence(firebaseAuth.Auth.Persistence.LOCAL)
 export const auth = firebase.auth();
 export var database = firebase.database();
 
@@ -45,12 +46,16 @@ export const signOut = () => {
 export const writeNewSemester = (uid, values) => {
 	userRef(uid)
 		.child(`semester`)
-		.push(
+		.push()
+		.child("semester-info")
+		.set(
 			values,
 			// failed to write data
 			(err) => {
 				if (err) {
 					console.warn("failed to write data to firebase: " + err.message);
+				} else {
+					// console.log(values);
 				}
 			}
 		);

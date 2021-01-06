@@ -18,14 +18,15 @@ const NavBar = ({onLogoClick, onHamburgerClick, showHamburger}) => {
 		setShowModule((prevState) => !prevState);
 	};
 
-	// useEffect(() => {
-	// 	console.log(showModule);
-	// }, [showModule]);
+	useEffect(() => {
+		console.log(showModule);
+	}, [showModule]);
 
 	// hide NavModule on mount
 	useEffect(() => {
-		setShowModule(false);
 		if (!user) {
+			setShowModule(false);
+		} else {
 			setShowModule(false);
 		}
 	}, [user]);
@@ -62,9 +63,16 @@ const NavBar = ({onLogoClick, onHamburgerClick, showHamburger}) => {
 					<p className="display-email">{user.email}</p>
 				</section>
 				<section id="module-signout-sect">
-					<Button className="sign-out" onClick={() => signOut()}>
-						Đăng xuất
-					</Button>
+					<div>
+						<Button className="new module-btn" onClick={() => signInWithGoogle()}>
+							Chuyển <br /> tài khoản
+						</Button>
+					</div>
+					<div>
+						<Button className="sign-out module-btn" onClick={() => signOut()}>
+							Đăng xuất
+						</Button>
+					</div>
 				</section>
 			</div>
 		);

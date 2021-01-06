@@ -20,12 +20,12 @@
 	border-radius: 100px;
 	text-align: center;
 	cursor: pointer;
-	font-size: 20px;
 }
 
 .navbar-mainmenu i {
 	position: relative;
-	top: calc(50% - 10px);
+	font-size: 16px !important;
+	top: calc(50% - 7px);
 }
 
 .navbar-mainmenu:hover {
@@ -123,4 +123,27 @@ img.nav-avatar:hover {
 	width: 100%;
 	margin-top: 20px;
 	background: rgb(202, 202, 202);
+}
+
+#module-signout-sect {
+	display: flex;
+}
+
+#module-signout-sect div {
+	width: 50%;
+}
+
+#module-signout-sect div:first-child {
+	margin-right: 3px;
+}
+#module-signout-sect div:last-child {
+	margin-left: 3px;
+}
+
+.module-btn {
+	font-size: calc(2vmin + 1px);
+	font-weight: 600;
+	height: 100%;
+	width: 100%;
+	padding: 5px 10px;
 }

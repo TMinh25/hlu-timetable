@@ -19,7 +19,8 @@ import ManageAssignments from "./screens/management/ManageAssignments";
 import ManageFacultiesClasses from "./screens/management/ManageFacultiesClasses";
 import ManageLecture from "./screens/management/ManageLectures";
 import ManageSubjects from "./screens/management/ManageSubjects";
-import Note from "./screens/Note";
+import ChooseYourTable from "./screens/ChooseYourTable";
+import TimeTable from "./screens/TimeTable";
 import NotFound from "./screens/NotFound";
 
 const Application = () => {
@@ -36,7 +37,6 @@ const Application = () => {
 				<LeftMenu visible={leftMenuVisible} showScheduler={true} />
 				<Router className="main-container">
 					<Home path="/" />
-					{/* <Note path="note/:noteId" /> */}
 					<New path="new" />
 					<TeacherTimeTable path="teacher-time-table" />
 					<ScheduleTimeTable path="schedule-timetable" />
@@ -44,6 +44,8 @@ const Application = () => {
 					<ManageFacultiesClasses path="mng-faculties-classes" />
 					<ManageLecture path="mng-lectures" />
 					<ManageSubjects path="mng-subjects" />
+					<ChooseYourTable path="your-table" />
+					<TimeTable path="timetable:/timeTableId" />
 					<NotFound default />
 				</Router>
 			</main>

@@ -21,8 +21,8 @@ const LeftMenu = ({
 			<div
 				className={`left-menu ${visible ? "show-left-menu" : "hide-left-menu"}`}
 			>
-				<LinkButton to="/new" className="new">
-					<div>Thời khóa biểu mới</div>
+				<LinkButton to="/your-table" >
+					<div>Thời khóa biểu</div>
 				</LinkButton>
 
 				<DropDownHoverButton

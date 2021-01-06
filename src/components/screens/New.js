@@ -1,33 +1,41 @@
 import React, {useState, useEffect, useContext} from "react";
 
 // import components
-import {userRef} from "../../firebase";
+import {writeNewSemester} from "../../firebase";
 import {UserContext} from "../../providers/UserProvider";
 import Calendar from "react-calendar";
 import {Button} from "../Button";
+import {useNavigate} from "@reach/router";
 
 // import styles
 import "./New.css";
 
+function weekCount(time2, time1) {
+	var diff = (time2.getTime() - time1.getTime()) / 1000;
+	diff /= 60 * 60 * 24 * 7;
+	return Math.abs(Math.round(diff));
+}
+
 const New = () => {
 	const currentUser = useContext(UserContext);
+	const navigate = useNavigate();
 
 	const [values, setValues] = useState({});
-	const [semesterObject, setSemesterObject] = useState({});
+	// const [semesterObject, setSemesterObject] = useState({});
 
-	useEffect(() => {
-		if (!!currentUser) {
-			userRef(currentUser.uid)
-				.child("note")
-				.on("value", (snapshot) => {
-					if (snapshot.val() != null) {
-						setSemesterObject({...snapshot.val()});
-					} else {
-						setSemesterObject({});
-					}
-				});
-		}
-	}, [currentUser]); // similar to componentDidMount()
+	// useEffect(() => {
+	// 	if (!!currentUser) {
+	// 		userRef(currentUser.uid)
+	// 			.child("semester")
+	// 			.on("value", (snapshot) => {
+	// 				if (snapshot.val() != null) {
+	// 					setSemesterObject({...snapshot.val()});
+	// 				} else {
+	// 					setSemesterObject({});
+	// 				}
+	// 			});
+	// 	}
+	// }, [currentUser]); // similar to componentDidMount()
 
 	// const handleInputChange = (e) => {
 	// 	var {name, value} = e.target;
@@ -39,21 +47,25 @@ const New = () => {
 
 	const handleOnSubmit = (e) => {
 		e.preventDefault();
-		// writeNewSemester(currentUser.uid, values);
-
-		alert(
-			calendarStartValue.getFullYear() +
-				"-" +
-				calendarEndValue.getFullYear() +
-				semName
-		);
+		setValues({
+			"user-named":
+				semName ||
+				calendarStartValue.getFullYear().toString() +
+					"-" +
+					calendarEndValue.getFullYear().toString(),
+			"semester-start": calendarStartValue.toDateString(),
+			"semester-end": calendarEndValue.toDateString(),
+			"number-of-weeks": weekCount(calendarEndValue, calendarStartValue),
+		});
+		navigate("/your-table");
 	};
 
-	// useEffect(() => {
-	// 	if (!!currentUser) {
-	// 		console.log(currentUser.uid);
-	// 	}
-	// }, [currentUser]);
+	useEffect(() => {
+		console.log(values);
+		if (Object.keys(values).length) {
+			writeNewSemester(currentUser.uid, values);
+		}
+	}, [values]);
 
 	// start and end of semester
 	const [calendarStartValue, onStartValueChange] = useState(new Date());
@@ -115,12 +127,12 @@ const New = () => {
 							</div>
 						</section>
 						<Button
-							style={{marginLeft: "auto", width: "25%", height: 55}}
+							style={{marginLeft: "auto", width: "25%"}}
 							className="new"
 							type="submit"
 							onClick={handleOnSubmit}
 						>
-							Bắt đầu{" "}
+							Tạo mới{" "}
 							<i style={{marginLeft: 10}} className="fas fa-arrow-right" />
 						</Button>
 					</form>
