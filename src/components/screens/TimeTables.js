@@ -2,34 +2,49 @@ import React, {useEffect, useState, useContext} from "react";
 
 // import components
 import {UserContext} from "../../providers/UserProvider";
-import {LinkButton} from "../Button";
+import {LinkButton, Button} from "../Button";
 import {userRef} from "../../firebase";
 import {Link} from "@reach/router";
 
 // import styles
-import "./ChooseYourTable.css";
+import "./TimeTables.css";
 
-const TimeTableLi = (props) => {
+const TimeTableLi = ({id, name, time, onDelete}) => {
+	const getTimeString = (t) => {
+		const time = new Date(t);
+		const today = new Date();
+		let date = "";
+		if (
+			time.getDate() === today.getDate() &&
+			time.getMonth() === today.getMonth() &&
+			time.getFullYear() === today.getFullYear()
+		) {
+			date = "Hôm nay";
+		} else {
+			date = time.toLocaleDateString();
+		}
+		return `${date}, ${time.getHours()}:${time.getMinutes()}`;
+	};
+
 	return (
 		<>
-			<li key={props.id}>
-				<Link to={`/timetable/${props.id}`}>{props.timetableName}</Link>
-				<span
-					onClick={props.onDelete}
-					style={{
-						color: "red",
-						backgroundColor: "white",
-						cursor: "pointer",
-					}}
-				>
-					x
-				</span>
+			<li key={id} className="timetable__li">
+				<Link to={`${id}`} className="timetable__li-link">
+					<div className="li__name">
+						<i className="fas fa-table" /> {name}
+					</div>
+					<div className="li__time">
+						<i className="far fa-clock" /> {getTimeString(time)}
+					</div>
+				</Link>
+				<Button onClick={onDelete} className="sign-out delete-btn__li">x</Button>
+				{/* <span onClick={onDelete} className="delete-btn__li center-text"></span> */}
 			</li>
 		</>
 	);
 };
 
-const ChooseYourTable = () => {
+const TimeTables = () => {
 	const currentUser = useContext(UserContext);
 
 	const [semesterObject, setSemesterObject] = useState({});
@@ -62,7 +77,7 @@ const ChooseYourTable = () => {
 		<>
 			<div className="choose">
 				<div className="choose__header">
-					<h2>Các thời khóa biểu mà bạn đã lưu</h2>
+					<h1>Các thời khóa biểu mà bạn đã lưu</h1>
 					<LinkButton to="/new" className="new choose__new">
 						Tạo mới
 					</LinkButton>
@@ -77,8 +92,9 @@ const ChooseYourTable = () => {
 											<TimeTableLi
 												id={id}
 												onDelete={() => handleOnDelete(id)}
-												timetableName={
-													semesterObject[id]["semester-info"]["user-named"]
+												name={semesterObject[id]["semester-info"]["user-named"]}
+												time={
+													semesterObject[id]["semester-info"]["time-created"]
 												}
 											/>
 										</>
@@ -99,4 +115,4 @@ const ChooseYourTable = () => {
 	);
 };
 
-export default ChooseYourTable;
+export default TimeTables;

@@ -19,7 +19,7 @@ import ManageAssignments from "./screens/management/ManageAssignments";
 import ManageFacultiesClasses from "./screens/management/ManageFacultiesClasses";
 import ManageLecture from "./screens/management/ManageLectures";
 import ManageSubjects from "./screens/management/ManageSubjects";
-import ChooseYourTable from "./screens/ChooseYourTable";
+import TimeTables from "./screens/TimeTables";
 import TimeTable from "./screens/TimeTable";
 import NotFound from "./screens/NotFound";
 
@@ -44,7 +44,7 @@ const Application = () => {
 					<ManageFacultiesClasses path="mng-faculties-classes" />
 					<ManageLecture path="mng-lectures" />
 					<ManageSubjects path="mng-subjects" />
-					<ChooseYourTable path="your-table" />
+					<TimeTables path="timetable" />
 					<TimeTable path="timetable:/timeTableId" />
 					<NotFound default />
 				</Router>

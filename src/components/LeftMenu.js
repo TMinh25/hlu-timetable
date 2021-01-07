@@ -21,7 +21,7 @@ const LeftMenu = ({
 			<div
 				className={`left-menu ${visible ? "show-left-menu" : "hide-left-menu"}`}
 			>
-				<LinkButton to="/your-table" >
+				<LinkButton to="/timetable" >
 					<div>Thời khóa biểu</div>
 				</LinkButton>
 

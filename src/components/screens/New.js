@@ -56,8 +56,9 @@ const New = () => {
 			"semester-start": calendarStartValue.toDateString(),
 			"semester-end": calendarEndValue.toDateString(),
 			"number-of-weeks": weekCount(calendarEndValue, calendarStartValue),
+			'time-created': new Date().toLocaleString(),
 		});
-		navigate("/your-table");
+		navigate("/timetable");
 	};
 
 	useEffect(() => {

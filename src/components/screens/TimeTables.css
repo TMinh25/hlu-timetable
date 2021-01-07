@@ -1,0 +1,70 @@
+.choose {
+	height: 100%;
+}
+
+.choose__new {
+	margin: 0;
+	margin-left: auto;
+	width: 15%;
+}
+
+.choose__header {
+	display: flex;
+	height: 10%;
+	justify-content: center;
+	align-items: center;
+	line-height: 300%;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #161b22;
+	overflow: hidden;
+}
+
+.choose__main {
+	height: 90%;
+}
+
+.timetable__li {
+	list-style: none;
+	background-color: #181a1d;
+	margin: 10px 0px;
+	border-radius: 10px;
+	transition: 0.2s all;
+	overflow: hidden;
+}
+
+.timetable__li:last-child {
+	margin-bottom: 0;
+}
+
+.timetable__li:hover {
+	background-color: #25272e;
+	transition: 0.2s all;
+}
+
+.timetable__li-link {
+	display: flex;
+	min-height: 50px;
+	padding: 5px 20px;
+	align-items: center;
+	color: rgb(231, 231, 231);
+	font-size: 2.5vmin;
+}
+
+div.li__name {
+	flex: 8;
+}
+
+div.li__time {
+	flex: 2;
+	margin-right: 50px;
+	font-size: 2vmin;
+	color: #999999;
+}
+
+.delete-btn__li {
+	position: absolute;
+	background-color: white;
+	color: red;
+	right: 0;
+	transform: translate(-30px, -40px);
+}
