@@ -24,8 +24,10 @@
 }
 
 .timetable__li {
+	display: flex;
 	list-style: none;
 	background-color: #181a1d;
+	padding: 5px 20px 5px 5px;
 	margin: 10px 0px;
 	border-radius: 10px;
 	transition: 0.2s all;
@@ -41,10 +43,14 @@
 	transition: 0.2s all;
 }
 
+.content__li-container {
+	flex: 10;
+}
+
 .timetable__li-link {
 	display: flex;
-	min-height: 50px;
-	padding: 5px 20px;
+	height: 100%;
+	padding: 10px 20px;
 	align-items: center;
 	color: rgb(231, 231, 231);
 	font-size: 2.5vmin;
@@ -54,17 +60,51 @@ div.li__name {
 	flex: 8;
 }
 
+input.li__name-input {
+	background-color: transparent;
+	border: none;
+	color: #eeeeee;
+}
+
 div.li__time {
 	flex: 2;
-	margin-right: 50px;
 	font-size: 2vmin;
 	color: #999999;
 }
 
-.delete-btn__li {
-	position: absolute;
-	background-color: white;
-	color: red;
-	right: 0;
-	transform: translate(-30px, -40px);
+.btn__li {
+	position: relative;
+	height: 100% !important;
+	width: 2%;
+	margin: 2px;
+}
+
+/* confirm alert re-style */
+.react-confirm-alert-overlay {
+	background: rgba(78, 78, 78, 0.9) !important;
+}
+
+.react-confirm-alert-body {
+	background-color: rgb(29, 29, 29) !important;
+	font-size: 13px !important;
+	color: #f1f1f1 !important;
+}
+
+.react-confirm-alert-button-group {
+	justify-content: space-evenly !important;
+}
+
+.react-confirm-alert-button-group > button {
+	width: 50%;
+	height: 50px;
+	font-size: 2vmin;
+	transition: 0.2s all !important;
+}
+
+.react-confirm-alert-button-group > button.confirm__cancel:hover {
+	background-color: rgb(126, 126, 126) !important;
+}
+
+.link__disable {
+	pointer-events: none;
 }

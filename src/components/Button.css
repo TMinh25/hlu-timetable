@@ -1,6 +1,5 @@
 .button {
-	display: block;
-	/* display: flex; */
+	display: flex;
 	padding: 10px 20px;
 	min-height: 35px;
 	border-radius: 4px;
@@ -49,6 +48,20 @@
 	-webkit-box-shadow: inset 0px 0px 3px 1px rgba(173, 53, 53, 0.8);
 	-moz-box-shadow: inset 0px 0px 3px 1px rgba(173, 53, 53, 0.8);
 	box-shadow: inset 0px 0px 3px 1px rgba(173, 53, 53, 0.8);
+	transition: 0.3s all;
+}
+
+.modify {
+	margin: auto;
+}
+
+.modify:hover {
+	background-color: #6621b6;
+	border-color: #7734a3;
+	color: white;
+	-webkit-box-shadow: inset 0px 0px 3px 1px rgba(104, 72, 141, 0.8);
+	-moz-box-shadow: inset 0px 0px 3px 1px rgba(104, 72, 141, 0.8);
+	box-shadow: inset 0px 0px 3px 1px rgba(104, 72, 141, 0.8);
 	transition: 0.3s all;
 }
 

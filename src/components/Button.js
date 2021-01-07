@@ -8,7 +8,11 @@ import "./Button.css";
 export const LinkButton = (props) => {
 	return (
 		<>
-			<Link to={props.to} className={`button ${props.className}`}>
+			<Link
+				title={props.title}
+				to={props.to}
+				className={`button ${props.className}`}
+			>
 				{props.children}
 			</Link>
 		</>
@@ -19,6 +23,7 @@ export const Button = (props) => {
 	return (
 		<>
 			<button
+				title={props.title}
 				style={props.style}
 				type={props.type}
 				className={`button ${props.className}`}
@@ -43,10 +48,15 @@ export const DropDownHoverButton = ({
 	item4Link,
 	item5,
 	item5Link,
+	title,
 }) => {
 	return (
 		<>
-			<div className="button dropdown-button" onClick={onMenuClick}>
+			<div
+				title={title}
+				className="button dropdown-button"
+				onClick={onMenuClick}
+			>
 				{children}
 				<ul className="dropdown_menu">
 					{item1 && item1Link && (

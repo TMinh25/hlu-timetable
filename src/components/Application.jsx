@@ -45,7 +45,7 @@ const Application = () => {
 					<ManageLecture path="mng-lectures" />
 					<ManageSubjects path="mng-subjects" />
 					<TimeTables path="timetable" />
-					<TimeTable path="timetable:/timeTableId" />
+					<TimeTable path="timetable/:timeTableId" />
 					<NotFound default />
 				</Router>
 			</main>

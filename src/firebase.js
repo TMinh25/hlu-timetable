@@ -45,7 +45,7 @@ export const signOut = () => {
 // write notes in database
 export const writeNewSemester = (uid, values) => {
 	userRef(uid)
-		.child(`semester`)
+		.child(`semesters`)
 		.push()
 		.child("semester-info")
 		.set(

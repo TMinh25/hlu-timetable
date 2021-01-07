@@ -22,10 +22,10 @@
 	cursor: pointer;
 }
 
-.navbar-mainmenu i {
+.navbar-mainmenu > * {
 	position: relative;
 	font-size: 16px !important;
-	top: calc(50% - 7px);
+	top: calc(50% - 10px);
 }
 
 .navbar-mainmenu:hover {

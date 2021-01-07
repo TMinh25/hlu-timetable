@@ -64,7 +64,10 @@ const NavBar = ({onLogoClick, onHamburgerClick, showHamburger}) => {
 				</section>
 				<section id="module-signout-sect">
 					<div>
-						<Button className="new module-btn" onClick={() => signInWithGoogle()}>
+						<Button
+							className="new module-btn"
+							onClick={() => signInWithGoogle()}
+						>
 							Chuyển <br /> tài khoản
 						</Button>
 					</div>
@@ -83,7 +86,7 @@ const NavBar = ({onLogoClick, onHamburgerClick, showHamburger}) => {
 			<nav className="navbar">
 				{showHamburger && (
 					<span className="navbar-mainmenu" onClick={onHamburgerClick}>
-						<i className="fas fa-bars"></i>
+						<i className="fas fa-bars" />
 					</span>
 				)}
 
