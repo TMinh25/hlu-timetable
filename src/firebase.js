@@ -70,13 +70,17 @@ export const setNewSemester = (uid, values) => {
 };
 
 // add faculty to database
-export const setNewFaculty = (values) => {
+export const setNewFaculty = (facID, values) => {
 	if (values["faculty-name"]) {
-		const userID = currentUser.uid;
 		let object = values;
-		let facultyId = object["faculty-id"];
+		// let facultyId = object["faculty-id"];
 		delete object["faculty-id"];
-		userRef(userID).child("faculties").child(facultyId).set(object);
+
+		auth.onAuthStateChanged((user) => {
+			if (user) {
+				userRef(user.uid).child(`faculties/${facID}`).set(object);
+			}
+		});
 	}
 };
 
@@ -91,8 +95,7 @@ export const getAllFaculties = () => {
 						console.log(snapshot.val());
 						return snapshot.val();
 					} else {
-						console.log("ghj");
-						return null;
+						return {};
 					}
 				});
 		}

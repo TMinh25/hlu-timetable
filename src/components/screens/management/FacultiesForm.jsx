@@ -4,7 +4,7 @@ import React, {useState, useEffect, useContext} from "react";
 import {Button} from "../../Button";
 import {setNewFaculty, auth} from "../../../firebase";
 
-const FacultiesForm = () => {
+const FacultiesForm = ({facultiesList, currentFacultyId}) => {
 	const initialState = {
 		"faculty-id": "",
 		"faculty-name": "",
@@ -13,7 +13,15 @@ const FacultiesForm = () => {
 
 	const [values, setValues] = useState(initialState);
 
-	const getFacultyId = () => {
+	useEffect(() => {
+		if (currentFacultyId == "") {
+			setValues(...initialState);
+		} else {
+			setValues({...facultiesList[currentFacultyId]});
+		}
+	}, [currentFacultyId, facultiesList]);
+
+	const getFacultyId = async () => {
 		if (values["faculty-name"]) {
 			let id = "";
 
@@ -44,17 +52,15 @@ const FacultiesForm = () => {
 	};
 
 	useEffect(() => {
-		if (auth.currentUser && values) {
-			setNewFaculty(values);
+		if (values["faculty-id"]) {
+			setNewFaculty(values["faculty-id"], values);
 			setValues(initialState);
-		} else {
-
-    }
+		}
 	}, [values["faculty-id"]]);
 
-	// useEffect(() => {
-	// 	console.warn(values);
-	// }, [values]);
+	useEffect(() => {
+		console.log(values);
+	}, [values]);
 
 	return (
 		<>
@@ -73,19 +79,33 @@ const FacultiesForm = () => {
 					title="Ghi chú"
 					name="faculty-note"
 					placeholder="Ghi Chú"
+					style={{marginBottom: 10}}
 					cols="20"
 					rows="10"
 					value={values["faculty-note"]}
 					onChange={handleInputChange}
 				/>
-				<Button
-					type="submit"
-					className="new"
-					title="Thêm khoa mới vào hệ thống"
-					onClick={handleSubmitForm}
-				>
-					Thêm
-				</Button>
+				<div style={{display: "flex", justifyContent: "space-between"}}>
+					<Button
+						style={{margin: "0"}}
+						type="submit"
+						className="new"
+						title="Thêm khoa mới vào hệ thống"
+						onClick={handleSubmitForm}
+					>
+						{currentFacultyId ? "Chỉnh Sửa" : "Thêm"}
+					</Button>
+					{currentFacultyId && (
+						<Button
+							style={{margin: "0"}}
+							className="sign-out"
+							title="Hủy chỉnh sửa"
+							onClick={() => setValues(initialState)}
+						>
+							Hủy
+						</Button>
+					)}
+				</div>
 			</form>
 		</>
 	);
