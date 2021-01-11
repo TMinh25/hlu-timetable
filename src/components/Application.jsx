@@ -16,7 +16,7 @@ import New from "./screens/New";
 import TeacherTimeTable from "./screens/TeacherTimeTable";
 import ScheduleTimeTable from "./screens/ScheduleTimeTable";
 import ManageAssignments from "./screens/management/ManageAssignments";
-import ManageFacultiesClasses from "./screens/management/ManageFacultiesClasses";
+import ManageFaculties from "./screens/management/ManageFaculties";
 import ManageLecture from "./screens/management/ManageLectures";
 import ManageSubjects from "./screens/management/ManageSubjects";
 import TimeTables from "./screens/TimeTables";
@@ -41,7 +41,7 @@ const Application = () => {
 					<TeacherTimeTable path="teacher-time-table" />
 					<ScheduleTimeTable path="schedule-timetable" />
 					<ManageAssignments path="mng-assignments" />
-					<ManageFacultiesClasses path="mng-faculties-classes" />
+					<ManageFaculties path="mng-faculties" />
 					<ManageLecture path="mng-lectures" />
 					<ManageSubjects path="mng-subjects" />
 					<TimeTables path="timetable" />

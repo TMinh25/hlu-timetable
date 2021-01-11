@@ -41,10 +41,10 @@ const LeftMenu = ({
 					item2Link="mng-subjects"
 					item3={
 						<>
-							Khoa & Lớp <i className="fas fa-chalkboard-teacher" />
+							Khoa <i className="fas fa-chalkboard-teacher" />
 						</>
 					}
-					item3Link="mng-faculties-classes"
+					item3Link="mng-faculties"
 					item4={
 						<>
 							Phân công giảng dạy <i className="fas fa-graduation-cap" />

@@ -1,0 +1,15 @@
+.mng-container {
+	height: 100%;
+}
+
+.form-list__container {
+	display: flex;
+}
+
+.facuties-form__container {
+	flex: 3;
+}
+
+.facuties-list__container {
+	flex: 7;
+}

@@ -12,30 +12,7 @@ class MainContent extends React.Component {
 		return (
 			<div className="main-content">
 				<p>Home</p>
-				{/* <FullCalendar
-					plugins={[timeGridPlugin, interactionPlugin]}
-					initialView="timeGridWeek"
-					titleFormat={{year: "numeric", month: "long", day: "numeric"}}
-					headerToolbar={{start: "today", center: "title", end: "prev,next"}}
-					buttonText={{
-						today: "Hôm nay",
-						month: "Tháng",
-						week: "Tuần",
-						day: "Ngày",
-						list: "Danh sách",
-					}}
-					scrollTime="07:00:00"
-					slotDuration="00:45:00"
-					selectable={true}
-					nowIndicator={true}
-					businessHours={[{allDay: false}]}
-					dateClick={(dateClickInfo) => {
-						console.log(dateClickInfo.dateStr);
-					}}
-					locale="vi"
-					events={[{title: "event 1", date: "2020-12-15"}]}
-				/> */}
-				<table id="time-table__table">
+				{/* <table id="time-table__table">
 					<thead>
 						<tr>
 							<th colSpan={2}>Thời Gian</th>
@@ -248,7 +225,7 @@ class MainContent extends React.Component {
 							<td></td>
 						</tr>
 					</tbody>
-				</table>
+				</table> */}
 			</div>
 		);
 	}

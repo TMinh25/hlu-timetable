@@ -16,6 +16,14 @@ firebase.initializeApp(firebaseConfig);
 //  setPersistence(firebaseAuth.Auth.Persistence.LOCAL)
 export const auth = firebase.auth();
 export var database = firebase.database();
+export const currentUser = () =>
+	auth.onAuthStateChanged((user) => {
+		if (user) {
+			return user;
+		} else {
+			return null;
+		}
+	});
 
 export const userRef = (userID) => database.ref(userID);
 
@@ -43,7 +51,7 @@ export const signOut = () => {
 };
 
 // write notes in database
-export const writeNewSemester = (uid, values) => {
+export const setNewSemester = (uid, values) => {
 	userRef(uid)
 		.child(`semesters`)
 		.push()
@@ -59,4 +67,34 @@ export const writeNewSemester = (uid, values) => {
 				}
 			}
 		);
+};
+
+// add faculty to database
+export const setNewFaculty = (values) => {
+	if (values["faculty-name"]) {
+		const userID = currentUser.uid;
+		let object = values;
+		let facultyId = object["faculty-id"];
+		delete object["faculty-id"];
+		userRef(userID).child("faculties").child(facultyId).set(object);
+	}
+};
+
+// get faculties list in database
+export const getAllFaculties = () => {
+	auth.onAuthStateChanged((user) => {
+		if (user) {
+			userRef(user.uid)
+				.child("faculties")
+				.on("value", (snapshot) => {
+					if (snapshot.val() != null) {
+						console.log(snapshot.val());
+						return snapshot.val();
+					} else {
+						console.log("ghj");
+						return null;
+					}
+				});
+		}
+	});
 };

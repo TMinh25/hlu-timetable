@@ -366,6 +366,10 @@ template {
  * Add the correct display in IE 10.
  */
 
+ul {
+	list-style: none;
+}
+
 [hidden] {
 	display: none;
 }
@@ -388,4 +392,37 @@ a {
 	align-items: center;
 	justify-content: center;
 	text-align: center;
+}
+
+/* styling input */
+input,
+textarea {
+	width: 100%;
+	padding: 10px 20px;
+	margin-top: 10px;
+	border: none;
+	border-radius: 2px;
+	color: #cccccc;
+	background-color: #41474d;
+	border-bottom: 2px solid transparent;
+	transition: 0.2s all;
+	resize: none;
+}
+
+input:hover,
+input:focus,
+textarea:hover,
+textarea:focus {
+	border-bottom: 2px solid #2176cc;
+	transition: 0.2s all;
+}
+
+.left-align {
+	text-align: left;
+}
+.center-align {
+	text-align: left;
+}
+.right-align {
+	text-align: left;
 }

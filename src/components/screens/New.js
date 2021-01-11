@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
 
 // import components
-import {writeNewSemester} from "../../firebase";
+import {setNewSemester} from "../../firebase";
 import {UserContext} from "../../providers/UserProvider";
 import Calendar from "react-calendar";
 import {Button} from "../Button";
@@ -56,15 +56,15 @@ const New = () => {
 			"semester-start": calendarStartValue.toDateString(),
 			"semester-end": calendarEndValue.toDateString(),
 			"number-of-weeks": weekCount(calendarEndValue, calendarStartValue),
-			'time-created': new Date().toLocaleString(),
+			"time-created": new Date().toLocaleString(),
 		});
 		navigate("/timetable");
 	};
 
 	useEffect(() => {
-		console.log(values);
+		// console.log(values);
 		if (Object.keys(values).length) {
-			writeNewSemester(currentUser.uid, values);
+			setNewSemester(currentUser.uid, values);
 		}
 	}, [values]);
 
