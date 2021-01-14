@@ -70,17 +70,42 @@ export const setNewSemester = (uid, values) => {
 };
 
 // add faculty to database
-export const setNewFaculty = (facID, values) => {
+export const setNewFaculty = (values) => {
 	if (values["faculty-name"]) {
 		let object = values;
-		// let facultyId = object["faculty-id"];
+		let facID = object["faculty-id"];
 		delete object["faculty-id"];
 
 		auth.onAuthStateChanged((user) => {
 			if (user) {
-				userRef(user.uid).child(`faculties/${facID}`).set(object);
+				userRef(user.uid)
+					.child(`faculties/${facID}`)
+					.set(object, (err) => {
+						if (err) {
+							console.warn(err);
+						}
+					});
 			}
 		});
+	}
+};
+
+// remove faculty
+export const removeFaculty = (facID) => {
+	if (facID) {
+		auth.onAuthStateChanged((user) => {
+			if (user) {
+				userRef(user.uid)
+					.child(`faculties/${facID}`)
+					.remove((err) => {
+						if (err) {
+							console.warn("failed to remove: " + err);
+						}
+					});
+			}
+		});
+	} else {
+		console.warn("No Faculty ID was set!");
 	}
 };
 

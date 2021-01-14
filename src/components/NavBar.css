@@ -25,11 +25,11 @@
 .navbar-mainmenu > * {
 	position: relative;
 	font-size: 16px !important;
-	top: calc(50% - 10px);
+	color: white;
 }
 
 .navbar-mainmenu:hover {
-	background-color: #242c36;
+	background-color: #232a33 !important;
 }
 
 .sign-in-container {

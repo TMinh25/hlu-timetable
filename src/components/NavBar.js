@@ -4,7 +4,9 @@ import {signInWithGoogle, signOut} from "../firebase";
 // import components
 import Logo from "./Logo";
 import {UserContext} from "../providers/UserProvider";
-import {Button} from "./Button";
+import {Button as MyButton} from "./Button";
+import IconButton from "@material-ui/core/IconButton";
+import Button from "@material-ui/core/Button";
 
 // import styles
 import "./NavBar.css";
@@ -64,17 +66,17 @@ const NavBar = ({onLogoClick, onHamburgerClick, showHamburger}) => {
 				</section>
 				<section id="module-signout-sect">
 					<div>
-						<Button
+						<MyButton
 							className="new module-btn"
 							onClick={() => signInWithGoogle()}
 						>
 							Chuyển <br /> tài khoản
-						</Button>
+						</MyButton>
 					</div>
 					<div>
-						<Button className="sign-out module-btn" onClick={() => signOut()}>
+						<MyButton className="sign-out module-btn" onClick={() => signOut()}>
 							Đăng xuất
-						</Button>
+						</MyButton>
 					</div>
 				</section>
 			</div>
@@ -85,9 +87,9 @@ const NavBar = ({onLogoClick, onHamburgerClick, showHamburger}) => {
 		<>
 			<nav className="navbar">
 				{showHamburger && (
-					<span className="navbar-mainmenu" onClick={onHamburgerClick}>
+					<IconButton className="navbar-mainmenu" onClick={onHamburgerClick}>
 						<i className="fas fa-bars" />
-					</span>
+					</IconButton>
 				)}
 
 				<Logo style={onLogoClick && {cursor: "pointer"}} />
@@ -109,8 +111,12 @@ const NavBar = ({onLogoClick, onHamburgerClick, showHamburger}) => {
 						</>
 					) : (
 						<>
-							<Button className="sign-in" onClick={() => signInWithGoogle()}>
-								Đăng nhập
+							<Button
+								color="primary"
+								className="sign-in"
+								onClick={() => signInWithGoogle()}
+							>
+								Đăng Nhập
 							</Button>
 						</>
 					)}

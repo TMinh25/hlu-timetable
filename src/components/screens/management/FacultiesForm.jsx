@@ -4,7 +4,7 @@ import React, {useState, useEffect, useContext} from "react";
 import {Button} from "../../Button";
 import {setNewFaculty, auth} from "../../../firebase";
 
-const FacultiesForm = ({facultiesList, currentFacultyId}) => {
+const FacultiesForm = (props) => {
 	const initialState = {
 		"faculty-id": "",
 		"faculty-name": "",
@@ -14,32 +14,32 @@ const FacultiesForm = ({facultiesList, currentFacultyId}) => {
 	const [values, setValues] = useState(initialState);
 
 	useEffect(() => {
-		if (currentFacultyId == "") {
-			setValues(...initialState);
+		if (props.currentFacultyId == "") {
+			setValues({...initialState});
 		} else {
-			setValues({...facultiesList[currentFacultyId]});
+			setValues({...props.facultiesList[props.currentFacultyId]});
 		}
-	}, [currentFacultyId, facultiesList]);
+	}, [props.currentFacultyId, props.facultiesList]);
 
-	const getFacultyId = async () => {
-		if (values["faculty-name"]) {
-			let id = "";
+	// const getFacultyId = async () => {
+	// 	if (values["faculty-name"]) {
+	// 		let id = "";
 
-			// Tách từ tên khoa ra làm mã khoa
-			id = values["faculty-name"]
-				.trim()
-				.split(" ")
-				.map((word) => {
-					return word[0].toUpperCase();
-				})
-				.join("");
+	// 		// Tách từ tên khoa ra làm mã khoa
+	// 		id = values["faculty-name"]
+	// 			.trim()
+	// 			.split(" ")
+	// 			.map((word) => {
+	// 				return word[0].toUpperCase();
+	// 			})
+	// 			.join("");
 
-			setValues({
-				...values,
-				"faculty-id": id,
-			});
-		}
-	};
+	// 		setValues({
+	// 			...values,
+	// 			"faculty-id": id,
+	// 		});
+	// 	}
+	// };
 
 	const handleInputChange = (e) => {
 		var {name, value} = e.target;
@@ -48,15 +48,17 @@ const FacultiesForm = ({facultiesList, currentFacultyId}) => {
 
 	const handleSubmitForm = (e) => {
 		e.preventDefault();
-		getFacultyId();
+
+		// props.handleAddOrModify(values);
 	};
 
-	useEffect(() => {
-		if (values["faculty-id"]) {
-			setNewFaculty(values["faculty-id"], values);
-			setValues(initialState);
-		}
-	}, [values["faculty-id"]]);
+	// useEffect(() => {
+	// 	if (values["faculty-id"]) {
+	// 		// setNewFaculty(values["faculty-id"], values);
+	// 		handleAddOrModify(values["faculty-id"], values);
+	// 		setValues(initialState);
+	// 	}
+	// }, [values["faculty-id"]]);
 
 	useEffect(() => {
 		console.log(values);
@@ -64,7 +66,7 @@ const FacultiesForm = ({facultiesList, currentFacultyId}) => {
 
 	return (
 		<>
-			<form onSubmit={handleSubmitForm} id="faculty__form">
+			<form id="faculty__form">
 				<input
 					title="Tên khoa"
 					className="left-align"
@@ -74,6 +76,8 @@ const FacultiesForm = ({facultiesList, currentFacultyId}) => {
 					value={values["faculty-name"]}
 					onChange={handleInputChange}
 					required
+					autoFocus
+					autoComplete="off"
 				/>
 				<textarea
 					title="Ghi chú"
@@ -86,25 +90,52 @@ const FacultiesForm = ({facultiesList, currentFacultyId}) => {
 					onChange={handleInputChange}
 				/>
 				<div style={{display: "flex", justifyContent: "space-between"}}>
-					<Button
-						style={{margin: "0"}}
-						type="submit"
-						className="new"
-						title="Thêm khoa mới vào hệ thống"
-						onClick={handleSubmitForm}
-					>
-						{currentFacultyId ? "Chỉnh Sửa" : "Thêm"}
-					</Button>
-					{currentFacultyId && (
-						<Button
-							style={{margin: "0"}}
-							className="sign-out"
-							title="Hủy chỉnh sửa"
-							onClick={() => setValues(initialState)}
-						>
-							Hủy
-						</Button>
-					)}
+					<div>
+						{props.currentFacultyId ? (
+							<Button
+								style={{margin: "0"}}
+								type="submit"
+								className="new"
+								title="Chỉnh sửa khoa"
+								onClick={async (e) => {
+									e.preventDefault();
+									const response = await props.handleOnModify(values);
+									response && setValues(initialState);
+								}}
+							>
+								Chỉnh Sửa
+							</Button>
+						) : (
+							<Button
+								style={{margin: "0"}}
+								type="submit"
+								className="new"
+								title="Thêm khoa mới vào hệ thống"
+								onClick={async (e) => {
+									e.preventDefault();
+									const response = await props.handleOnAdd(values);
+									response && setValues(initialState);
+								}}
+							>
+								Thêm
+							</Button>
+						)}
+					</div>
+					<div>
+						{props.currentFacultyId && (
+							<Button
+								style={{margin: "0"}}
+								className="sign-out"
+								title="Hủy chỉnh sửa"
+								onClick={() => {
+									props.setCurrentFacultyId("");
+									setValues(initialState);
+								}}
+							>
+								Hủy
+							</Button>
+						)}
+					</div>
 				</div>
 			</form>
 		</>

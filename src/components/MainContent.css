@@ -39,3 +39,8 @@ td {
 	width: 30px;
 	height: 90px;
 } */
+
+.abc:hover {
+	background: red;
+	cursor: pointer;
+}

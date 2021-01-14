@@ -51,8 +51,8 @@
 	top: 0;
 }
 
-/* .faculties-list__table tbody {
-	overflow: scroll;
+.faculties-list__table tbody {
+	/* overflow: scroll; */
 	scrollbar-width: thin;
 	scrollbar-color: var(--thumbBG) var(--scrollbarBG);
 }
@@ -69,7 +69,7 @@
 	background-color: var(--thumbBG);
 	border-radius: 6px;
 	border: 3px solid var(--scrollbarBG);
-} */
+}
 
 .action__td {
 	text-align: center;
@@ -78,4 +78,20 @@
 .action__td > span {
 	margin-right: 10px;
 	cursor: pointer;
+}
+
+.outer {
+	overflow-y: auto;
+	height: 300px;
+}
+
+.outer {
+	width: 100%;
+	-layout: fixed;
+}
+
+.outer th {
+	text-align: left;
+	top: 0;
+	position: sticky;
 }

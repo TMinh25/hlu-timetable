@@ -1,20 +1,20 @@
 .button {
-	display: flex;
-	padding: 10px 20px;
-	min-height: 35px;
-	border-radius: 4px;
-	line-height: initial;
-	background-color: #21262d;
-	border: 1px solid #30363d;
-	font-size: 2vmin;
-	text-align: center;
-	justify-content: center;
-	align-items: center;
-	transition: 0.15s all;
-	color: white;
-	margin-bottom: 10px;
-	cursor: pointer;
-	user-select: none;
+	display: flex !important;
+	padding: 10px 20px !important;
+	min-height: 35px !important;
+	border-radius: 4px !important;
+	line-height: initial !important;
+	background-color: #21262d !important;
+	border: 1px solid #30363d !important;
+	font-size: 2vmin !important;
+	text-align: center !important;
+	justify-content: center !important;
+	align-items: center !important;
+	transition: 0.15s all !important;
+	color: white !important;
+	margin-bottom: 10px !important;
+	cursor: pointer !important;
+	user-select: none !important;
 }
 
 .button:hover {
@@ -27,28 +27,28 @@
 }
 
 .new:hover {
-	border-color: #2ea043;
-	background-color: #238636;
-	-webkit-box-shadow: inset 0px 0px 3px 1px rgba(94, 94, 94, 0.8);
-	-moz-box-shadow: inset 0px 0px 3px 1px rgba(94, 94, 94, 0.8);
-	box-shadow: inset 0px 0px 3px 1px rgba(94, 94, 94, 0.8);
+	border-color: #2ea043 !important;
+	background-color: #238636 !important;
+	-webkit-box-shadow: inset 0px 0px 3px 1px rgba(94, 94, 94, 0.8) !important;
+	-moz-box-shadow: inset 0px 0px 3px 1px rgba(94, 94, 94, 0.8) !important;
+	box-shadow: inset 0px 0px 3px 1px rgba(94, 94, 94, 0.8) !important;
 }
 
 .sign-out {
-	margin: auto;
-	font-weight: 600;
-	font-size: calc(2vmin + 2px);
-	transition: 0.3s all;
+	margin: auto !important;
+	font-weight: 600 !important;
+	font-size: calc(2vmin + 2px) !important;
+	transition: 0.3s all !important;
 }
 
 .sign-out:hover {
-	background-color: #f13a31;
-	border-color: #f74c43;
-	color: white;
-	-webkit-box-shadow: inset 0px 0px 3px 1px rgba(173, 53, 53, 0.8);
-	-moz-box-shadow: inset 0px 0px 3px 1px rgba(173, 53, 53, 0.8);
-	box-shadow: inset 0px 0px 3px 1px rgba(173, 53, 53, 0.8);
-	transition: 0.3s all;
+	background-color: #f13a31 !important;
+	border-color: #f74c43 !important;
+	color: white !important;
+	-webkit-box-shadow: inset 0px 0px 3px 1px rgba(173, 53, 53, 0.8) !important;
+	-moz-box-shadow: inset 0px 0px 3px 1px rgba(173, 53, 53, 0.8) !important;
+	box-shadow: inset 0px 0px 3px 1px rgba(173, 53, 53, 0.8) !important;
+	transition: 0.3s all !important;
 }
 
 .modify {
@@ -67,11 +67,12 @@
 
 .sign-in {
 	margin: 0;
-	border: none;
-	background-color: transparent;
-	font-size: 16px;
-	color: #78b5f7;
-	border-radius: 100px;
+	background-color: transparent !important;
+	color: #78b5f7 !important;
+}
+
+.sign-in:hover {
+	background-color: #78b5f733 !important;
 }
 
 /* drop down button */
