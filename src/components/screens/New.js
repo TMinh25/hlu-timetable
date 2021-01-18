@@ -64,7 +64,7 @@ const New = () => {
 	useEffect(() => {
 		// console.log(values);
 		if (Object.keys(values).length) {
-			setNewSemester(currentUser.uid, values);
+			setNewSemester(values);
 		}
 	}, [values]);
 

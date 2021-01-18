@@ -11,6 +11,9 @@
 	font-size: 1.2rem;
 	position: fixed;
 	z-index: 99;
+
+	/* -webkit-flex: 0 0 auto;
+	flex: 0 0 auto; */
 }
 
 .navbar-mainmenu {

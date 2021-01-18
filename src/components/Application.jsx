@@ -5,6 +5,7 @@ import {Router} from "@reach/router";
 // import styles
 import "../App.css";
 import "react-calendar/dist/Calendar.css";
+import {createMuiTheme, ThemeProvider} from "@material-ui/core/styles";
 
 // import components
 import NavBar from "./NavBar";
@@ -30,25 +31,37 @@ const Application = () => {
 		setLeftMenuVisible((prev) => !prev);
 	};
 
+	const theme = React.useMemo(
+		() =>
+			createMuiTheme({
+				palette: {
+					type: "dark",
+				},
+			}),
+		[]
+	);
+
 	return (
 		<>
-			<NavBar onHamburgerClick={handleHamburgerClick} showHamburger={true} />
-			<main>
-				<LeftMenu visible={leftMenuVisible} showScheduler={true} />
-				<Router className="main-container">
-					<Home path="/" />
-					<New path="new" />
-					<TeacherTimeTable path="teacher-time-table" />
-					<ScheduleTimeTable path="schedule-timetable" />
-					<ManageAssignments path="mng-assignments" />
-					<ManageFaculties path="mng-faculties" />
-					<ManageLecture path="mng-lectures" />
-					<ManageSubjects path="mng-subjects" />
-					<TimeTables path="timetable" />
-					<TimeTable path="timetable/:timeTableId" />
-					<NotFound default />
-				</Router>
-			</main>
+			<ThemeProvider theme={theme}>
+				<NavBar onHamburgerClick={handleHamburgerClick} showHamburger={true} />
+				<main>
+					<LeftMenu visible={leftMenuVisible} showScheduler={true} />
+					<Router className="main-container">
+						<Home path="/" />
+						<New path="new" />
+						<TeacherTimeTable path="teacher-time-table" />
+						<ScheduleTimeTable path="schedule-timetable" />
+						<ManageAssignments path="mng-assignments" />
+						<ManageFaculties path="mng-faculties" />
+						<ManageLecture path="mng-lectures" />
+						<ManageSubjects path="mng-subjects" />
+						<TimeTables path="timetable" />
+						<TimeTable path="timetable/:timeTableId" />
+						<NotFound default />
+					</Router>
+				</main>
+			</ThemeProvider>
 		</>
 	);
 };

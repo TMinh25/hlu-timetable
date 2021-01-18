@@ -3,7 +3,7 @@ html {
 	color: white;
 	--scrollbarBG: #0d1117;
 	--thumbBG: #f0f0f0;
-	min-height: 100%;
+	height: 100%;
 	/* width: 100%; */
 }
 
@@ -13,21 +13,23 @@ body {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	height: 100vh;
-	/* height: calc(100% - 50px); */
+	height: 100%;
+}
 
+* {
 	scrollbar-width: thin;
 	scrollbar-color: var(--thumbBG) var(--scrollbarBG);
 }
 
-body::-webkit-scrollbar {
+*::-webkit-scrollbar {
 	width: 11px;
 }
 
-body::-webkit-scrollbar-track {
+*::-webkit-scrollbar-track {
 	background: var(--scrollbarBG);
 }
 
-body::-webkit-scrollbar-thumb {
+*::-webkit-scrollbar-thumb {
 	background-color: var(--thumbBG);
 	border-radius: 6px;
 	border: 3px solid var(--scrollbarBG);
@@ -35,9 +37,10 @@ body::-webkit-scrollbar-thumb {
 
 main {
 	display: flex;
-	padding-top: 50px;
 	width: 100%;
 	/* height: 100%; */
+	padding-top: 50px;
+	overflow: hidden;
 	min-height: 100vh;
 	background-color: #06090f;
 }

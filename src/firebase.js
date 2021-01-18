@@ -16,16 +16,25 @@ firebase.initializeApp(firebaseConfig);
 //  setPersistence(firebaseAuth.Auth.Persistence.LOCAL)
 export const auth = firebase.auth();
 export var database = firebase.database();
-export const currentUser = () =>
-	auth.onAuthStateChanged((user) => {
-		if (user) {
-			return user;
-		} else {
-			return null;
-		}
-	});
+// export const currentUser = () =>
+// 	auth.onAuthStateChanged((user) => {
+// 		if (user) {
+// 			return user;
+// 		} else {
+// 			return null;
+// 		}
+// 	});
 
 export const userRef = (userID) => database.ref(userID);
+
+export const currentUserQuery = () => {
+	auth.onAuthStateChanged((user) => {
+		if (user) {
+			return userRef(user.uid);
+		}
+	});
+	return;
+};
 
 // change the loged in user
 export const signInWithGoogle = () => {
@@ -50,26 +59,65 @@ export const signOut = () => {
 		});
 };
 
-// write notes in database
-export const setNewSemester = (uid, values) => {
-	userRef(uid)
-		.child(`semesters`)
-		.push()
-		.child("semester-info")
-		.set(
-			values,
-			// failed to write data
-			(err) => {
-				if (err) {
-					console.warn("failed to write data to firebase: " + err.message);
-				} else {
-					// console.log(values);
+//#region Semester: Quản lý kì học
+
+// write new semester or modify in database
+export const setNewSemester = (values) => {
+	auth.onAuthStateChanged((user) => {
+		userRef(user.uid)
+			.child(`semesters`)
+			.push()
+			.child("semester-info")
+			.set(
+				values,
+				// failed to write data
+				(err) => {
+					if (err) {
+						console.warn("failed to write data to firebase: " + err.message);
+					} else {
+						// console.log(values);
+					}
 				}
-			}
-		);
+			);
+	});
 };
 
-// add faculty to database
+export const removeSemester = (semID) => {
+	auth.onAuthStateChanged((user) => {
+		if (user) {
+			userRef(user.uid)
+				.child(`semesters/${semID}`)
+				.remove((err) => {
+					if (err) {
+						console.warn("failed to remove: " + err);
+					}
+				});
+		}
+	});
+};
+
+//#endregion
+
+//#region Faculties: Quản Lý Khoa
+
+// get all faculties in database
+export function getAllFaculties(callback) {
+	auth.onAuthStateChanged((user) => {
+		if (!!user) {
+			userRef(user.uid)
+				.child("faculties")
+				.on("value", (snapshot) => {
+					if (snapshot.val() != null) {
+						callback(snapshot.val());
+					} else {
+						callback({});
+					}
+				});
+		}
+	});
+}
+
+// add and modify faculty to database
 export const setNewFaculty = (values) => {
 	if (values["faculty-name"]) {
 		let object = values;
@@ -91,12 +139,12 @@ export const setNewFaculty = (values) => {
 };
 
 // remove faculty
-export const removeFaculty = (facID) => {
-	if (facID) {
+export const removeFaculty = (id) => {
+	if (id) {
 		auth.onAuthStateChanged((user) => {
 			if (user) {
 				userRef(user.uid)
-					.child(`faculties/${facID}`)
+					.child(`faculties/${id}`)
 					.remove((err) => {
 						if (err) {
 							console.warn("failed to remove: " + err);
@@ -110,19 +158,89 @@ export const removeFaculty = (facID) => {
 };
 
 // get faculties list in database
-export const getAllFaculties = () => {
+// export const getAllFaculties = () => {
+// 	auth.onAuthStateChanged((user) => {
+// 		if (user) {
+// 			userRef(user.uid)
+// 				.child("faculties")
+// 				.on("value", (snapshot) => {
+// 					if (snapshot.val() != null) {
+// 						console.log(snapshot.val());
+// 						return snapshot.val();
+// 					} else {
+// 						return {};
+// 					}
+// 				});
+// 		}
+// 	});
+// };
+
+//#endregion
+
+//#region Lectures: Quản lý nhân sự, giảng viên
+
+// get all lectures in database
+export function getAllLectures(callback) {
 	auth.onAuthStateChanged((user) => {
 		if (user) {
 			userRef(user.uid)
 				.child("faculties")
-				.on("value", (snapshot) => {
-					if (snapshot.val() != null) {
-						console.log(snapshot.val());
-						return snapshot.val();
+				.once("value", (snapshot) => {
+					if (snapshot.val() !== null) {
+						callback(snapshot.val());
 					} else {
-						return {};
+						callback({});
 					}
 				});
 		}
 	});
+}
+
+// set new or modify lectures
+export function newLecture(values) {
+	auth.onAuthStateChanged((user) => {
+		if (user) {
+			userRef(user.uid)
+				.child("lectures")
+				.push(values, (err) => {
+					err ? console.warn(err) : console.log("newLecture success!");
+				});
+		}
+	});
+}
+
+// modify lecture by id
+export function modifyLecture({id, values}) {
+	auth.onAuthStateChanged((user) => {
+		if (user) {
+			userRef(user.uid)
+				.child(`lectures/${id}`)
+				.set(values, (err) => {
+					err ? console.warn(err) : console.log("modifyLecture success!");
+				});
+		}
+	});
+}
+
+// remove lecture by id
+
+// remove faculty
+export const removeLecture = ({id}) => {
+	if (id) {
+		auth.onAuthStateChanged((user) => {
+			if (user) {
+				userRef(user.uid)
+					.child(`lectures/${id}`)
+					.remove((err) => {
+						if (err) {
+							console.warn("failed to remove: " + err);
+						}
+					});
+			}
+		});
+	} else {
+		console.warn("No Lecture ID was set!");
+	}
 };
+
+//#endregion

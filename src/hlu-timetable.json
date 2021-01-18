@@ -114,10 +114,10 @@
 			"periods": 30
 		}
 	},
-	"teachers": {
+	"lectures": {
 		"MÃ GIẢNG VIÊN": {
-			"teacher-name": "TÊN GIẢNG VIÊN",
-			"email": "EMAIL GIẢNG VIÊN",
+			"lecture-name": "TÊN GIẢNG VIÊN",
+			"lecture-email": "EMAIL GIẢNG VIÊN",
 			"faculty": "GIẢNG VIÊN THUỘC KHOA NÀO, null LÀ KHÔNG THUỘC VỀ KHOA NÀO"
 		}
 	},

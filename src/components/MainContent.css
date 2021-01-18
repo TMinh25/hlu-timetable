@@ -1,13 +1,12 @@
 .main-container {
 	flex: 8;
 	outline: none;
-	min-height: 100%;
+	/* height: calc(100vh - 50px); */
 	padding: 20px 15px;
-	overflow: auto;
+	overflow: hidden;
 }
 
 .main-content {
-	/* padding: 20px 10px; */
 	flex: 1;
 	min-height: 100%;
 	background-color: #06090f;

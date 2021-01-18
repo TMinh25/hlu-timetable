@@ -4,22 +4,22 @@ import React, {useState, useEffect, useContext} from "react";
 import {Button} from "../../Button";
 import {setNewFaculty, auth} from "../../../firebase";
 
-const FacultiesForm = (props) => {
+const LecturesForm = (props) => {
 	const initialState = {
-		"faculty-id": "",
-		"faculty-name": "",
-		"faculty-note": "",
+		"lecture-name": "",
+		"lecture-email": "",
+		"faculty": "",
 	};
 
 	const [values, setValues] = useState(initialState);
 
-	useEffect(() => {
-		if (props.currentFacultyId == "") {
-			setValues({...initialState});
-		} else {
-			setValues({...props.facultiesList[props.currentFacultyId]});
-		}
-	}, [props.currentFacultyId, props.facultiesList]);
+	// useEffect(() => {
+	// 	if (props.currentFacultyId == "") {
+	// 		setValues({...initialState});
+	// 	} else {
+	// 		setValues({...props.facultiesList[props.currentFacultyId]});
+	// 	}
+	// }, [props.currentFacultyId, props.facultiesList]);
 
 	const handleInputChange = (e) => {
 		var {name, value} = e.target;
@@ -32,35 +32,59 @@ const FacultiesForm = (props) => {
 		// props.handleAddOrModify(values);
 	};
 
-		// useEffect(() => {
-		// 	console.log(values);
-		// }, [values]);
+	useEffect(() => {
+		console.log(values);
+	}, [values]);
 
 	return (
 		<>
 			<form id="faculty__form">
+				<label htmlFor="lecture-name">Họ tên:</label>
 				<input
-					title="Tên khoa"
+					title="Họ tên giảng viên"
 					className="left-align"
-					placeholder="Tên khoa"
+					placeholder="Họ tên giảng viên"
 					type="text"
-					name="faculty-name"
-					value={values["faculty-name"]}
+					name="lecture-name"
+					id="lecture-name"
+					value={values["lecture-name"]}
 					onChange={handleInputChange}
 					required
 					autoFocus
-					autoComplete="off"
 				/>
-				<textarea
-					title="Ghi chú"
-					name="faculty-note"
-					placeholder="Ghi Chú"
-					style={{marginBottom: 10}}
-					cols="20"
-					rows="10"
-					value={values["faculty-note"]}
+				<input
+					title="Email"
+					placeholder="Email"
+					type="email"
+					name="lecture-email"
+					value={values["lecture-email"]}
 					onChange={handleInputChange}
 				/>
+				{Object.keys(props.facultiesList).length ? (
+					<>
+						<select
+							name="faculty"
+							id="lecture__select-faculty"
+							style={{marginBottom: 10}}
+							onChange={handleInputChange}
+						>
+							<option selected disabled>
+								--- Khoa ---
+							</option>
+							{Object.keys(props.facultiesList).map((id) => {
+								return (
+									<option value={props.facultiesList[id]["faculty-name"]}>
+										{props.facultiesList[id]["faculty-name"]}
+									</option>
+								);
+							})}
+						</select>
+					</>
+				) : (
+					<>
+						<div className="alert__nothing">Bạn chưa có khoa nào để chọn</div>
+					</>
+				)}
 				<div style={{display: "flex", justifyContent: "space-between"}}>
 					<div>
 						{props.currentFacultyId ? (
@@ -114,4 +138,4 @@ const FacultiesForm = (props) => {
 	);
 };
 
-export default FacultiesForm;
+export default LecturesForm;

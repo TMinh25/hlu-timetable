@@ -396,7 +396,9 @@ a {
 
 /* styling input */
 input,
-textarea {
+textarea,
+option,
+select {
 	width: 100%;
 	padding: 10px 20px;
 	margin-top: 10px;
@@ -409,10 +411,16 @@ textarea {
 	resize: none;
 }
 
+option:hover {
+	cursor: pointer;
+}
+
 input:hover,
 input:focus,
 textarea:hover,
-textarea:focus {
+textarea:focus,
+select:hover,
+select:focus {
 	border-bottom: 2px solid #2176cc;
 	transition: 0.2s all;
 }
@@ -425,4 +433,14 @@ textarea:focus {
 }
 .right-align {
 	text-align: left;
+}
+
+.clearfix {
+	overflow: auto;
+}
+
+.clearfix::after {
+	content: "";
+	clear: both;
+	display: table;
 }

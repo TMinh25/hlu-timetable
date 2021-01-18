@@ -3,21 +3,20 @@
 }
 
 .form-list__container {
-	/* height: 500px; */
+	width: 100%;
+	height: 100%;
 	overflow: hidden;
+  display: grid;
+  grid-template-columns: 30% 70%;
 }
 
 .facuties-form__container {
-	float: left;
-	width: 30%;
 	height: 100%;
 }
 
 .facuties-list__container {
-	float: right;
-	width: 70%;
 	height: 100%;
-	padding: 10px 20px;
+	padding: 10px 0px 10px 20px;
 }
 
 .faculties-list__table {
@@ -94,4 +93,12 @@
 	text-align: left;
 	top: 0;
 	position: sticky;
+}
+
+.falculties__table {
+	color: red !important;
+}
+
+.MuiTableBody-root {
+	height: 100%;
 }

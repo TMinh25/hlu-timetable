@@ -3,7 +3,7 @@ import React, {useEffect, useState, useContext} from "react";
 // import components
 import {UserContext} from "../../providers/UserProvider";
 import {LinkButton, Button} from "../Button";
-import {userRef} from "../../firebase";
+import {removeSemester, userRef} from "../../firebase";
 import {Link} from "@reach/router";
 import {confirmAlert} from "react-confirm-alert";
 
@@ -14,6 +14,7 @@ import "react-confirm-alert/src/react-confirm-alert.css";
 const TimeTableLi = ({id, name, time, onDelete}) => {
 	const getTimeString = (t) => {
 		const time = new Date(t);
+		console.warn(time);
 		const today = new Date();
 		let date = "";
 		if (
@@ -23,7 +24,7 @@ const TimeTableLi = ({id, name, time, onDelete}) => {
 		) {
 			date = "Hôm nay";
 		} else {
-			date = time.toLocaleDateString();
+			date = time.toLocaleDateString("vi-VN");
 		}
 		return `${date}, ${time.getHours()}:${
 			(time.getMinutes() < 10 ? "0" : "") + time.getMinutes()
@@ -43,9 +44,9 @@ const TimeTableLi = ({id, name, time, onDelete}) => {
 						</div>
 					</Link>
 				</div>
-					<Button title="Xóa" onClick={onDelete} className="sign-out btn__li">
-						<i className="fas fa-times" />
-					</Button>
+				<Button title="Xóa" onClick={onDelete} className="sign-out btn__li">
+					<i className="fas fa-times" />
+				</Button>
 			</li>
 		</>
 	);
@@ -84,13 +85,7 @@ const TimeTables = () => {
 					className: "sign-out",
 					label: "Xóa",
 					onClick: () => {
-						userRef(currentUser.uid)
-							.child(`semesters/${semID}`)
-							.remove((err) => {
-								if (err) {
-									console.warn("failed to remove: " + err);
-								}
-							});
+						removeSemester(semID);
 					},
 				},
 			],

@@ -2,7 +2,12 @@ import React, {useEffect, useState, useContext} from "react";
 
 // import components
 import FacultiesForm from "./FacultiesForm";
-import {setNewFaculty, removeFaculty, userRef} from "../../../firebase";
+import {
+	getAllFaculties,
+	setNewFaculty,
+	removeFaculty,
+	userRef,
+} from "../../../firebase";
 import {UserContext} from "../../../providers/UserProvider";
 import {confirmAlert} from "react-confirm-alert";
 
@@ -15,6 +20,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
+import {createMuiTheme, ThemeProvider} from "@material-ui/core/styles";
 
 // import styles
 import "./ManageFaculties.css";
@@ -35,7 +41,6 @@ const columns = [
 	{
 		id: "action",
 		label: "Hành Động",
-		width: 80,
 		align: "center",
 	},
 ];
@@ -43,10 +48,12 @@ const columns = [
 const useStyles = makeStyles({
 	root: {
 		width: "100%",
+		height: "100%",
 		overflow: "hidden",
 	},
 	container: {
 		maxHeight: "100%",
+		// maxHeight: "90%",
 	},
 });
 
@@ -68,19 +75,8 @@ const ManageFaculties = () => {
 	const [currentFacultyId, setCurrentFacultyId] = useState();
 
 	useEffect(() => {
-		if (!!currentUser) {
-			userRef(currentUser.uid)
-				.child("faculties")
-				.on("value", (snapshot) => {
-					if (snapshot.val() != null) {
-						setFacultiesList({...snapshot.val()});
-					} else {
-						setFacultiesList({});
-					}
-					console.log(snapshot.val());
-				});
-		}
-	}, [currentUser]); // similar to fetching faculties list on componentDidMount()
+		getAllFaculties((result) => setFacultiesList(result));
+	}, []); // similar to fetching faculties list on componentDidMount()
 
 	const handleOnDeleleFaculty = (facID) => {
 		confirmAlert({
@@ -94,7 +90,10 @@ const ManageFaculties = () => {
 				{
 					className: "sign-out",
 					label: "Xóa",
-					onClick: () => removeFaculty(facID),
+					onClick: () => {
+						removeFaculty(facID);
+						setCurrentFacultyId("");
+					},
 				},
 			],
 		});
@@ -185,7 +184,8 @@ const ManageFaculties = () => {
 
 	return (
 		<div className="mng-container">
-			<h1>Quản lý các khoa tại trường học</h1>
+			{/* <h1>Quản lý các khoa tại trường học</h1> */}
+
 			<div className="form-list__container">
 				<div className="facuties-form__container">
 					<FacultiesForm
@@ -204,10 +204,10 @@ const ManageFaculties = () => {
 							<Paper className={classes.root}>
 								<TableContainer className={classes.container}>
 									<Table
-										stickyHeader
+										classes={"falculties__table"}
 										aria-label="sticky table"
-										striped
-										bordered
+										size="medium"
+										stickyHeader={true}
 										hover
 										variant="dark"
 									>
@@ -220,6 +220,7 @@ const ManageFaculties = () => {
 														style={{
 															minWidth: column.minWidth,
 															width: column.width,
+															height: 30,
 														}}
 													>
 														{column.label}
@@ -271,6 +272,12 @@ const ManageFaculties = () => {
 									</Table>
 								</TableContainer>
 								<TablePagination
+									labelDisplayedRows={({from, to, count}) => {
+										return `${from}-${to} trong ${
+											count !== -1 ? count : "more than ${to}"
+										}`;
+									}}
+									labelRowsPerPage="Số hàng mỗi trang"
 									rowsPerPageOptions={[10, 25, 100]}
 									component="div"
 									count={Object.keys(facultiesList).length}

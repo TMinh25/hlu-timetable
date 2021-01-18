@@ -31,13 +31,13 @@ class UserProvider extends Component {
 			if (!!userAuth) {
 				console.log("signed in");
 				this.setUser(userAuth);
-				userRef(userAuth.uid)
-					.child("loged-history/")
-					.set({"loged in": new Date().toString()}, (err) => {
-						if (err) {
-							console.warn("failed to write data to firebase: " + err.message);
-						}
-					});
+				// userRef(userAuth.uid)
+				// 	.child("loged-history/")
+				// 	.set({"loged in": new Date().toString()}, (err) => {
+				// 		if (err) {
+				// 			console.warn("failed to write data to firebase: " + err.message);
+				// 		}
+				// 	});
 			} else {
 				console.log("not signed in");
 				this.setUser(null);
