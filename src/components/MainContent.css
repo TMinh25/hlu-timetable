@@ -1,9 +1,9 @@
 .main-container {
 	flex: 8;
-	outline: none;
+	/* outline: none; */
 	/* height: calc(100vh - 50px); */
 	padding: 20px 15px;
-	overflow: hidden;
+	/* overflow: hidden; */
 }
 
 .main-content {

@@ -1,10 +1,16 @@
-import React, {useState, useEffect, useContext} from "react";
+import React, {useState, useEffect} from "react";
 
 // import components
 import {Button} from "../../Button";
-import {setNewFaculty, auth} from "../../../firebase";
+import {Form} from "semantic-ui-react";
 
-const FacultiesForm = (props) => {
+const FormFaculties = ({
+	currentFacultyId,
+	facultiesList,
+	handleOnAdd,
+	handleOnModify,
+	setCurrentFacultyId,
+}) => {
 	const initialState = {
 		"faculty-id": "",
 		"faculty-name": "",
@@ -14,32 +20,35 @@ const FacultiesForm = (props) => {
 	const [values, setValues] = useState(initialState);
 
 	useEffect(() => {
-		if (props.currentFacultyId == "") {
+		if (currentFacultyId == "") {
 			setValues({...initialState});
 		} else {
-			setValues({...props.facultiesList[props.currentFacultyId]});
+			setValues({...facultiesList[currentFacultyId]});
 		}
-	}, [props.currentFacultyId, props.facultiesList]);
+	}, [currentFacultyId, facultiesList]);
 
 	const handleInputChange = (e) => {
 		var {name, value} = e.target;
 		setValues({...values, [name]: value});
 	};
 
-	const handleSubmitForm = (e) => {
+	const handleButtonAdd = async (e) => {
 		e.preventDefault();
-
-		// props.handleAddOrModify(values);
+		const response = await handleOnAdd(values);
+		response && setValues(initialState);
 	};
 
-		// useEffect(() => {
-		// 	console.log(values);
-		// }, [values]);
+	const handleButtonModify = async (e) => {
+		e.preventDefault();
+		const response = await handleOnModify(values);
+		response && setValues(initialState);
+	};
 
 	return (
 		<>
-			<form id="faculty__form">
-				<input
+			<Form id="manage__form">
+				<Form.Input
+					label="Tên khoa"
 					title="Tên khoa"
 					className="left-align"
 					placeholder="Tên khoa"
@@ -51,7 +60,8 @@ const FacultiesForm = (props) => {
 					autoFocus
 					autoComplete="off"
 				/>
-				<textarea
+				<Form.TextArea
+					label="Ghi chú"
 					title="Ghi chú"
 					name="faculty-note"
 					placeholder="Ghi Chú"
@@ -63,17 +73,13 @@ const FacultiesForm = (props) => {
 				/>
 				<div style={{display: "flex", justifyContent: "space-between"}}>
 					<div>
-						{props.currentFacultyId ? (
+						{currentFacultyId ? (
 							<Button
 								style={{margin: "0"}}
 								type="submit"
 								className="new"
 								title="Chỉnh sửa khoa"
-								onClick={async (e) => {
-									e.preventDefault();
-									const response = await props.handleOnModify(values);
-									response && setValues(initialState);
-								}}
+								onClick={handleButtonModify}
 							>
 								Chỉnh Sửa
 							</Button>
@@ -83,24 +89,20 @@ const FacultiesForm = (props) => {
 								type="submit"
 								className="new"
 								title="Thêm khoa mới vào hệ thống"
-								onClick={async (e) => {
-									e.preventDefault();
-									const response = await props.handleOnAdd(values);
-									response && setValues(initialState);
-								}}
+								onClick={handleButtonAdd}
 							>
 								Thêm
 							</Button>
 						)}
 					</div>
 					<div>
-						{props.currentFacultyId && (
+						{currentFacultyId && (
 							<Button
 								style={{margin: "0"}}
 								className="sign-out"
 								title="Hủy chỉnh sửa"
 								onClick={() => {
-									props.setCurrentFacultyId("");
+									setCurrentFacultyId("");
 									setValues(initialState);
 								}}
 							>
@@ -109,9 +111,9 @@ const FacultiesForm = (props) => {
 						)}
 					</div>
 				</div>
-			</form>
+			</Form>
 		</>
 	);
 };
 
-export default FacultiesForm;
+export default FormFaculties;

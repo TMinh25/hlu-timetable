@@ -1,12 +1,11 @@
 import React from "react";
 
 // import components
-import LeftMenu from "../LeftMenu";
 import MainContent from "../MainContent";
-import NavBar from "../NavBar";
 
 // import styles
 import "./Home.css";
+import "./management/Manage.css"
 
 // class Home extends React.Component {
 const Home = () => {

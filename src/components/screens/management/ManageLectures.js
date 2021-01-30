@@ -1,181 +1,185 @@
-import React, {useEffect, useState, useContext} from "react";
+import React, {useEffect, useState} from "react";
 
 // import components
-import LecturesForm from "./LecturesForm";
+import FormLectures from "./FormLectures";
 import {
 	newLecture,
+	modifyLecture,
 	removeLecture,
 	getAllLectures,
 	getAllFaculties,
-	userRef,
 } from "../../../firebase";
-import {UserContext} from "../../../providers/UserProvider";
 import {confirmAlert} from "react-confirm-alert";
-
-import {makeStyles} from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TablePagination from "@material-ui/core/TablePagination";
-import TableRow from "@material-ui/core/TableRow";
+import Loading from "../../Loading";
 
 // import styles
-import "./ManageFaculties.css";
+import "./Manage.css";
 
-const columns = [
-	{id: "faculty-id", label: "Mã Khoa", width: 100, align: "center"},
-	{id: "faculty-name", label: "Tên Khoa", minWidth: 300},
-	{
-		id: "action",
-		label: "Hành Động",
-		align: "center",
-	},
-];
-
-const useStyles = makeStyles({
-	root: {
-		width: "100%",
-		height: "100%",
-		overflow: "hidden",
-	},
-	container: {
-		maxHeight: "100%",
-		// maxHeight: "90%",
-	},
-});
+const LectureListItem = ({id: index, name, faculty, onRemove, onClick}) => {
+	return (
+		<>
+			<li key={index} className="list__container-li_item" onClick={onClick}>
+				<p className="li__item-search">{name}</p>
+				<p className="li__item-search">
+					{faculty !== "defaultValue" ? faculty : "Không"}
+				</p>
+				<span className="btn__trash" onClick={() => onRemove(index)}>
+					<i className="fas fa-trash-alt" />
+				</span>
+			</li>
+		</>
+	);
+};
 
 const ManageLectures = () => {
-	const [lecturesList, setLecturesList] = useState({});
-	const [facultiesList, setFacultiesList] = useState({});
+	//#region Component State
+
+	const [lecturesObj, setLecturesObj] = useState({});
+	const [facultiesObj, setFacultiesObj] = useState({});
 	const [currentLectureId, setCurrentLectureId] = useState();
+	const [searchString, setSearchString] = useState("");
+	const [isLoading, setIsLoading] = useState(true);
+
+	//#endregion
+
+	//#region Hooks
 
 	useEffect(() => {
 		getAllLectures((result) => {
-			setLecturesList(result);
-			// console.log(result);
+			setLecturesObj(result);
 		});
 		getAllFaculties((result) => {
-			setFacultiesList(result);
-			console.log(result);
+			setFacultiesObj(result);
+			setIsLoading(false);
 		});
-	}, []); // similar to fetching lectures list on componentDidMount()
+	}, [isLoading]); // similar to fetching lectures list on componentUpdate()
 
-	// const handleOnDeleleFaculty = (facID) => {
-	// 	confirmAlert({
-	// 		title: "Bạn có chắc muốn xóa khoa này?",
-	// 		message: "Bạn sẽ không thể truy cập lại thông tin này",
-	// 		buttons: [
-	// 			{
-	// 				className: "confirm__cancel",
-	// 				label: "Hủy",
-	// 			},
-	// 			{
-	// 				className: "sign-out",
-	// 				label: "Xóa",
-	// 				onClick: () => {
-	// 					removeFaculty(facID);
-	// 					setCurrentFacultyId("");
-	// 				},
-	// 			},
-	// 		],
-	// 	});
-	// };
+	useEffect(() => {
+		const li = document.getElementsByClassName("list__container-li_item");
+		for (let i = 0; i < li.length; i++) {
+			const items = li[i].querySelectorAll(".li__item-search");
+			let isInclude = [];
+			items.forEach((item) => {
+				let txtValue = item.textContent || item.innerHTML;
+				isInclude.push(
+					txtValue.toLowerCase().includes(searchString.toLowerCase())
+						? true
+						: false
+				);
+			});
+			if (isInclude.some((item) => item === true)) {
+				li[i].style.display = "";
+			} else {
+				li[i].style.display = "none";
+			}
+		}
+	}, [searchString]); // search for text in list when searchString change
 
-	// const handleOnModifyFaculty = (falcID) => {
-	// 	setCurrentFacultyId(falcID);
-	// };
+	//#endregion
 
-	// const handleOnModify = (values) => {
-	// 	return new Promise((resolve) => {
-	// 		let id = getFacId(values["faculty-name"]);
-	// 		values["faculty-id"] = id;
-
-	// 		if (id !== currentFacultyId) {
-	// 			if (values["faculty-id"] in facultiesList) {
-	// 				confirmAlert({
-	// 					closeOnEscape: true,
-	// 					title: "Bạn có muốn thay đổi tên khoa?",
-	// 					message: "Mã khoa này đã tồn tại",
-	// 					buttons: [
-	// 						{
-	// 							className: "confirm__cancel",
-	// 							label: "Hủy",
-	// 							onClick: () => {
-	// 								resolve();
-	// 							},
-	// 						},
-	// 						{
-	// 							className: "sign-out",
-	// 							label: "Thay Đổi",
-	// 							onClick: () => {
-	// 								removeFaculty(currentFacultyId);
-	// 								setLecture(values);
-	// 								resolve(true);
-	// 							},
-	// 						},
-	// 					],
-	// 				});
-	// 			} else {
-	// 				setLecture(values);
-	// 				resolve(true);
-	// 			}
-	// 		} else {
-	// 			setNewFaculty(values);
-	// 		}
-	// 		// Đặt lại id thành null để reset Form
-	// 		setCurrentFacultyId("");
-	// 		resolve(true);
-	// 	});
-	// };
+	//#region Component Method
 
 	const handleOnAdd = (values) => {
-		// Trả về Promise để Form đợi tới khi người dùng chọn tùy chọn
 		return new Promise((resolve) => {
 			if (!!values["lecture-name"]) {
-				// values["faculty-id"] = getFacId(values["faculty-name"]);
-				// console.warn(values["faculty-id"]);
-				// confirmAlert({
-				// 	title: "Bạn có muốn thay đổi tên khoa?",
-				// 	message: "Mã khoa này đã tồn tại",
-				// 	buttons: [
-				// 		{
-				// 			className: "confirm__cancel",
-				// 			label: "Hủy",
-				// 			onClick: () => {
-				// 				resolve();
-				// 			},
-				// 		},
-				// 		{
-				// 			className: "sign-out",
-				// 			label: "Thay Đổi",
-				// 			onClick: () => {
-				// 				newLecture(values);
-				// 				resolve(true);
-				// 			},
-				// 		},
-				// 	],
-				// });
 				newLecture(values);
-				resolve(true);
+				setIsLoading(true);
 			}
+			resolve(true);
 		});
 	};
+
+	const handleOnModify = (id, values) => {
+		return new Promise((resolve) => {
+			if (!!Object.keys(values).length) {
+				modifyLecture(id, values);
+				setCurrentLectureId("");
+				setIsLoading(true);
+			}
+			resolve(true);
+		});
+	};
+
+	const handleOnRemove = (id) => {
+		confirmAlert({
+			title: "Bạn có chắc muốn xóa khoa này?",
+			message: "Bạn sẽ không thể truy cập lại thông tin này",
+			buttons: [
+				{
+					className: "confirm__cancel",
+					label: "Hủy",
+				},
+				{
+					className: "sign-out",
+					label: "Xóa",
+					onClick: () => {
+						removeLecture(id);
+						setCurrentLectureId("");
+						setIsLoading(true);
+					},
+				},
+			],
+		});
+	};
+
+	//#endregion
 
 	return (
 		<>
 			<div className="mng-container">
-				{/* <h1>Quản lý các khoa tại trường học</h1> */}
-
 				<div className="form-list__container">
 					<div className="facuties-form__container">
-						<LecturesForm {...{facultiesList, lecturesList, handleOnAdd}} />
+						<FormLectures
+							{...{
+								facultiesObj,
+								lecturesObj,
+								currentLectureId,
+								setCurrentLectureId,
+								handleOnAdd,
+								handleOnModify,
+							}}
+						/>
 					</div>
-					<div className="facuties-list__container"></div>
+
+					<div className="list__container">
+						<div className="list__container-search lecture-list">
+							<input
+								type="text"
+								className="text__search"
+								onChange={({target}) => setSearchString(target.value)}
+								name="search-string"
+								value={searchString}
+								placeholder="Tìm kiếm..."
+							/>
+							<div className="list__header">
+								<h5>Tên giảng viên</h5>
+								<h5>Khoa</h5>
+							</div>
+						</div>
+						{!!Object.keys(lecturesObj).length ? (
+							<ul>
+								{Object.keys(lecturesObj)
+									.reverse()
+									.map((id, index) => {
+										return (
+											<LectureListItem
+												key={index}
+												index={index}
+												name={lecturesObj[id]["lecture-name"]}
+												faculty={lecturesObj[id]["faculty"]}
+												onRemove={() => handleOnRemove(id)}
+												onClick={() => setCurrentLectureId(id)}
+											/>
+										);
+									})}
+							</ul>
+						) : (
+							<p>no lecture</p>
+						)}
+					</div>
 				</div>
 			</div>
+			{isLoading && <Loading />}
 		</>
 	);
 };

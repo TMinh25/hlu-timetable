@@ -12,7 +12,6 @@
 	align-items: center !important;
 	transition: 0.15s all !important;
 	color: white !important;
-	margin-bottom: 10px !important;
 	cursor: pointer !important;
 	user-select: none !important;
 }
@@ -36,7 +35,7 @@
 
 .sign-out {
 	margin: auto !important;
-	font-weight: 600 !important;
+	/* font-weight: 600 !important; */
 	font-size: calc(2vmin + 2px) !important;
 	transition: 0.3s all !important;
 }
@@ -113,7 +112,7 @@
 	color: #fff;
 	background-color: #21262d;
 	padding: 10px 20px;
-	font-size: calc(2vmin + 3px);
+	font-size: 2vmin;
 	opacity: 0;
 }
 .dropdown_item:hover {

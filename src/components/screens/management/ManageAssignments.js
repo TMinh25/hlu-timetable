@@ -4,7 +4,7 @@ import React from "react";
 import Muuri from "muuri";
 
 // import styles
-import "./ManageAssignments.css";
+import "./Manage.css";
 
 const ManageAssignments = () => {
 	const [leftMenuVisible, setLeftMenuVisible] = React.useState(true);

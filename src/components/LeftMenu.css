@@ -25,6 +25,10 @@
 	display: none;
 }
 
+.left-menu .button {
+	margin-bottom: 10px;
+}
+
 .calendar__left-menu {
 	width: 100%;
 }

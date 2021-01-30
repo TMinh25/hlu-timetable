@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 // import {BrowserRouter as Router, Switch, Route} from "react-router-dom";
 import {Router} from "@reach/router";
 
@@ -25,7 +25,25 @@ import TimeTable from "./screens/TimeTable";
 import NotFound from "./screens/NotFound";
 
 const Application = () => {
-	const [leftMenuVisible, setLeftMenuVisible] = React.useState(true);
+	const [leftMenuVisible, setLeftMenuVisible] = useState(true);
+
+	useEffect(() => {
+		const handleResize = () => {
+			if (window.innerWidth <= 850) {
+				setLeftMenuVisible(false);
+			}
+			if (window.innerWidth > 850) {
+				setLeftMenuVisible(true);
+			}
+		};
+
+		window.addEventListener("resize", () => {
+			handleResize();
+		});
+		return () => {
+			window.removeEventListener("resize", handleResize);
+		};
+	}, []);
 
 	const handleHamburgerClick = () => {
 		setLeftMenuVisible((prev) => !prev);

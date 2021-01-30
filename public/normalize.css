@@ -182,10 +182,15 @@ optgroup,
 select,
 textarea {
 	font-family: inherit; /* 1 */
-	font-size: 100%; /* 1 */
 	line-height: 1.15; /* 1 */
-	margin: 0; /* 2 */
-	outline: none !important;
+	/* outline: thin solid #000; */
+	/* outline: medium #000000; */
+	align-items: center;
+}
+
+select {
+	-webkit-appearance: none;
+	-moz-appearance: none;
 }
 
 /**
@@ -366,7 +371,7 @@ template {
  * Add the correct display in IE 10.
  */
 
-ul {
+ul li {
 	list-style: none;
 }
 
@@ -401,7 +406,7 @@ option,
 select {
 	width: 100%;
 	padding: 10px 20px;
-	margin-top: 10px;
+	margin-bottom: 10px;
 	border: none;
 	border-radius: 2px;
 	color: #cccccc;

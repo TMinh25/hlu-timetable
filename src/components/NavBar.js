@@ -20,17 +20,13 @@ const NavBar = ({onLogoClick, onHamburgerClick, showHamburger}) => {
 		setShowModule((prevState) => !prevState);
 	};
 
-	useEffect(() => {
-		console.log(showModule);
-	}, [showModule]);
+	// useEffect(() => {
+	// 	console.log(showModule);
+	// }, [showModule]);
 
 	// hide NavModule on mount
 	useEffect(() => {
-		if (!user) {
-			setShowModule(false);
-		} else {
-			setShowModule(false);
-		}
+		setShowModule(false);
 	}, [user]);
 
 	const NavModule = (props) => {

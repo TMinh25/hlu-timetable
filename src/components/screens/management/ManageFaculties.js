@@ -1,15 +1,11 @@
 import React, {useEffect, useState, useContext} from "react";
 
 // import components
-import FacultiesForm from "./FacultiesForm";
-import {
-	getAllFaculties,
-	setNewFaculty,
-	removeFaculty,
-	userRef,
-} from "../../../firebase";
+import FormFaculties from "./FormFaculties";
+import {getAllFaculties, setNewFaculty, removeFaculty} from "../../../firebase";
 import {UserContext} from "../../../providers/UserProvider";
 import {confirmAlert} from "react-confirm-alert";
+import Loading from "../../Loading";
 
 import {makeStyles} from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
@@ -20,10 +16,10 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
-import {createMuiTheme, ThemeProvider} from "@material-ui/core/styles";
+// import {createMuiTheme, ThemeProvider} from "@material-ui/core/styles";
 
 // import styles
-import "./ManageFaculties.css";
+import "./Manage.css";
 
 const getFacId = (facName) => {
 	return facName
@@ -35,72 +31,96 @@ const getFacId = (facName) => {
 		.join("");
 };
 
-const columns = [
-	{id: "faculty-id", label: "Mã Khoa", width: 100, align: "center"},
-	{id: "faculty-name", label: "Tên Khoa", minWidth: 300},
-	{
-		id: "action",
-		label: "Hành Động",
-		align: "center",
-	},
-];
-
-const useStyles = makeStyles({
-	root: {
-		width: "100%",
-		height: "100%",
-		overflow: "hidden",
-	},
-	container: {
-		maxHeight: "100%",
-		// maxHeight: "90%",
-	},
-});
+const FacultyListItem = ({index, id, facultyName, onClick, onRemove}) => {
+	return (
+		<li key={index} className="list__container-li_item" onClick={onClick}>
+			<p className="li__item-search">{id}</p>
+			<p className="li__item-search">{facultyName}</p>
+			<span className="btn__trash" onClick={onRemove}>
+				<i className="fas fa-trash-alt" />
+			</span>
+		</li>
+	);
+};
 
 const ManageFaculties = () => {
-	const classes = useStyles();
-	const [page, setPage] = React.useState(0);
-	const [rowsPerPage, setRowsPerPage] = React.useState(10);
-	const handleChangePage = (event, newPage) => {
-		setPage(newPage);
-	};
+	//#region Component State
 
-	const handleChangeRowsPerPage = (event) => {
-		setRowsPerPage(+event.target.value);
-		setPage(0);
-	};
-
-	const currentUser = useContext(UserContext);
-	const [facultiesList, setFacultiesList] = useState({});
+	const [isLoading, setIsLoading] = useState(true);
+	const [facultiesObj, setFacultiesObj] = useState({});
 	const [currentFacultyId, setCurrentFacultyId] = useState();
+	const [searchString, setSearchString] = useState("");
+
+	//#endregion
+
+	//#region Hooks
 
 	useEffect(() => {
-		getAllFaculties((result) => setFacultiesList(result));
-	}, []); // similar to fetching faculties list on componentDidMount()
-
-	const handleOnDeleleFaculty = (facID) => {
-		confirmAlert({
-			title: "Bạn có chắc muốn xóa khoa này?",
-			message: "Bạn sẽ không thể truy cập lại thông tin này",
-			buttons: [
-				{
-					className: "confirm__cancel",
-					label: "Hủy",
-				},
-				{
-					className: "sign-out",
-					label: "Xóa",
-					onClick: () => {
-						removeFaculty(facID);
-						setCurrentFacultyId("");
-					},
-				},
-			],
+		getAllFaculties((result) => {
+			setFacultiesObj(result);
+			setIsLoading(false);
 		});
-	};
+	}, []); // fetching faculties list on componentUpdate
 
-	const handleOnModifyFaculty = (falcID) => {
-		setCurrentFacultyId(falcID);
+	useEffect(() => {
+		const li = document.getElementsByClassName("list__container-li_item");
+		for (let i = 0; i < li.length; i++) {
+			const items = li[i].querySelectorAll(".li__item-search");
+			let isInclude = [];
+			items.forEach((item) => {
+				let txtValue = item.textContent || item.innerHTML;
+				isInclude.push(
+					txtValue.toLowerCase().includes(searchString.toLowerCase())
+						? true
+						: false
+				);
+			});
+			if (isInclude.some((item) => item === true)) {
+				li[i].style.display = "";
+			} else {
+				li[i].style.display = "none";
+			}
+		}
+	}, [searchString]); // search for text in list when searchString change
+
+	//#endregion
+
+	//#region Component Method
+
+	const handleOnAdd = (values) => {
+		// Trả về Promise để Form đợi tới khi người dùng chọn tùy chọn
+		return new Promise((resolve) => {
+			if (!!values["faculty-name"]) {
+				values["faculty-id"] = getFacId(values["faculty-name"]);
+				console.warn(values["faculty-id"]);
+				if (values["faculty-id"] in facultiesObj) {
+					confirmAlert({
+						title: "Bạn có muốn thay đổi tên khoa?",
+						message: "Mã khoa này đã tồn tại",
+						buttons: [
+							{
+								className: "confirm__cancel",
+								label: "Hủy",
+								onClick: () => {
+									resolve();
+								},
+							},
+							{
+								className: "sign-out",
+								label: "Thay Đổi",
+								onClick: () => {
+									setNewFaculty(values);
+									resolve(true);
+								},
+							},
+						],
+					});
+				} else {
+					setNewFaculty(values);
+					resolve(true);
+				}
+			}
+		});
 	};
 
 	const handleOnModify = (values) => {
@@ -109,7 +129,7 @@ const ManageFaculties = () => {
 			values["faculty-id"] = id;
 
 			if (id !== currentFacultyId) {
-				if (values["faculty-id"] in facultiesList) {
+				if (values["faculty-id"] in facultiesObj) {
 					confirmAlert({
 						closeOnEscape: true,
 						title: "Bạn có muốn thay đổi tên khoa?",
@@ -146,51 +166,38 @@ const ManageFaculties = () => {
 		});
 	};
 
-	const handleOnAdd = (values) => {
-		// Trả về Promise để Form đợi tới khi người dùng chọn tùy chọn
-		return new Promise((resolve) => {
-			if (!!values["faculty-name"]) {
-				values["faculty-id"] = getFacId(values["faculty-name"]);
-				console.warn(values["faculty-id"]);
-				if (values["faculty-id"] in facultiesList) {
-					confirmAlert({
-						title: "Bạn có muốn thay đổi tên khoa?",
-						message: "Mã khoa này đã tồn tại",
-						buttons: [
-							{
-								className: "confirm__cancel",
-								label: "Hủy",
-								onClick: () => {
-									resolve();
-								},
-							},
-							{
-								className: "sign-out",
-								label: "Thay Đổi",
-								onClick: () => {
-									setNewFaculty(values);
-									resolve(true);
-								},
-							},
-						],
-					});
-				} else {
-					setNewFaculty(values);
-					resolve(true);
-				}
-			}
+	const onRemove = (id) => {
+		confirmAlert({
+			title: "Bạn có chắc muốn xóa khoa này?",
+			message: "Bạn sẽ không thể truy cập lại thông tin này",
+			buttons: [
+				{
+					className: "confirm__cancel",
+					label: "Hủy",
+				},
+				{
+					className: "sign-out",
+					label: "Xóa",
+					onClick: () => {
+						removeFaculty(id);
+						setCurrentFacultyId("");
+					},
+				},
+			],
 		});
 	};
 
-	return (
-		<div className="mng-container">
-			{/* <h1>Quản lý các khoa tại trường học</h1> */}
+	//#endregion
 
+	return isLoading ? (
+		<Loading />
+	) : (
+		<div className="mng-container">
 			<div className="form-list__container">
 				<div className="facuties-form__container">
-					<FacultiesForm
+					<FormFaculties
 						{...{
-							facultiesList,
+							facultiesList: facultiesObj,
 							currentFacultyId,
 							setCurrentFacultyId,
 							handleOnAdd,
@@ -198,96 +205,40 @@ const ManageFaculties = () => {
 						}}
 					/>
 				</div>
-				<div className="facuties-list__container">
-					{!!Object.keys(facultiesList).length && (
-						<>
-							<Paper className={classes.root}>
-								<TableContainer className={classes.container}>
-									<Table
-										classes={"falculties__table"}
-										aria-label="sticky table"
-										size="medium"
-										stickyHeader={true}
-										hover
-										variant="dark"
-									>
-										<TableHead>
-											<TableRow>
-												{columns.map((column) => (
-													<TableCell
-														key={column.id}
-														align={column.align}
-														style={{
-															minWidth: column.minWidth,
-															width: column.width,
-															height: 30,
-														}}
-													>
-														{column.label}
-													</TableCell>
-												))}
-											</TableRow>
-										</TableHead>
-										<TableBody>
-											{Object.keys(facultiesList)
-												.slice(
-													page * rowsPerPage,
-													page * rowsPerPage + rowsPerPage
-												)
-												.map((id) => {
-													return (
-														<TableRow
-															key={id}
-															className=""
-															hover
-															role="checkbox"
-															tabIndex={-1}
-															onClick={() => handleOnModifyFaculty(id)}
-														>
-															<TableCell
-																key={id}
-																// align={column.align}
-															>
-																{id}
-															</TableCell>
-															<TableCell
-																key={id}
-																// align={column.align}
-															>
-																{facultiesList[id]["faculty-name"]}
-															</TableCell>
-															<TableCell
-																key={id}
-																className="action__td"
-																align="center"
-															>
-																<span onClick={() => handleOnDeleleFaculty(id)}>
-																	<i className="fas fa-trash-alt" />
-																</span>
-															</TableCell>
-														</TableRow>
-													);
-												})}
-										</TableBody>
-									</Table>
-								</TableContainer>
-								<TablePagination
-									labelDisplayedRows={({from, to, count}) => {
-										return `${from}-${to} trong ${
-											count !== -1 ? count : "more than ${to}"
-										}`;
-									}}
-									labelRowsPerPage="Số hàng mỗi trang"
-									rowsPerPageOptions={[10, 25, 100]}
-									component="div"
-									count={Object.keys(facultiesList).length}
-									rowsPerPage={rowsPerPage}
-									page={page}
-									onChangePage={handleChangePage}
-									onChangeRowsPerPage={handleChangeRowsPerPage}
-								/>
-							</Paper>{" "}
-						</>
+
+				<div className="list__container faculties-list">
+					<div className="list__container-search">
+						<input
+							type="text"
+							className="text__search"
+							onChange={({target}) => setSearchString(target.value)}
+							name="search-string"
+							value={searchString}
+							placeholder="Tìm kiếm..."
+						/>
+						<div className="list__header">
+							<h5>Mã khoa</h5>
+							<h5>Tên khoa</h5>
+						</div>
+					</div>
+					{!!Object.keys(facultiesObj).length ? (
+						<ul>
+							{Object.keys(facultiesObj)
+								.reverse()
+								.map((id, index) => {
+									return (
+										<FacultyListItem
+											index={index}
+											id={id}
+											facultyName={facultiesObj[id]["faculty-name"]}
+											onClick={() => setCurrentFacultyId(id)}
+											onRemove={() => onRemove(id)}
+										/>
+									);
+								})}
+						</ul>
+					) : (
+						<p>no lecture</p>
 					)}
 				</div>
 			</div>

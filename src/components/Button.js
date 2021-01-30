@@ -89,3 +89,29 @@ export const DropDownHoverButton = ({
 		</>
 	);
 };
+
+export const IconInput = ({
+	type,
+	onChange,
+	name,
+	value,
+	placeholder,
+	className,
+	id,
+	iconClass,
+}) => {
+	return (
+		<>
+			<div className="icon__input">
+				<input
+					type={type || "text"}
+					onChange={onChange}
+					name={name}
+					value={value}
+					placeholder={placeholder}
+				/>
+				<i className={iconClass || "fas fa-search" + " icon__merge"} />
+			</div>
+		</>
+	);
+};

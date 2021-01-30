@@ -1,0 +1,203 @@
+.manage__form input {
+	margin-bottom: 12px !important;
+}
+
+.form__container {
+	height: 100%;
+	margin-right: 10px;
+}
+
+.list__container {
+	max-height: inherit;
+	overflow-y: auto;
+	margin-left: 10px;
+}
+
+.list__container > ul {
+	padding-top: 10px;
+}
+
+.list__container-search {
+	background-color: #06090f;
+	border-radius: 3px;
+	position: -webkit-sticky; /* Safari */
+	position: sticky;
+	top: 0;
+}
+
+.mng-container {
+	height: 100%;
+	overflow: hidden;
+}
+
+.form-list__container {
+	width: 100%;
+	height: 100%;
+	/* overflow: hidden; */
+	display: grid;
+	grid-template-columns: 30% 70%;
+}
+
+.facuties-list__container {
+	height: 100%;
+	padding: 10px 0px 10px 20px;
+}
+
+.faculties-list__table {
+	width: 100%;
+	height: 100%;
+	border: 1px solid #21262d;
+	border-radius: 5px;
+	border-collapse: collapse;
+	width: 100%;
+	overflow-y: auto;
+}
+
+.faculties-list__table td {
+	border: none;
+	text-align: left;
+	padding: 5px 10px;
+}
+
+.faculties-list__table tr {
+	height: 35px;
+}
+
+.faculties-list__table thead td {
+	height: 40px;
+	background: #0d1117;
+}
+
+.faculties-list__table thead th {
+	/* padding-right: 10px; */
+	position: sticky;
+	top: 0;
+}
+
+.faculties-list__table tbody {
+	/* overflow: scroll; */
+	scrollbar-width: thin;
+	scrollbar-color: var(--thumbBG) var(--scrollbarBG);
+}
+
+.faculties-list__table tbody::-webkit-scrollbar {
+	width: 11px;
+}
+
+.faculties-list__table tbody::-webkit-scrollbar-track {
+	background: var(--scrollbarBG);
+}
+
+.faculties-list__table tbody::-webkit-scrollbar-thumb {
+	background-color: var(--thumbBG);
+	border-radius: 6px;
+	border: 3px solid var(--scrollbarBG);
+}
+
+.action__td {
+	text-align: center;
+}
+
+.action__td > span {
+	margin-right: 10px;
+	cursor: pointer;
+}
+
+.outer {
+	overflow-y: auto;
+	height: 300px;
+}
+
+.outer {
+	width: 100%;
+	-layout: fixed;
+}
+
+.outer th {
+	text-align: left;
+	top: 0;
+	position: sticky;
+}
+
+.falculties__table {
+	color: red !important;
+}
+
+.MuiTableBody-root {
+	height: 100%;
+}
+
+.list__header {
+	background-color: #252a31;
+	display: flex;
+	padding: 10px 20px;
+	/* border-radius: 10px 10px 0 0; */
+}
+
+.list__container-li_item {
+	line-height: 1.4;
+	display: flex;
+	background-color: #41474d;
+	margin-bottom: 10px;
+	border-radius: 2px;
+	padding: 10px 20px;
+	align-items: center;
+	cursor: pointer;
+}
+
+.list__container-li_item > p {
+	display: flex;
+	align-items: center;
+	width: 20%;
+	margin-right: 16px;
+}
+
+.list__container-li_item > p:first-child {
+	width: 60%;
+}
+.list__container-li_item > p:last-child {
+	margin: 0;
+}
+
+.text__search {
+	width: 50%;
+	margin-bottom: 5px;
+}
+
+.btn__trash {
+	color: #f02828;
+	justify-self: flex-end;
+	margin-left: auto;
+}
+
+.subject-list .list__header > h5 {
+	width: 20%;
+	margin-right: 30px;
+}
+
+.subject-list .list__header > h5:first-child {
+	width: 60%;
+}
+
+.lecture-list .list__header > h5 {
+	width: 35%;
+	margin-right: 50px;
+}
+
+.lecture-list .list__header > h5:first-child {
+	width: 65%;
+}
+
+.faculties-list .list__header > h5 {
+	margin-right: 50px;
+}
+
+.faculties-list .list__header > h5,
+.faculties-list .list__container-li_item > p {
+	width: 35%;
+}
+
+.faculties-list .list__header > h5:last-child,
+.faculties-list .list__container-li_item > p:last-child {
+	width: 65%;
+}
