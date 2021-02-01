@@ -2,6 +2,7 @@ import React, {useEffect, useState, useContext} from "react";
 
 // import components
 import FormFaculties from "./FormFaculties";
+import ExcelLoaderFaculties from "./ExcelLoaderFaculties";
 import {getAllFaculties, setNewFaculty, removeFaculty} from "../../../firebase";
 import {UserContext} from "../../../providers/UserProvider";
 import {confirmAlert} from "react-confirm-alert";
@@ -21,27 +22,35 @@ import TableRow from "@material-ui/core/TableRow";
 // import styles
 import "./Manage.css";
 
-const getFacId = (facName) => {
-	return facName
+const getFacId = (facName) =>
+	facName
 		.trim()
 		.split(" ")
-		.map((word) => {
-			return word[0].toUpperCase();
-		})
+		.map((word) => word[0].toUpperCase())
 		.join("");
-};
 
-const FacultyListItem = ({index, id, facultyName, onClick, onRemove}) => {
-	return (
-		<li key={index} className="list__container-li_item" onClick={onClick}>
-			<p className="li__item-search">{id}</p>
-			<p className="li__item-search">{facultyName}</p>
-			<span className="btn__trash" onClick={onRemove}>
+const FacultyListItem = ({
+	index,
+	id,
+	facultyName,
+	onClick,
+	onRemove,
+	onAdd,
+}) => (
+	<li key={index} className="list__container-li_item" onClick={onClick}>
+		{onAdd || <p className="li__item-search">{id}</p>}
+		<p className="li__item-search">{facultyName}</p>
+		{onAdd ? (
+			<span className="btn__trash add" onClick={onAdd}>
+				<i className="far fa-plus-square" />
+			</span>
+		) : (
+			<span className="btn__trash trash" onClick={onRemove}>
 				<i className="fas fa-trash-alt" />
 			</span>
-		</li>
-	);
-};
+		)}
+	</li>
+);
 
 const ManageFaculties = () => {
 	//#region Component State
@@ -83,6 +92,10 @@ const ManageFaculties = () => {
 		}
 	}, [searchString]); // search for text in list when searchString change
 
+	useEffect(() => {
+		console.error(facultiesObj);
+	}, [facultiesObj]);
+
 	//#endregion
 
 	//#region Component Method
@@ -92,7 +105,6 @@ const ManageFaculties = () => {
 		return new Promise((resolve) => {
 			if (!!values["faculty-name"]) {
 				values["faculty-id"] = getFacId(values["faculty-name"]);
-				console.warn(values["faculty-id"]);
 				if (values["faculty-id"] in facultiesObj) {
 					confirmAlert({
 						title: "Bạn có muốn thay đổi tên khoa?",
@@ -197,13 +209,16 @@ const ManageFaculties = () => {
 				<div className="facuties-form__container">
 					<FormFaculties
 						{...{
-							facultiesList: facultiesObj,
+							facultiesObj,
 							currentFacultyId,
 							setCurrentFacultyId,
 							handleOnAdd,
 							handleOnModify,
+							// excelSchema,
 						}}
 					/>
+
+					<ExcelLoaderFaculties {...{handleOnAdd, FacultyListItem}} />
 				</div>
 
 				<div className="list__container faculties-list">
@@ -225,17 +240,15 @@ const ManageFaculties = () => {
 						<ul>
 							{Object.keys(facultiesObj)
 								.reverse()
-								.map((id, index) => {
-									return (
-										<FacultyListItem
-											index={index}
-											id={id}
-											facultyName={facultiesObj[id]["faculty-name"]}
-											onClick={() => setCurrentFacultyId(id)}
-											onRemove={() => onRemove(id)}
-										/>
-									);
-								})}
+								.map((id, index) => (
+									<FacultyListItem
+										index={index}
+										id={id}
+										facultyName={facultiesObj[id]["faculty-name"]}
+										onClick={() => setCurrentFacultyId(id)}
+										onRemove={() => onRemove(id)}
+									/>
+								))}
 						</ul>
 					) : (
 						<p>no lecture</p>

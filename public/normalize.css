@@ -400,7 +400,7 @@ a {
 }
 
 /* styling input */
-input,
+input:not([type="file"]),
 textarea,
 option,
 select {
@@ -420,8 +420,8 @@ option:hover {
 	cursor: pointer;
 }
 
-input:hover,
-input:focus,
+input:not([type="file"]):hover,
+input:not([type="file"]):focus,
 textarea:hover,
 textarea:focus,
 select:hover,
@@ -430,12 +430,18 @@ select:focus {
 	transition: 0.2s all;
 }
 
+input[type="file"] {
+	cursor: pointer;
+}
+
 .left-align {
 	text-align: left;
 }
+
 .center-align {
 	text-align: left;
 }
+
 .right-align {
 	text-align: left;
 }

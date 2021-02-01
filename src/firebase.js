@@ -1,7 +1,7 @@
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
-import {toast} from "react-toastify";
+import {titleCase, defaultSuccessCB, defaultFailCB} from "./utils";
 
 var firebaseConfig = {
 	apiKey: "AIzaSyAvou0hUxm9CUqZUN7pRmq6ooHDqHy52x0",
@@ -20,58 +20,63 @@ export var database = firebase.database();
 
 export const userRef = (userID) => database.ref(userID);
 
-export const currentUserQuery = () => {
+export function currentUserQuery() {
 	auth.onAuthStateChanged((user) => {
 		if (user) {
 			return userRef(user.uid);
 		}
 	});
 	return;
-};
+}
 
 // change the loged in user
-export const signInWithGoogle = () => {
+export function signInWithGoogle() {
 	var googleAuthProvider = new firebase.auth.GoogleAuthProvider();
 	googleAuthProvider.setCustomParameters({
 		prompt: "select_account",
 	});
 	auth.signInWithPopup(googleAuthProvider);
-};
+}
 
 // sign out current user
-export const signOut = () => {
+export function signOut(callback) {
 	auth
 		.signOut()
 		.then(() => {
 			// Sign-out successful.
 			console.log("Sign-out successful.");
+			callback();
 		})
 		.catch((err) => {
 			// An error happened.
 			console.log("Sign-out unsuccessful: " + err);
 		});
-};
-
-function titleCase(str) {
-	var splitStr = str.toLowerCase().split(" ");
-	for (var i = 0; i < splitStr.length; i++) {
-		// You do not need to check if i is larger than splitStr length, as your for does that for you
-		// Assign it back to the array
-		splitStr[i] =
-			splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
-	}
-	// Directly return the joined string
-	return splitStr.join(" ");
 }
-
-const defaultFailCB = (err) => toast.error("🚫 Lỗi: " + err + "!");
-const defaultSuccessCB = () => toast.success("✌ Thành Công!");
 
 //#region Semester: Quản lý kì học
 
 // write new semester or modify in database
-export const setNewSemester = (values) => {
-	Object.keys(values).map((key) => (values[key] = values[key].trim()));
+
+export function getAllSemester(callback) {
+	auth.onAuthStateChanged((user) => {
+		if (!!user) {
+			userRef(user.uid)
+				.child("semesters")
+				.on("value", (snapshot) => {
+					if (snapshot.val() != null) {
+						callback(snapshot.val());
+					} else {
+						callback({});
+					}
+				});
+		}
+	});
+}
+
+export function setNewSemester(values) {
+	Object.keys(values).map(
+		(key) => (values[key] = values[key].toString().toString().trim())
+	);
 	auth.onAuthStateChanged((user) => {
 		userRef(user.uid)
 			.child(`semesters`)
@@ -89,13 +94,13 @@ export const setNewSemester = (values) => {
 				}
 			);
 	});
-};
+}
 
-export const removeSemester = (
+export function removeSemester(
 	semID,
 	successCB = defaultSuccessCB,
 	failCB = defaultFailCB
-) => {
+) {
 	auth.onAuthStateChanged((user) => {
 		if (user) {
 			userRef(user.uid)
@@ -103,7 +108,7 @@ export const removeSemester = (
 				.remove((err) => (err ? failCB(err.message) : successCB()));
 		}
 	});
-};
+}
 
 //#endregion
 
@@ -127,8 +132,10 @@ export function getAllFaculties(callback) {
 }
 
 // add and modify faculty to database
-export const setNewFaculty = (values) => {
-	Object.keys(values).map((key) => (values[key] = values[key].trim()));
+export function setNewFaculty(values) {
+	Object.keys(values).map(
+		(key) => (values[key] = values[key].toString().toString().trim())
+	);
 	if (values["faculty-name"]) {
 		let object = values;
 		let facID = object["faculty-id"];
@@ -147,14 +154,14 @@ export const setNewFaculty = (values) => {
 			}
 		});
 	}
-};
+}
 
 // remove faculty
-export const removeFaculty = (
+export function removeFaculty(
 	id,
 	successCB = defaultSuccessCB,
 	failCB = defaultFailCB
-) => {
+) {
 	if (id) {
 		auth.onAuthStateChanged((user) => {
 			if (user) {
@@ -166,7 +173,7 @@ export const removeFaculty = (
 	} else {
 		failCB("Không có khoa nào được chọn");
 	}
-};
+}
 
 //#endregion
 
@@ -191,7 +198,9 @@ export function getAllLectures(callback) {
 
 // set new lectures
 export function newLecture(values) {
-	Object.keys(values).map((key) => (values[key] = values[key].trim()));
+	Object.keys(values).map(
+		(key) => (values[key] = values[key].toString().trim())
+	);
 	auth.onAuthStateChanged((user) => {
 		if (user) {
 			userRef(user.uid)
@@ -210,7 +219,9 @@ export function modifyLecture(
 	successCB = defaultSuccessCB,
 	failCB = defaultFailCB
 ) {
-	Object.keys(values).map((key) => (values[key] = values[key].trim()));
+	Object.keys(values).map(
+		(key) => (values[key] = values[key].toString().trim())
+	);
 	auth.onAuthStateChanged((user) => {
 		if (user) {
 			userRef(user.uid)
@@ -223,11 +234,11 @@ export function modifyLecture(
 }
 
 // remove lecture by id
-export const removeLecture = (
+export function removeLecture(
 	id,
 	successCB = defaultSuccessCB,
 	failCB = defaultFailCB
-) => {
+) {
 	if (id) {
 		auth.onAuthStateChanged((user) => {
 			if (user) {
@@ -239,7 +250,7 @@ export const removeLecture = (
 	} else {
 		console.warn("No Lectures ID was set!");
 	}
-};
+}
 
 //#endregion
 
@@ -265,7 +276,9 @@ export function getAllSubjects(callback) {
 // set new subject
 export function newSubject(values) {
 	if (!!values["subject-name"]) {
-		Object.keys(values).map((key) => (values[key] = values[key].trim()));
+		Object.keys(values).map(
+			(key) => (values[key] = values[key].toString().trim())
+		);
 		values["subject-name"] = values["subject-name"].toString().toUpperCase();
 	}
 	auth.onAuthStateChanged((user) => {
@@ -287,7 +300,9 @@ export function modifySubject(
 	failCB = defaultFailCB
 ) {
 	if (!!values["subject-name"]) {
-		Object.keys(values).map((key) => (values[key] = values[key].trim()));
+		Object.keys(values).map(
+			(key) => (values[key] = values[key].toString().trim())
+		);
 		values["subject-name"] = values["subject-name"].toString().toUpperCase();
 	}
 	auth.onAuthStateChanged((user) => {
@@ -300,11 +315,11 @@ export function modifySubject(
 }
 
 // remove lecture by id
-export const removeSubject = (
+export function removeSubject(
 	id,
 	successCB = defaultSuccessCB,
 	failCB = defaultFailCB
-) => {
+) {
 	if (id) {
 		auth.onAuthStateChanged((user) => {
 			if (user) {
@@ -316,6 +331,6 @@ export const removeSubject = (
 	} else {
 		console.warn("No Subject ID was set!");
 	}
-};
+}
 
 //#endregion

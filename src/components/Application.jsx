@@ -13,10 +13,9 @@ import LeftMenu from "./LeftMenu";
 
 // import screens
 import Home from "./screens/Home";
-import New from "./screens/New";
+import TimeTableNew from "./screens/TimeTableNew";
 import TeacherTimeTable from "./screens/TeacherTimeTable";
 import ScheduleTimeTable from "./screens/ScheduleTimeTable";
-import ManageAssignments from "./screens/management/ManageAssignments";
 import ManageFaculties from "./screens/management/ManageFaculties";
 import ManageLecture from "./screens/management/ManageLectures";
 import ManageSubjects from "./screens/management/ManageSubjects";
@@ -67,13 +66,12 @@ const Application = () => {
 					<LeftMenu visible={leftMenuVisible} showScheduler={true} />
 					<Router className="main-container">
 						<Home path="/" />
-						<New path="new" />
 						<TeacherTimeTable path="teacher-time-table" />
 						<ScheduleTimeTable path="schedule-timetable" />
-						<ManageAssignments path="mng-assignments" />
 						<ManageFaculties path="mng-faculties" />
 						<ManageLecture path="mng-lectures" />
 						<ManageSubjects path="mng-subjects" />
+						<TimeTableNew path="new-timetable" />
 						<TimeTables path="timetable" />
 						<TimeTable path="timetable/:timeTableId" />
 						<NotFound default />

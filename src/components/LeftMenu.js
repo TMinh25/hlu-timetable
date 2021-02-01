@@ -21,7 +21,7 @@ const LeftMenu = ({
 			<div
 				className={`left-menu ${visible ? "show-left-menu" : "hide-left-menu"}`}
 			>
-				<LinkButton to="/timetable" >
+				<LinkButton to="/timetable">
 					<div>Thời khóa biểu</div>
 				</LinkButton>
 
@@ -45,12 +45,6 @@ const LeftMenu = ({
 						</>
 					}
 					item3Link="mng-faculties"
-					item4={
-						<>
-							Phân công giảng dạy <i className="fas fa-graduation-cap" />
-						</>
-					}
-					item4Link="mng-assignments"
 				/>
 
 				<Calendar
@@ -58,6 +52,7 @@ const LeftMenu = ({
 					value={calendarValue}
 					className={["calendar calendar__left-menu"]}
 					locale="vi-VN"
+					showNeighboringMonth={false}
 					nextLabel={<i className="fas fa-angle-right" />}
 					next2Label={<i className="fas fa-angle-double-right" />}
 					prevLabel={<i className="fas fa-angle-left" />}

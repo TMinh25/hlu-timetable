@@ -6,7 +6,7 @@ import {Form} from "semantic-ui-react";
 
 const FormFaculties = ({
 	currentFacultyId,
-	facultiesList,
+	facultiesObj,
 	handleOnAdd,
 	handleOnModify,
 	setCurrentFacultyId,
@@ -23,9 +23,9 @@ const FormFaculties = ({
 		if (currentFacultyId == "") {
 			setValues({...initialState});
 		} else {
-			setValues({...facultiesList[currentFacultyId]});
+			setValues({...facultiesObj[currentFacultyId]});
 		}
-	}, [currentFacultyId, facultiesList]);
+	}, [currentFacultyId, facultiesObj]);
 
 	const handleInputChange = (e) => {
 		var {name, value} = e.target;

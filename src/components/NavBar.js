@@ -2,6 +2,7 @@ import React, {useContext, useState, useEffect} from "react";
 import {signInWithGoogle, signOut} from "../firebase";
 
 // import components
+import {useNavigate} from "@reach/router";
 import Logo from "./Logo";
 import {UserContext} from "../providers/UserProvider";
 import {Button as MyButton} from "./Button";
@@ -13,16 +14,11 @@ import "./NavBar.css";
 
 const NavBar = ({onLogoClick, onHamburgerClick, showHamburger}) => {
 	const user = useContext(UserContext);
-
 	const [showModule, setShowModule] = useState(false);
 
 	const toggleModule = () => {
 		setShowModule((prevState) => !prevState);
 	};
-
-	// useEffect(() => {
-	// 	console.log(showModule);
-	// }, [showModule]);
 
 	// hide NavModule on mount
 	useEffect(() => {
@@ -70,7 +66,10 @@ const NavBar = ({onLogoClick, onHamburgerClick, showHamburger}) => {
 						</MyButton>
 					</div>
 					<div>
-						<MyButton className="sign-out module-btn" onClick={() => signOut()}>
+						<MyButton
+							className="sign-out module-btn"
+							onClick={() => signOut(() => (window.location.href = "/"))}
+						>
 							Đăng xuất
 						</MyButton>
 					</div>

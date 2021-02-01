@@ -8,7 +8,7 @@ import {Button} from "../Button";
 import {useNavigate} from "@reach/router";
 
 // import styles
-import "./New.css";
+import "./TimeTableNew.css";
 
 function weekCount(time2, time1) {
 	var diff = (time2.getTime() - time1.getTime()) / 1000;
@@ -16,34 +16,11 @@ function weekCount(time2, time1) {
 	return Math.abs(Math.round(diff));
 }
 
-const New = () => {
+const TimeTableNew = () => {
 	const currentUser = useContext(UserContext);
 	const navigate = useNavigate();
 
 	const [values, setValues] = useState({});
-	// const [semesterObject, setSemesterObject] = useState({});
-
-	// useEffect(() => {
-	// 	if (!!currentUser) {
-	// 		userRef(currentUser.uid)
-	// 			.child("semester")
-	// 			.on("value", (snapshot) => {
-	// 				if (snapshot.val() != null) {
-	// 					setSemesterObject({...snapshot.val()});
-	// 				} else {
-	// 					setSemesterObject({});
-	// 				}
-	// 			});
-	// 	}
-	// }, [currentUser]); // similar to componentDidMount()
-
-	// const handleInputChange = (e) => {
-	// 	var {name, value} = e.target;
-	// 	setValues({
-	// 		...values,
-	// 		[name]: value,
-	// 	});
-	// };
 
 	const handleOnSubmit = (e) => {
 		e.preventDefault();
@@ -137,46 +114,6 @@ const New = () => {
 							<i style={{marginLeft: 10}} className="fas fa-arrow-right" />
 						</Button>
 					</form>
-
-					<div>
-						{/* {!!noteObjects ? (
-							<ol>
-								{Object.keys(noteObjects).map((id) => {
-									return (
-										<>
-											<li key={id}>
-												<Link to={`/note/${id}`}>
-													{noteObjects[id].id}, {noteObjects[id].note}
-												</Link>
-												<span
-													onClick={() => {
-														userRef(currentUser.uid)
-															.child(`note/${id}`)
-															.remove((err) => {
-																if (err) {
-																	console.warn("failed to remove: " + err);
-																}
-															});
-													}}
-													style={{
-														color: "red",
-														backgroundColor: "white",
-														cursor: "pointer",
-													}}
-												>
-													x
-												</span>
-											</li>
-										</>
-									);
-								})}
-							</ol>
-						) : (
-							<div>
-								<h1>No note yet!</h1>
-							</div>
-						)} */}
-					</div>
 				</>
 			) : (
 				<div>Đăng nhập để tiếp tục</div>
@@ -185,4 +122,4 @@ const New = () => {
 	);
 };
 
-export default New;
+export default TimeTableNew;

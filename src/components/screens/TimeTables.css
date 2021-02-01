@@ -1,4 +1,4 @@
-.choose {
+.choose__container {
 	height: 100%;
 }
 
@@ -20,6 +20,7 @@
 
 .choose__main {
 	height: 90%;
+	overflow: auto;
 }
 
 .timetable__li {

@@ -165,9 +165,16 @@
 }
 
 .btn__trash {
-	color: #f02828;
 	justify-self: flex-end;
 	margin-left: auto;
+}
+
+.trash {
+	color: #f02828;
+}
+
+.add {
+	color: #238636;
 }
 
 .subject-list .list__header > h5 {

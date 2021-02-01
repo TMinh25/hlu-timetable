@@ -35,9 +35,11 @@
     "react-toastify": "^7.0.2",
     "react-virtualized": "^9.22.3",
     "reactable-search": "^0.2.51",
+    "read-excel-file": "^5.0.0",
     "semantic-ui-react": "^2.0.1",
     "web-animations-js": "^2.3.2",
-    "web-vitals": "^0.2.4"
+    "web-vitals": "^0.2.4",
+    "xlsx": "^0.16.9"
   },
   "scripts": {
     "start": "react-scripts start",
