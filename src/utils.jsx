@@ -41,4 +41,4 @@ export function titleCase(str) {
 // success notification
 export const defaultSuccessCB = () => toast.success("✌ Thành Công!");
 // fail notification
-export const defaultFailCB = (err) => toast.error("🚫 Lỗi: " + err + "!");
+export const defaultFailCB = (err) => toast.error(`🚫 Lỗi: ${err}!`);

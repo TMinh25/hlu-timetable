@@ -439,11 +439,11 @@ input[type="file"] {
 }
 
 .center-align {
-	text-align: left;
+	text-align: center;
 }
 
 .right-align {
-	text-align: left;
+	text-align: right;
 }
 
 .clearfix {

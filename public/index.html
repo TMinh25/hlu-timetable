@@ -50,7 +50,14 @@
 			src="https://unpkg.com/react-bootstrap@next/dist/react-bootstrap.min.js"
 			crossorigin
 		></script>
-
+		<script>
+			$(document).ready(function () {
+				$("#excel__loaded-list").css(
+					"max-height",
+					$(".form__container").height() - $("#manage__form").height()
+				);
+			});
+		</script>
 		<title>Hạ Long University</title>
 	</head>
 	<body>

@@ -1,6 +1,6 @@
-import React, {useState, useEffect} from "react";
-// import {BrowserRouter as Router, Switch, Route} from "react-router-dom";
+import React, {useState, useEffect, useContext} from "react";
 import {Router} from "@reach/router";
+import {UserContext} from "../providers/UserProvider";
 
 // import styles
 import "../App.css";
@@ -25,6 +25,7 @@ import NotFound from "./screens/NotFound";
 
 const Application = () => {
 	const [leftMenuVisible, setLeftMenuVisible] = useState(true);
+	const currentUser = useContext(UserContext);
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -61,9 +62,14 @@ const Application = () => {
 	return (
 		<>
 			<ThemeProvider theme={theme}>
-				<NavBar onHamburgerClick={handleHamburgerClick} showHamburger={true} />
+				<NavBar
+					onHamburgerClick={handleHamburgerClick}
+					showHamburger={currentUser}
+				/>
 				<main>
-					<LeftMenu visible={leftMenuVisible} showScheduler={true} />
+					{currentUser && (
+						<LeftMenu visible={leftMenuVisible} showScheduler={true} />
+					)}
 					<Router className="main-container">
 						<Home path="/" />
 						<TeacherTimeTable path="teacher-time-table" />

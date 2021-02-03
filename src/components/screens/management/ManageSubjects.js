@@ -10,13 +10,11 @@ import {
 import FormSubjects from "./FormSubjects";
 import Loading from "../../Loading";
 import {confirmAlert} from "react-confirm-alert";
-import {Icon, Input} from "semantic-ui-react";
 
 //import styles
 import "./Manage.css";
 
 const SubjectListItem = ({
-	id,
 	index,
 	onClick,
 	onRemove,
@@ -26,6 +24,7 @@ const SubjectListItem = ({
 }) => {
 	return (
 		<li onClick={onClick} className="list__container-li_item" key={index}>
+			<p className="li__item-search">{index + 1}</p>
 			<p className="li__item-search">{subjectName}</p>
 			<p>{credit}</p>
 			<p>{periods}</p>
@@ -127,8 +126,8 @@ const ManageSubjects = () => {
 							}}
 						/>
 					</div>
-					<div className="list__container">
-						<div className="list__container-search subject-list">
+					<div className="list__container subject-list">
+						<div className="list__container-search">
 							<input
 								type="text"
 								className="text__search"
@@ -138,6 +137,7 @@ const ManageSubjects = () => {
 								placeholder="Tìm kiếm..."
 							/>
 							<div className="list__header">
+								<h5>STT</h5>
 								<h5>Tên học phần</h5>
 								<h5>Số tín chỉ</h5>
 								<h5>Số tiết</h5>

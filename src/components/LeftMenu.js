@@ -29,22 +29,22 @@ const LeftMenu = ({
 					children="Quản lý đào tạo"
 					item1={
 						<>
+							Khoa <i className="fas fa-chalkboard-teacher" />
+						</>
+					}
+					item1Link="mng-faculties"
+					item2={
+						<>
 							Nhân sự <i className="fas fa-users" />
 						</>
 					}
-					item1Link="mng-lectures"
-					item2={
+					item2Link="mng-lectures"
+					item3={
 						<>
 							Môn học <i className="fas fa-book" />
 						</>
 					}
-					item2Link="mng-subjects"
-					item3={
-						<>
-							Khoa <i className="fas fa-chalkboard-teacher" />
-						</>
-					}
-					item3Link="mng-faculties"
+					item3Link="mng-subjects"
 				/>
 
 				<Calendar

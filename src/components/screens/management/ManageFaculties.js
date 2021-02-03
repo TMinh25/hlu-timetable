@@ -1,23 +1,13 @@
-import React, {useEffect, useState, useContext} from "react";
+import React, {useEffect, useState, useCallback} from "react";
 
 // import components
 import FormFaculties from "./FormFaculties";
-import ExcelLoaderFaculties from "./ExcelLoaderFaculties";
 import {getAllFaculties, setNewFaculty, removeFaculty} from "../../../firebase";
-import {UserContext} from "../../../providers/UserProvider";
 import {confirmAlert} from "react-confirm-alert";
 import Loading from "../../Loading";
-
-import {makeStyles} from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TablePagination from "@material-ui/core/TablePagination";
-import TableRow from "@material-ui/core/TableRow";
-// import {createMuiTheme, ThemeProvider} from "@material-ui/core/styles";
+import {useDropzone} from "react-dropzone";
+import {readExcel, defaultFailCB} from "../../../utils";
+import {Button} from "../../Button";
 
 // import styles
 import "./Manage.css";
@@ -29,26 +19,27 @@ const getFacId = (facName) =>
 		.map((word) => word[0].toUpperCase())
 		.join("");
 
-const FacultyListItem = ({
-	index,
-	id,
-	facultyName,
-	onClick,
-	onRemove,
-	onAdd,
-}) => (
+// accepted files for react-dropzone in MIME Type
+const accept =
+	"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel";
+
+const FacultyListItem = ({index, id, facultyName, onClick, onRemove}) => (
 	<li key={index} className="list__container-li_item" onClick={onClick}>
-		{onAdd || <p className="li__item-search">{id}</p>}
+		<p className="li__item-search">{index + 1}</p>
+		<p className="li__item-search">{id}</p>
 		<p className="li__item-search">{facultyName}</p>
-		{onAdd ? (
-			<span className="btn__trash add" onClick={onAdd}>
-				<i className="far fa-plus-square" />
-			</span>
-		) : (
-			<span className="btn__trash trash" onClick={onRemove}>
-				<i className="fas fa-trash-alt" />
-			</span>
-		)}
+		<span className="btn__trash trash" onClick={onRemove}>
+			<i className="fas fa-trash-alt" />
+		</span>
+	</li>
+);
+
+const FacultyItemToAdd = ({index, facultyName, onAdd}) => (
+	<li key={index} className="list__container-li_item">
+		<p>{facultyName}</p>
+		<span className="btn__trash add" onClick={onAdd}>
+			<i className="far fa-plus-square" />
+		</span>
 	</li>
 );
 
@@ -59,6 +50,7 @@ const ManageFaculties = () => {
 	const [facultiesObj, setFacultiesObj] = useState({});
 	const [currentFacultyId, setCurrentFacultyId] = useState();
 	const [searchString, setSearchString] = useState("");
+	const [excelLoadedItems, setExcelLoadedItems] = useState();
 
 	//#endregion
 
@@ -92,9 +84,9 @@ const ManageFaculties = () => {
 		}
 	}, [searchString]); // search for text in list when searchString change
 
-	useEffect(() => {
-		console.error(facultiesObj);
-	}, [facultiesObj]);
+	// useEffect(() => {
+	// 	console.error(facultiesObj);
+	// }, [facultiesObj]);
 
 	//#endregion
 
@@ -122,6 +114,7 @@ const ManageFaculties = () => {
 								label: "Thay Đổi",
 								onClick: () => {
 									setNewFaculty(values);
+									setIsLoading(true);
 									resolve(true);
 								},
 							},
@@ -129,6 +122,7 @@ const ManageFaculties = () => {
 					});
 				} else {
 					setNewFaculty(values);
+					setIsLoading(true);
 					resolve(true);
 				}
 			}
@@ -199,28 +193,117 @@ const ManageFaculties = () => {
 		});
 	};
 
+	const onDrop = useCallback((acceptedFiles, fileRejections) => {
+		if (!!fileRejections.length) {
+			defaultFailCB("Tệp tin không phù hợp");
+		} else {
+			handleExcelLoad(acceptedFiles[0]);
+		}
+	}, []);
+
+	const {
+		getRootProps,
+		getInputProps,
+		isDragActive,
+		isDragAccept,
+		isDragReject,
+	} = useDropzone({
+		accept,
+		onDrop,
+	});
+
+	const handleAddExcelItem = (item, index) => {
+		handleOnAdd(item);
+		// const removedList = Array.slice(excelLoadedItems, index, 1);
+		// let removedList = excelLoadedItems.slice(index, 1);
+		// setExcelLoadedItems(removedList);
+	};
+
+	const handleExcelLoad = async (file) => {
+		const data = await readExcel(file, ["faculty-name", "faculty-note"]);
+		const slicedData = data.slice(1);
+		if (slicedData.length === 0) {
+			setExcelLoadedItems(<div>Không có dữ liệu</div>);
+		} else {
+			setExcelLoadedItems(
+				slicedData.map((item, index) => (
+					<FacultyItemToAdd
+						index={index}
+						facultyName={item["faculty-name"]}
+						onAdd={() => handleAddExcelItem(item, index)}
+					/>
+				))
+			);
+		}
+		// console.error(data);
+	};
+
 	//#endregion
+
+	const getBorderColor = (props) => {
+		if (props.isDragAccept) {
+			return "#00e676";
+		}
+		if (props.isDragReject) {
+			return "#ff1744";
+		}
+		if (props.isDragActive) {
+			return "#2196f3";
+		}
+		return "#eeeeee";
+	};
 
 	return isLoading ? (
 		<Loading />
 	) : (
 		<div className="mng-container">
 			<div className="form-list__container">
-				<div className="facuties-form__container">
-					<FormFaculties
-						{...{
-							facultiesObj,
-							currentFacultyId,
-							setCurrentFacultyId,
-							handleOnAdd,
-							handleOnModify,
-							// excelSchema,
-						}}
-					/>
-
-					<ExcelLoaderFaculties {...{handleOnAdd, FacultyListItem}} />
+				<div className="form__container">
+					{/* <div id="excel__loaded-list" className="excel__loaded-list"> */}
+					{excelLoadedItems && (
+						<Button className="delete" onClick={() => setExcelLoadedItems()}>
+							clear
+						</Button>
+					)}
+					{!!excelLoadedItems ? (
+						<ul>{excelLoadedItems}</ul>
+					) : (
+						<div
+							className="dropzone__container"
+							style={{
+								height: (isDragActive || !!excelLoadedItems) && "100%",
+								borderColor: getBorderColor({
+									...getRootProps({isDragActive, isDragAccept, isDragReject}),
+								}),
+							}}
+							{...getRootProps()}
+						>
+							<input {...getInputProps()} />
+							{isDragActive ? (
+								<div style={{width: "100%", height: "100%"}}>
+									Thả file vào đây...
+								</div>
+							) : (
+								<p>
+									Kéo thả tệp excel vào đây <br />
+									hoặc nhấn để chọn tệp của bạn!
+								</p>
+							)}
+						</div>
+					)}
+					{isDragActive || !!excelLoadedItems || (
+						<FormFaculties
+							{...{
+								facultiesObj,
+								currentFacultyId,
+								setCurrentFacultyId,
+								handleOnAdd,
+								handleOnModify,
+							}}
+						/>
+					)}
+					{/* </div> */}
 				</div>
-
 				<div className="list__container faculties-list">
 					<div className="list__container-search">
 						<input
@@ -232,6 +315,7 @@ const ManageFaculties = () => {
 							placeholder="Tìm kiếm..."
 						/>
 						<div className="list__header">
+							<h5>STT</h5>
 							<h5>Mã khoa</h5>
 							<h5>Tên khoa</h5>
 						</div>

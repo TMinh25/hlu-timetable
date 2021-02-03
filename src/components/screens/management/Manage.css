@@ -3,8 +3,12 @@
 }
 
 .form__container {
+	display: flex;
+	flex-direction: column;
 	height: 100%;
 	margin-right: 10px;
+	max-height: inherit;
+	overflow-y: auto;
 }
 
 .list__container {
@@ -103,44 +107,20 @@
 	cursor: pointer;
 }
 
-.outer {
-	overflow-y: auto;
-	height: 300px;
-}
-
-.outer {
-	width: 100%;
-	-layout: fixed;
-}
-
-.outer th {
-	text-align: left;
-	top: 0;
-	position: sticky;
-}
-
-.falculties__table {
-	color: red !important;
-}
-
-.MuiTableBody-root {
-	height: 100%;
-}
-
 .list__header {
 	background-color: #252a31;
 	display: flex;
 	padding: 10px 20px;
-	/* border-radius: 10px 10px 0 0; */
 }
 
 .list__container-li_item {
+	display: grid;
+	grid-template-columns: 3fr 1fr;
 	line-height: 1.4;
-	display: flex;
 	background-color: #41474d;
 	margin-bottom: 10px;
 	border-radius: 2px;
-	padding: 10px 20px;
+	padding: 0 0 0 20px;
 	align-items: center;
 	cursor: pointer;
 }
@@ -148,15 +128,6 @@
 .list__container-li_item > p {
 	display: flex;
 	align-items: center;
-	width: 20%;
-	margin-right: 16px;
-}
-
-.list__container-li_item > p:first-child {
-	width: 60%;
-}
-.list__container-li_item > p:last-child {
-	margin: 0;
 }
 
 .text__search {
@@ -167,6 +138,11 @@
 .btn__trash {
 	justify-self: flex-end;
 	margin-left: auto;
+	padding: 13px 20px;
+}
+
+.btn__trash:hover {
+	color: #f06e6e;
 }
 
 .trash {
@@ -177,34 +153,42 @@
 	color: #238636;
 }
 
-.subject-list .list__header > h5 {
-	width: 20%;
-	margin-right: 30px;
+.list__header {
+	display: grid;
 }
 
-.subject-list .list__header > h5:first-child {
-	width: 60%;
+.subject-list .list__header,
+.subject-list .list__container-li_item {
+	grid-template-columns: 1fr 6fr 1.5fr 1.5fr 1fr;
 }
 
-.lecture-list .list__header > h5 {
-	width: 35%;
-	margin-right: 50px;
+.lecture-list .list__header,
+.lecture-list .list__container-li_item {
+	grid-template-columns: 1fr 6fr 6fr 1fr;
 }
 
-.lecture-list .list__header > h5:first-child {
-	width: 65%;
+.faculties-list .list__header,
+.faculties-list .list__container-li_item {
+	grid-template-columns: 1fr 3fr 8fr 1fr;
 }
 
-.faculties-list .list__header > h5 {
-	margin-right: 50px;
-}
-
-.faculties-list .list__header > h5,
-.faculties-list .list__container-li_item > p {
-	width: 35%;
-}
-
-.faculties-list .list__header > h5:last-child,
-.faculties-list .list__container-li_item > p:last-child {
-	width: 65%;
+.dropzone__container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 10px 15px;
+	margin-bottom: 10px;
+	border-width: 2px;
+	border-radius: 2px;
+	border-style: dashed;
+	text-align: center;
+	background-color: #22303c;
+	color: #bdbdbd;
+	outline: none;
+	transition: border 0.24s ease-in-out;
+	width: 100%;
+	max-height: inherit;
+	overflow-y: auto;
+	cursor: pointer;
 }

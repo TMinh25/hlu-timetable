@@ -15,15 +15,16 @@ import Loading from "../../Loading";
 // import styles
 import "./Manage.css";
 
-const LectureListItem = ({id: index, name, faculty, onRemove, onClick}) => {
+const LectureListItem = ({index, name, faculty, onRemove, onClick}) => {
 	return (
 		<>
 			<li key={index} className="list__container-li_item" onClick={onClick}>
+				<p className="li__item-search">{index + 1}</p>
 				<p className="li__item-search">{name}</p>
 				<p className="li__item-search">
 					{faculty !== "defaultValue" ? faculty : "Không"}
 				</p>
-				<span className="btn__trash" onClick={() => onRemove(index)}>
+				<span className="btn__trash trash" onClick={() => onRemove(index)}>
 					<i className="fas fa-trash-alt" />
 				</span>
 			</li>
@@ -128,7 +129,7 @@ const ManageLectures = () => {
 		<>
 			<div className="mng-container">
 				<div className="form-list__container">
-					<div className="facuties-form__container">
+					<div className="form__container">
 						<FormLectures
 							{...{
 								facultiesObj,
@@ -141,8 +142,8 @@ const ManageLectures = () => {
 						/>
 					</div>
 
-					<div className="list__container">
-						<div className="list__container-search lecture-list">
+					<div className="list__container lecture-list">
+						<div className="list__container-search">
 							<input
 								type="text"
 								className="text__search"
@@ -152,6 +153,7 @@ const ManageLectures = () => {
 								placeholder="Tìm kiếm..."
 							/>
 							<div className="list__header">
+								<h5>STT</h5>
 								<h5>Tên giảng viên</h5>
 								<h5>Khoa</h5>
 							</div>
@@ -163,7 +165,6 @@ const ManageLectures = () => {
 									.map((id, index) => {
 										return (
 											<LectureListItem
-												key={index}
 												index={index}
 												name={lecturesObj[id]["lecture-name"]}
 												faculty={lecturesObj[id]["faculty"]}
