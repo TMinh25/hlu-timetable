@@ -34,14 +34,14 @@ const FormFaculties = ({
 
 	const handleButtonAdd = async (e) => {
 		e.preventDefault();
-		const response = await handleOnAdd(values);
-		response && setValues(initialState);
+		await handleOnAdd(values);
+		setValues(initialState);
 	};
 
 	const handleButtonModify = async (e) => {
 		e.preventDefault();
-		const response = await handleOnModify(values);
-		response && setValues(initialState);
+		await handleOnModify(values);
+		setValues(initialState);
 	};
 
 	return (

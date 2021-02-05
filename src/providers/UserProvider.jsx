@@ -1,7 +1,7 @@
 import React, {Component, createContext} from "react";
 
 // import components
-import {auth, database, userRef} from "../firebase";
+import {auth} from "../firebase";
 
 export const UserContext = createContext({
 	user: null,
@@ -27,10 +27,10 @@ class UserProvider extends Component {
 
 	componentDidMount = () => {
 		// check if the user has changed and setState to the {user}
-		auth.onAuthStateChanged((userAuth) => {
-			if (!!userAuth) {
+		auth.onAuthStateChanged((user) => {
+			if (!!user) {
 				console.log("signed in");
-				this.setUser(userAuth);
+				this.setUser(user);
 				// userRef(userAuth.uid)
 				// 	.child("loged-history/")
 				// 	.set({"loged in": new Date().toString()}, (err) => {

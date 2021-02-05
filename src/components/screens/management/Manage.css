@@ -113,7 +113,8 @@
 	padding: 10px 20px;
 }
 
-.list__container-li_item {
+.list__container-li_item,
+.excel__list-li_item {
 	display: grid;
 	grid-template-columns: 3fr 1fr;
 	line-height: 1.4;
@@ -125,7 +126,8 @@
 	cursor: pointer;
 }
 
-.list__container-li_item > p {
+.list__container-li_item > p,
+.excel__list-li_item > p {
 	display: flex;
 	align-items: center;
 }
@@ -141,7 +143,7 @@
 	padding: 13px 20px;
 }
 
-.btn__trash:hover {
+.list__container-li_item .btn__trash:hover {
 	color: #f06e6e;
 }
 

@@ -5,7 +5,7 @@ import {UserContext} from "../providers/UserProvider";
 // import styles
 import "../App.css";
 import "react-calendar/dist/Calendar.css";
-import {createMuiTheme, ThemeProvider} from "@material-ui/core/styles";
+// import {createMuiTheme, ThemeProvider} from "@material-ui/core/styles";
 
 // import components
 import NavBar from "./NavBar";
@@ -49,41 +49,29 @@ const Application = () => {
 		setLeftMenuVisible((prev) => !prev);
 	};
 
-	const theme = React.useMemo(
-		() =>
-			createMuiTheme({
-				palette: {
-					type: "dark",
-				},
-			}),
-		[]
-	);
-
 	return (
 		<>
-			<ThemeProvider theme={theme}>
-				<NavBar
-					onHamburgerClick={handleHamburgerClick}
-					showHamburger={currentUser}
-				/>
-				<main>
-					{currentUser && (
-						<LeftMenu visible={leftMenuVisible} showScheduler={true} />
-					)}
-					<Router className="main-container">
-						<Home path="/" />
-						<TeacherTimeTable path="teacher-time-table" />
-						<ScheduleTimeTable path="schedule-timetable" />
-						<ManageFaculties path="mng-faculties" />
-						<ManageLecture path="mng-lectures" />
-						<ManageSubjects path="mng-subjects" />
-						<TimeTableNew path="new-timetable" />
-						<TimeTables path="timetable" />
-						<TimeTable path="timetable/:timeTableId" />
-						<NotFound default />
-					</Router>
-				</main>
-			</ThemeProvider>
+			<NavBar
+				onHamburgerClick={handleHamburgerClick}
+				showHamburger={currentUser}
+			/>
+			<main>
+				{currentUser && (
+					<LeftMenu visible={leftMenuVisible} showScheduler={true} />
+				)}
+				<Router className="main-container">
+					<Home path="/" />
+					<TeacherTimeTable path="teacher-time-table" />
+					<ScheduleTimeTable path="schedule-timetable" />
+					<ManageFaculties path="mng-faculties" />
+					<ManageLecture path="mng-lectures" />
+					<ManageSubjects path="mng-subjects" />
+					<TimeTableNew path="new-timetable" />
+					<TimeTables path="timetable" />
+					<TimeTable path="timetable/:timeTableId" />
+					<NotFound default />
+				</Router>
+			</main>
 		</>
 	);
 };
