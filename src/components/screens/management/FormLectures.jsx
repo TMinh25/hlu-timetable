@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
 
 // import components
-import {Button} from "../../Button";
+import {Button} from "../../Components";
 import {Form} from "semantic-ui-react";
 
 const FormLectures = ({

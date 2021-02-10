@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 
 // import components
-import {Button} from "../../Button";
+import {Button} from "../../Components";
 import {Form} from "semantic-ui-react";
 
 const FormFaculties = ({
@@ -27,6 +27,10 @@ const FormFaculties = ({
 		}
 	}, [currentFacultyId, facultiesObj]);
 
+	// useEffect(() => {
+	// 	console.log(values);
+	// }, [values])
+
 	const handleInputChange = (e) => {
 		var {name, value} = e.target;
 		setValues({...values, [name]: value});
@@ -34,7 +38,7 @@ const FormFaculties = ({
 
 	const handleButtonAdd = async (e) => {
 		e.preventDefault();
-		await handleOnAdd(values);
+		await handleOnAdd({values: values});
 		setValues(initialState);
 	};
 

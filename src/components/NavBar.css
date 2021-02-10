@@ -11,9 +11,6 @@
 	font-size: 1.2rem;
 	position: fixed;
 	z-index: 99;
-
-	/* -webkit-flex: 0 0 auto;
-	flex: 0 0 auto; */
 }
 
 .navbar-mainmenu {
@@ -98,7 +95,6 @@ img.nav-avatar:hover {
 
 #nav__module.hide {
 	/* hide module */
-	/* visibility: hidden; */
 	opacity: 0;
 	user-select: none;
 	pointer-events: none;

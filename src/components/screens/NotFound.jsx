@@ -1,7 +1,7 @@
-import React, {StyleSheet} from "react";
+import React from "react";
 
 // import components
-import {LinkButton} from "../Button";
+import {LinkButton} from "../Components";
 
 const NotFoundPage = () => {
 	return (

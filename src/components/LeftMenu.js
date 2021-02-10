@@ -3,7 +3,7 @@ import Calendar from "react-calendar";
 import PropTypes from "prop-types";
 
 // import components
-import {LinkButton, DropDownHoverButton} from "./Button";
+import {LinkButton, DropDownHoverButton} from "./Components";
 
 // import styles
 import "./LeftMenu.css";

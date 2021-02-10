@@ -2,7 +2,7 @@ import React, {useState, useEffect} from "react";
 import {modifySubject, newSubject} from "../../../firebase";
 
 // import components
-import {Button} from "../../Button";
+import {Button} from "../../Components";
 import {Form} from "semantic-ui-react";
 
 // import styles

@@ -4,38 +4,6 @@ import React, {useEffect, useState} from "react";
 import {auth, userRef} from "../../firebase";
 import NotFound from "./NotFound";
 
-// const TimeTable = (props) => {
-// 	const [semester, setSemesterObject] = useState({});
-
-// 	useEffect(() => {
-// 		if (props.timeTableId) {
-// 			console.log(props.timeTableId);
-// 		}
-// 		console.log('abcs');
-// 		console.log(semester);
-// 	}, [props.timeTableId]);
-
-// 	useEffect(() => {
-// 		if (!!auth.currentUser) {
-// 			userRef(auth.currentUser.uid)
-// 				.child(`semester/${props.timeTableId}`)
-// 				.on("value", (snapshot) => {
-// 					if (snapshot.val() != null) {
-// 						setSemesterObject({...snapshot.val()});
-// 					} else {
-// 						setSemesterObject({});
-// 					}
-// 				});
-// 		}
-// 	}, [auth.currentUser, props.timeTableId]); // similar to componentDidUpdate()
-
-// 	return (
-// 		<>
-// 			<p>{semester["semester-info"]["user-named"]}</p>
-// 		</>
-// 	);
-// };
-
 const TimeTable = (props) => {
 	const [semester, setSemester] = useState({});
 

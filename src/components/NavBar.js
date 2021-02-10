@@ -2,10 +2,8 @@ import React, {useContext, useState, useEffect} from "react";
 import {signInWithGoogle, signOut} from "../firebase";
 
 // import components
-import {useNavigate} from "@reach/router";
-import Logo from "./Logo";
+import {Logo, Button as MyButton} from "./Components";
 import {UserContext} from "../providers/UserProvider";
-import {Button as MyButton} from "./Button";
 import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 

@@ -4,10 +4,9 @@ import React, {useEffect, useState, useCallback} from "react";
 import FormFaculties from "./FormFaculties";
 import {getAllFaculties, setNewFaculty, removeFaculty} from "../../../firebase";
 import {confirmAlert} from "react-confirm-alert";
-import Loading from "../../Loading";
+import {Loading, Button} from "../../Components";
 import {useDropzone} from "react-dropzone";
 import {readExcel, defaultFailCB} from "../../../utils";
-import {Button} from "../../Button";
 
 // import styles
 import "./Manage.css";
@@ -20,8 +19,10 @@ const getFacId = (facName) =>
 		.join("");
 
 // accepted files for react-dropzone in MIME Type
-const accept =
-	"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel";
+const accept = [
+	"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+	"application/vnd.ms-excel",
+];
 
 const FacultyListItem = ({index, id, facultyName, onClick, onRemove}) => (
 	<li key={index} className="list__container-li_item" onClick={onClick}>
@@ -34,42 +35,38 @@ const FacultyListItem = ({index, id, facultyName, onClick, onRemove}) => (
 	</li>
 );
 
-const FacultyItemToAdd = ({index, facultyName, onAdd}) => {
-	const handleOnItemAdd = (event) => {
-		onAdd();
-		const thisEle = event.target;
-		thisEle.closest("li").remove();
-	};
-
-	return (
-		<li key={index} className="excel__list-li_item">
-			<p>{facultyName}</p>
-			<span
-				className="btn__trash add"
-				onClick={(event) => handleOnItemAdd(event)}
-			>
-				<i className="far fa-plus-square" />
-			</span>
-		</li>
-	);
-};
-
 const ManageFaculties = () => {
 	//#region Component State
 
 	const [isLoading, setIsLoading] = useState(true);
+	const [searchString, setSearchString] = useState("");
+
 	const [facultiesObj, setFacultiesObj] = useState({});
 	const [currentFacultyId, setCurrentFacultyId] = useState();
-	const [searchString, setSearchString] = useState("");
 	const [excelLoadedItems, setExcelLoadedItems] = useState();
+
+	//#endregion
+
+	//#region Component
+
+	const FacultyItemToAdd = ({onAdd, index, facultyName}) => {
+		return (
+			<li key={index} className="excel__list-li_item">
+				<p>{facultyName}</p>
+				<span className="btn__trash add" onClick={onAdd}>
+					<i className="far fa-plus-square" />
+				</span>
+			</li>
+		);
+	};
 
 	//#endregion
 
 	//#region Hooks
 
 	useEffect(() => {
-		getAllFaculties((result) => {
-			setFacultiesObj(result);
+		getAllFaculties((res) => {
+			setFacultiesObj(res);
 			setIsLoading(false);
 		});
 	}, []); // fetching faculties list on componentUpdate
@@ -95,16 +92,16 @@ const ManageFaculties = () => {
 		}
 	}, [searchString]); // search for text in list when searchString change
 
-	useEffect(() => {
-		console.error(facultiesObj);
-	}, [facultiesObj]);
+	// useEffect(() => {
+	// 	console.error(facultiesObj);
+	// }, [facultiesObj]);
 
 	const onDrop = useCallback((acceptedFiles, fileRejections) => {
 		if (!!fileRejections.length) {
 			defaultFailCB("Tệp tin không phù hợp");
 		} else {
 			handleExcelLoad(acceptedFiles[0]);
-		}
+		} // eslint-disable-next-line
 	}, []);
 
 	const {
@@ -122,16 +119,27 @@ const ManageFaculties = () => {
 
 	//#region Component Method
 
-	const handleOnAdd = (values) => {
+	// function handleOnExcelItemAdd(values, event) {
+	// 	console.log(facultiesObj);
+	// 	handleOnAdd(values).then((res) => {
+	// 		// remove li item if user says yes
+	// 		if (res) {
+	// 			const thisEle = event.target;
+	// 			thisEle.closest("li").remove();
+	// 		}
+	// 	});
+	// }
+
+	function handleOnAdd({values, removeChild = false, event}) {
+		console.log(values);
 		// Trả về Promise để Form đợi tới khi người dùng chọn tùy chọn
 		return new Promise((resolve) => {
-			if (values["faculty-name"] != "") {
-				values["faculty-id"] = getFacId(values["faculty-name"]);
-				// alert("." + values["faculty-id"] + ".");
-				// console.warn(Object.keys(facultiesObj).length);
-				// alert(!!(values["faculty-id"] in facultiesObj));
+			if (values["faculty-name"] !== "") {
+				let facID = getFacId(values["faculty-name"]);
+				values["faculty-id"] = facID;
+				console.log(facultiesObj);
+				// alert(values["faculty-id"] in facultiesObj);
 				if (values["faculty-id"] in facultiesObj) {
-					alert("true");
 					confirmAlert({
 						title: "Bạn có muốn thay đổi tên khoa?",
 						message: "Mã khoa này đã tồn tại",
@@ -140,7 +148,7 @@ const ManageFaculties = () => {
 								className: "confirm__cancel",
 								label: "Hủy",
 								onClick: () => {
-									resolve(true);
+									resolve(false);
 								},
 							},
 							{
@@ -148,28 +156,28 @@ const ManageFaculties = () => {
 								label: "Thay Đổi",
 								onClick: () => {
 									setNewFaculty(values);
-									// setFacultiesObj((prevState) => ({
-									// 	...prevState,
-									// 	[values["faculty-id"]]: delete values["faculty-id"],
-									// }));
 									resolve(true);
+									if (removeChild) {
+										const thisEle = event.target;
+										thisEle.closest("li").remove();
+									}
 								},
 							},
 						],
 					});
 				} else {
 					setNewFaculty(values);
-					// setFacultiesObj((prevState) => ({
-					// 	...prevState,
-					// 	[values["faculty-id"]]: delete values["faculty-id"],
-					// }));
 					resolve(true);
+					if (removeChild) {
+						const thisEle = event.target;
+						thisEle.closest("li").remove();
+					}
 				}
 			}
 		});
-	};	
+	}
 
-	const handleOnModify = (values) => {
+	function handleOnModify(values) {
 		return new Promise((resolve) => {
 			let id = getFacId(values["faculty-name"]);
 			values["faculty-id"] = id;
@@ -210,9 +218,9 @@ const ManageFaculties = () => {
 			setCurrentFacultyId("");
 			resolve(true);
 		});
-	};
+	}
 
-	const handleOnRemove = (id) => {
+	function handleOnRemove(id) {
 		confirmAlert({
 			title: "Bạn có chắc muốn xóa khoa này?",
 			message: "Bạn sẽ không thể truy cập lại thông tin này",
@@ -231,9 +239,9 @@ const ManageFaculties = () => {
 				},
 			],
 		});
-	};
+	}
 
-	const handleExcelLoad = async (file) => {
+	async function handleExcelLoad(file) {
 		const data = await readExcel(file, ["faculty-name", "faculty-note"]);
 		const slicedData = data.slice(1);
 		if (slicedData.length === 0) {
@@ -244,17 +252,17 @@ const ManageFaculties = () => {
 					<FacultyItemToAdd
 						index={index}
 						facultyName={item["faculty-name"]}
-						onAdd={() => handleOnAdd(item)}
+						onAdd={(event) =>
+							handleOnAdd({values: item, removeChild: true, event})
+						}
 					/>
 				))
 			);
 		}
 		// console.error(data);
-	};
+	}
 
-	//#endregion
-
-	const getBorderColor = (props) => {
+	function getBorderColor(props) {
 		if (props.isDragAccept) {
 			return "#00e676";
 		}
@@ -265,7 +273,9 @@ const ManageFaculties = () => {
 			return "#2196f3";
 		}
 		return "#eeeeee";
-	};
+	}
+
+	//#endregion
 
 	return isLoading ? (
 		<Loading />
@@ -273,43 +283,55 @@ const ManageFaculties = () => {
 		<div className="mng-container">
 			<div className="form-list__container">
 				<div className="form__container">
-					{!!excelLoadedItems && (
-						<Button
-							style={{marginBottom: 10}}
-							className="delete"
-							// clear items
-							onClick={() => setExcelLoadedItems()}
-						>
-							Hủy
-						</Button>
-					)}
-					{!!excelLoadedItems ? (
-						<ul id="excel__loaded-ul">{excelLoadedItems}</ul>
-					) : (
-						<div
-							className="dropzone__container"
-							style={{
-								// expand to full height of parent
-								height: (isDragActive || !!excelLoadedItems) && "100%",
-								// change border color on Drag event
-								borderColor: getBorderColor({
-									...getRootProps({isDragActive, isDragAccept, isDragReject}),
-								}),
-							}}
-							// get props for root container
-							{...getRootProps()}
-						>
-							<input {...getInputProps()} />
-							{isDragActive ? (
-								<p>Thả file vào đây...</p>
-							) : (
-								<p>
-									Kéo thả tệp excel vào đây <br />
-									hoặc nhấn để chọn tệp của bạn!
-								</p>
-							)}
-						</div>
-					)}
+					{
+						// render button if excel loaded at least 1 row
+						!!excelLoadedItems && (
+							<Button
+								style={{marginBottom: 10}}
+								className="delete"
+								// clear items
+								onClick={() => setExcelLoadedItems()}
+							>
+								Hủy
+							</Button>
+						)
+					}
+					{
+						// render excel loaded list items if it has at least 1 row or render dropzone_container
+						!!excelLoadedItems ? (
+							<ul id="excel__loaded-ul">{excelLoadedItems}</ul>
+						) : (
+							<>
+								<div
+									className="dropzone__container"
+									style={{
+										// expand to full height of parent
+										height: (isDragActive || !!excelLoadedItems) && "100%",
+										// change border color on Drag event
+										borderColor: getBorderColor({
+											...getRootProps({
+												isDragActive,
+												isDragAccept,
+												isDragReject,
+											}),
+										}),
+									}}
+									// get props for root container
+									{...getRootProps()}
+								>
+									<input {...getInputProps()} />
+									{isDragActive ? (
+										<p>Thả file vào đây...</p>
+									) : (
+										<p>
+											Kéo thả tệp excel vào đây <br />
+											hoặc nhấn để chọn tệp của bạn!
+										</p>
+									)}
+								</div>
+							</>
+						)
+					}
 					{
 						// remove form on file drag or if list item has item
 						isDragActive || !!excelLoadedItems || (

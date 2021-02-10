@@ -1,8 +1,7 @@
 import React, {useEffect, useState, useContext} from "react";
 
 // import components
-import {LinkButton, Button} from "../Button";
-import Loading from "../Loading";
+import {Loading, LinkButton, Button} from "../Components";
 import {removeSemester, getAllSemester} from "../../firebase";
 import {Link} from "@reach/router";
 import {confirmAlert} from "react-confirm-alert";

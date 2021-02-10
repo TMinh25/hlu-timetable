@@ -1,9 +1,38 @@
-import React, {Component, useState} from "react";
-// import {Link} from "react-router-dom";
+import React from "react";
 import {Link} from "@reach/router";
 
+// import components
+import logo from "../logo.svg";
+
 // import styles
-import "./Button.css";
+import "./Components.css";
+
+//#region Logo & Loading
+
+export const Logo = () => (
+	<Link to="/">
+		<div className="app-logo-container">
+			<img src={logo} className="app-logo" alt="logo" />
+			<p>
+				Hạ Long
+				<br />
+				University
+			</p>
+		</div>
+	</Link>
+);
+
+export const Loading = () => (
+	<>
+		<div className="loading">
+			<img src={logo} className="app-logo-loading" alt="logo" />
+		</div>
+	</>
+);
+
+//#endregion
+
+//#region Button
 
 export const LinkButton = (props) => {
 	return (
@@ -90,28 +119,4 @@ export const DropDownHoverButton = ({
 	);
 };
 
-export const IconInput = ({
-	type,
-	onChange,
-	name,
-	value,
-	placeholder,
-	className,
-	id,
-	iconClass,
-}) => {
-	return (
-		<>
-			<div className="icon__input">
-				<input
-					type={type || "text"}
-					onChange={onChange}
-					name={name}
-					value={value}
-					placeholder={placeholder}
-				/>
-				<i className={iconClass || "fas fa-search" + " icon__merge"} />
-			</div>
-		</>
-	);
-};
+//#endregion

@@ -8,7 +8,7 @@ import {
 
 // import components
 import FormSubjects from "./FormSubjects";
-import Loading from "../../Loading";
+import {Loading} from "../../Components";
 import {confirmAlert} from "react-confirm-alert";
 
 //import styles

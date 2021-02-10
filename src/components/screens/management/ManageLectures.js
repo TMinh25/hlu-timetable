@@ -10,7 +10,7 @@ import {
 	getAllFaculties,
 } from "../../../firebase";
 import {confirmAlert} from "react-confirm-alert";
-import Loading from "../../Loading";
+import {Loading} from "../../Components";
 
 // import styles
 import "./Manage.css";

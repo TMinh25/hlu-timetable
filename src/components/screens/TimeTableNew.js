@@ -4,7 +4,7 @@ import React, {useState, useEffect, useContext} from "react";
 import {setNewSemester} from "../../firebase";
 import {UserContext} from "../../providers/UserProvider";
 import Calendar from "react-calendar";
-import {Button} from "../Button";
+import {Button} from "../Components";
 import {useNavigate} from "@reach/router";
 
 // import styles

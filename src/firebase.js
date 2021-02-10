@@ -132,13 +132,14 @@ export function getAllFaculties(callback) {
 }
 
 // add and modify faculty to database
-export function setNewFaculty(values) {
+export function setNewFaculty(values, failCB = defaultFailCB) {
 	Object.keys(values).map(
-		(key) => (values[key] = values[key].toString().toString().trim())
+		(key) => (values[key] = values[key].toString().trim())
 	);
 	if (values["faculty-name"]) {
 		let object = values;
 		let facID = object["faculty-id"];
+		// remove the faculty-id prop from object and use it as key
 		delete object["faculty-id"];
 		object["faculty-name"] = titleCase(object["faculty-name"]);
 
@@ -146,11 +147,7 @@ export function setNewFaculty(values) {
 			if (user) {
 				userRef(user.uid)
 					.child(`faculties/${facID}`)
-					.set(object, (err) => {
-						if (err) {
-							console.warn(err);
-						}
-					});
+					.set(object, (err) => err && failCB(err.message));
 			}
 		});
 	}

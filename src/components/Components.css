@@ -1,3 +1,69 @@
+/*#region Logo & Loading */
+
+.app-logo-container {
+	display: flex;
+	width: 100%;
+}
+
+.app-logo-container p {
+	font-size: 14px;
+	margin: 0;
+	user-select: none;
+	color: white;
+}
+
+.app-logo {
+	height: 30px;
+	pointer-events: none;
+	user-select: none;
+	transition-property: all;
+	-webkit-transition-property: all;
+	transition-duration: infinite;
+	-webkit-transition-duration: infinite;
+	animation: app-logo-spin infinite 10s linear;
+	-webkit-animation: app-logo-spin infinite 10s linear;
+}
+
+.app-logo-loading {
+	height: 90px;
+	pointer-events: none;
+	user-select: none;
+	opacity: 1;
+	transition-property: all;
+	-webkit-transition-property: all;
+	transition-duration: infinite;
+	-webkit-transition-duration: infinite;
+	animation: app-logo-spin infinite 10s linear;
+	-webkit-animation: app-logo-spin infinite 1s ease-in-out;
+}
+
+.loading {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	opacity: 0.5;
+	top: 0;
+	left: 0;
+	z-index: 50;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: black;
+}
+
+@keyframes app-logo-spin {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/*#endregion*/
+
+/*#region Buttons */
+
 .button {
 	display: flex !important;
 	padding: 10px 20px !important;
@@ -194,3 +260,5 @@
 		transform: rotateX(0deg);
 	}
 }
+
+/*#endregion*/
