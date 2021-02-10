@@ -1,5 +1,7 @@
 import * as XLSX from "xlsx";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
+
+// function check for sheet in excel is empty
 
 // read excel as json
 export function readExcel(file, headers) {
@@ -9,14 +11,21 @@ export function readExcel(file, headers) {
 
 		fileReader.onload = (e) => {
 			const bufferArray = e.target.result;
-			const wb = XLSX.read(bufferArray, {type: "buffer"});
+			const wb = XLSX.read(bufferArray, { type: "buffer" });
 			const wsname = wb.SheetNames[0];
 			const ws = wb.Sheets[wsname];
 			const data = XLSX.utils.sheet_to_json(ws, {
 				header: headers,
 				raw: false,
+				blankrows: false,
+				defval: null, // giá trị mặc định thay cho null hoặc undefined
 			});
-			resolve(data);
+
+			if (data.slice(1).length === 0) {
+				reject("Không có dữ liệu");
+			} else {
+				resolve(data.slice(1));
+			}
 		};
 
 		fileReader.onerror = (error) => {

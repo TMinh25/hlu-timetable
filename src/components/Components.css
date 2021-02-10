@@ -72,7 +72,6 @@
 	line-height: initial !important;
 	background-color: #21262d !important;
 	border: 1px solid #30363d !important;
-	font-size: 2vmin !important;
 	text-align: center !important;
 	justify-content: center !important;
 	align-items: center !important;
@@ -101,8 +100,6 @@
 
 .sign-out {
 	margin: auto !important;
-	/* font-weight: 600 !important; */
-	font-size: calc(2vmin + 2px) !important;
 	transition: 0.3s all !important;
 }
 
@@ -178,7 +175,6 @@
 	color: #fff;
 	background-color: #21262d;
 	padding: 10px 20px;
-	font-size: 2vmin;
 	opacity: 0;
 }
 .dropdown_item:hover {

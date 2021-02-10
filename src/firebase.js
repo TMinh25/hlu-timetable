@@ -1,7 +1,7 @@
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
-import {titleCase, defaultSuccessCB, defaultFailCB} from "./utils";
+import { titleCase, defaultSuccessCB, defaultFailCB } from "./utils";
 
 var firebaseConfig = {
 	apiKey: "AIzaSyAvou0hUxm9CUqZUN7pRmq6ooHDqHy52x0",
@@ -133,9 +133,11 @@ export function getAllFaculties(callback) {
 
 // add and modify faculty to database
 export function setNewFaculty(values, failCB = defaultFailCB) {
-	Object.keys(values).map(
-		(key) => (values[key] = values[key].toString().trim())
-	);
+	Object.keys(values).map((key) => {
+		if (!!values[key]) {
+			values[key] = values[key].toString().trim();
+		}
+	});
 	if (values["faculty-name"]) {
 		let object = values;
 		let facID = object["faculty-id"];

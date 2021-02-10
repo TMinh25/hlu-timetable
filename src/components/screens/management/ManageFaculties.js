@@ -1,12 +1,16 @@
-import React, {useEffect, useState, useCallback} from "react";
+import React, { useEffect, useState, useCallback } from "react";
 
 // import components
 import FormFaculties from "./FormFaculties";
-import {getAllFaculties, setNewFaculty, removeFaculty} from "../../../firebase";
-import {confirmAlert} from "react-confirm-alert";
-import {Loading, Button} from "../../Components";
-import {useDropzone} from "react-dropzone";
-import {readExcel, defaultFailCB} from "../../../utils";
+import {
+	getAllFaculties,
+	setNewFaculty,
+	removeFaculty,
+} from "../../../firebase";
+import { confirmAlert } from "react-confirm-alert";
+import { Loading, Button } from "../../Components";
+import { useDropzone } from "react-dropzone";
+import { readExcel, defaultFailCB } from "../../../utils";
 
 // import styles
 import "./Manage.css";
@@ -24,17 +28,6 @@ const accept = [
 	"application/vnd.ms-excel",
 ];
 
-const FacultyListItem = ({index, id, facultyName, onClick, onRemove}) => (
-	<li key={index} className="list__container-li_item" onClick={onClick}>
-		<p className="li__item-search">{index + 1}</p>
-		<p className="li__item-search">{id}</p>
-		<p className="li__item-search">{facultyName}</p>
-		<span className="btn__trash trash" onClick={onRemove}>
-			<i className="fas fa-trash-alt" />
-		</span>
-	</li>
-);
-
 const ManageFaculties = () => {
 	//#region Component State
 
@@ -42,14 +35,25 @@ const ManageFaculties = () => {
 	const [searchString, setSearchString] = useState("");
 
 	const [facultiesObj, setFacultiesObj] = useState({});
-	const [currentFacultyId, setCurrentFacultyId] = useState();
-	const [excelLoadedItems, setExcelLoadedItems] = useState();
+	const [currentFacultyId, setCurrentFacultyId] = useState("");
+	const [excelLoadedItems, setExcelLoadedItems] = useState([]);
 
 	//#endregion
 
 	//#region Component
 
-	const FacultyItemToAdd = ({onAdd, index, facultyName}) => {
+	const FacultyListItem = ({ index, id, facultyName, onClick, onRemove }) => (
+		<li key={index} className="list__container-li_item" onClick={onClick}>
+			<p className="li__item-search">{index + 1}</p>
+			<p className="li__item-search">{id}</p>
+			<p className="li__item-search">{facultyName}</p>
+			<span className="btn__trash trash" onClick={onRemove}>
+				<i className="fas fa-trash-alt" />
+			</span>
+		</li>
+	);
+
+	const FacultyItemToAdd = ({ onAdd, index, facultyName }) => {
 		return (
 			<li key={index} className="excel__list-li_item">
 				<p>{facultyName}</p>
@@ -92,10 +96,11 @@ const ManageFaculties = () => {
 		}
 	}, [searchString]); // search for text in list when searchString change
 
-	// useEffect(() => {
-	// 	console.error(facultiesObj);
-	// }, [facultiesObj]);
+	useEffect(() => {
+		console.error(excelLoadedItems);
+	}, [excelLoadedItems]); // show data
 
+	// handle on file drop with dropzone
 	const onDrop = useCallback((acceptedFiles, fileRejections) => {
 		if (!!fileRejections.length) {
 			defaultFailCB("Tệp tin không phù hợp");
@@ -104,6 +109,7 @@ const ManageFaculties = () => {
 		} // eslint-disable-next-line
 	}, []);
 
+	// get props
 	const {
 		getRootProps,
 		getInputProps,
@@ -119,26 +125,31 @@ const ManageFaculties = () => {
 
 	//#region Component Method
 
-	// function handleOnExcelItemAdd(values, event) {
-	// 	console.log(facultiesObj);
-	// 	handleOnAdd(values).then((res) => {
-	// 		// remove li item if user says yes
-	// 		if (res) {
-	// 			const thisEle = event.target;
-	// 			thisEle.closest("li").remove();
-	// 		}
-	// 	});
-	// }
-
-	function handleOnAdd({values, removeChild = false, event}) {
-		console.log(values);
+	function handleOnAdd({
+		values,
+		shouldRemoveChild = false,
+		event = undefined,
+	}) {
+		//remove li element on add
+		const removeLi = (shouldRemoveChild, event) => {
+			if (shouldRemoveChild) {
+				const thisLi = event.target.closest("li");
+				let nodes = Array.from(thisLi.closest("ul").children); // get array
+				let index = nodes.indexOf(thisLi);
+				if (index >= 0) {
+					const tempArr = [...excelLoadedItems];
+					tempArr.splice(index, 1);
+					console.log(tempArr);
+					setExcelLoadedItems(tempArr);
+				}
+			}
+		};
 		// Trả về Promise để Form đợi tới khi người dùng chọn tùy chọn
-		return new Promise((resolve) => {
+		return new Promise((resolve, reject) => {
+			console.log(values);
 			if (values["faculty-name"] !== "") {
 				let facID = getFacId(values["faculty-name"]);
 				values["faculty-id"] = facID;
-				console.log(facultiesObj);
-				// alert(values["faculty-id"] in facultiesObj);
 				if (values["faculty-id"] in facultiesObj) {
 					confirmAlert({
 						title: "Bạn có muốn thay đổi tên khoa?",
@@ -148,7 +159,7 @@ const ManageFaculties = () => {
 								className: "confirm__cancel",
 								label: "Hủy",
 								onClick: () => {
-									resolve(false);
+									reject();
 								},
 							},
 							{
@@ -156,22 +167,16 @@ const ManageFaculties = () => {
 								label: "Thay Đổi",
 								onClick: () => {
 									setNewFaculty(values);
-									resolve(true);
-									if (removeChild) {
-										const thisEle = event.target;
-										thisEle.closest("li").remove();
-									}
+									resolve();
+									removeLi(shouldRemoveChild, event);
 								},
 							},
 						],
 					});
 				} else {
 					setNewFaculty(values);
-					resolve(true);
-					if (removeChild) {
-						const thisEle = event.target;
-						thisEle.closest("li").remove();
-					}
+					resolve();
+					removeLi(shouldRemoveChild, event);
 				}
 			}
 		});
@@ -242,24 +247,17 @@ const ManageFaculties = () => {
 	}
 
 	async function handleExcelLoad(file) {
-		const data = await readExcel(file, ["faculty-name", "faculty-note"]);
-		const slicedData = data.slice(1);
-		if (slicedData.length === 0) {
-			setExcelLoadedItems(<div>Không có dữ liệu</div>);
-		} else {
-			setExcelLoadedItems(
-				slicedData.map((item, index) => (
-					<FacultyItemToAdd
-						index={index}
-						facultyName={item["faculty-name"]}
-						onAdd={(event) =>
-							handleOnAdd({values: item, removeChild: true, event})
-						}
-					/>
-				))
-			);
+		const objHeaders = ["faculty-name", "faculty-note"];
+		try {
+			const data = await readExcel(file, objHeaders);
+			if (data.length === 0) {
+				setExcelLoadedItems(null);
+			} else {
+				setExcelLoadedItems(data);
+			}
+		} catch (err) {
+			defaultFailCB(err);
 		}
-		// console.error(data);
 	}
 
 	function getBorderColor(props) {
@@ -285,12 +283,12 @@ const ManageFaculties = () => {
 				<div className="form__container">
 					{
 						// render button if excel loaded at least 1 row
-						!!excelLoadedItems && (
+						!!excelLoadedItems.length && (
 							<Button
-								style={{marginBottom: 10}}
+								style={{ marginBottom: 10 }}
 								className="delete"
 								// clear items
-								onClick={() => setExcelLoadedItems()}
+								onClick={() => setExcelLoadedItems([])}
 							>
 								Hủy
 							</Button>
@@ -298,15 +296,26 @@ const ManageFaculties = () => {
 					}
 					{
 						// render excel loaded list items if it has at least 1 row or render dropzone_container
-						!!excelLoadedItems ? (
-							<ul id="excel__loaded-ul">{excelLoadedItems}</ul>
+						!!excelLoadedItems.length ? (
+							<ul id="excel__loaded-ul">
+								{excelLoadedItems.map((values, index) => (
+									<FacultyItemToAdd
+										index={index}
+										facultyName={values["faculty-name"]}
+										onAdd={(event) =>
+											handleOnAdd({ values, shouldRemoveChild: true, event })
+										}
+									/>
+								))}
+							</ul>
 						) : (
 							<>
 								<div
 									className="dropzone__container"
 									style={{
 										// expand to full height of parent
-										height: (isDragActive || !!excelLoadedItems) && "100%",
+										height:
+											(isDragActive || !!excelLoadedItems.length) && "100%",
 										// change border color on Drag event
 										borderColor: getBorderColor({
 											...getRootProps({
@@ -334,7 +343,7 @@ const ManageFaculties = () => {
 					}
 					{
 						// remove form on file drag or if list item has item
-						isDragActive || !!excelLoadedItems || (
+						isDragActive || !!excelLoadedItems.length || (
 							<FormFaculties
 								{...{
 									facultiesObj,
@@ -352,7 +361,7 @@ const ManageFaculties = () => {
 						<input
 							type="text"
 							className="text__search"
-							onChange={({target}) => setSearchString(target.value)}
+							onChange={({ target }) => setSearchString(target.value)}
 							name="search-string"
 							value={searchString}
 							placeholder="Tìm kiếm..."

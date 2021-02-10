@@ -23,6 +23,7 @@ html {
 * {
 	margin: 0;
 	padding: 0;
+	font-size: 1.5vmin;
 	box-sizing: border-box;
 }
 
@@ -44,19 +45,19 @@ main {
  */
 
 h1 {
-	font-size: calc(3vmin + 3pt);
+	font-size: calc(2.3vmin + 3pt);
 }
 h2 {
-	font-size: calc(3vmin);
+	font-size: calc(2.3vmin);
 }
 h3 {
-	font-size: calc(3vmin - 2pt);
+	font-size: calc(2.3vmin - 2pt);
 }
 h4 {
-	font-size: calc(3vmin - 3pt);
+	font-size: calc(2.3vmin - 3pt);
 }
 h5 {
-	font-size: calc(3vmin - 4pt);
+	font-size: calc(2.3vmin - 4pt);
 }
 
 /* Grouping content
@@ -100,6 +101,10 @@ a {
  * 1. Remove the bottom border in Chrome 57-
  * 2. Add the correct text decoration in Chrome, Edge, IE, Opera, and Safari.
  */
+
+abbr {
+	font-size: 0.75em;
+}
 
 abbr[title] {
 	border-bottom: none; /* 1 */
@@ -387,7 +392,7 @@ ul li {
 
 p,
 a {
-	font-size: calc(2vmin - 2px);
+	font-size: 1.3vmin;
 }
 
 .center-text {

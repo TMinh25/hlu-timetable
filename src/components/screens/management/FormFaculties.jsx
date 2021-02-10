@@ -1,8 +1,8 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 
 // import components
-import {Button} from "../../Components";
-import {Form} from "semantic-ui-react";
+import { Button } from "../../Components";
+import { Form } from "semantic-ui-react";
 
 const FormFaculties = ({
 	currentFacultyId,
@@ -21,31 +21,39 @@ const FormFaculties = ({
 
 	useEffect(() => {
 		if (currentFacultyId == "") {
-			setValues({...initialState});
+			setValues({ ...initialState });
 		} else {
-			setValues({...facultiesObj[currentFacultyId]});
+			setValues({ ...facultiesObj[currentFacultyId] });
 		}
 	}, [currentFacultyId, facultiesObj]);
 
-	// useEffect(() => {
-	// 	console.log(values);
-	// }, [values])
+	useEffect(() => {
+		console.log(values);
+	}, [values]);
 
 	const handleInputChange = (e) => {
-		var {name, value} = e.target;
-		setValues({...values, [name]: value});
+		var { name, value } = e.target;
+		setValues({ ...values, [name]: value });
 	};
 
 	const handleButtonAdd = async (e) => {
 		e.preventDefault();
-		await handleOnAdd({values: values});
-		setValues(initialState);
+		try {
+			await handleOnAdd({ values });
+			setValues(initialState);
+		} catch (e) {
+			return;
+		}
 	};
 
 	const handleButtonModify = async (e) => {
 		e.preventDefault();
-		await handleOnModify(values);
-		setValues(initialState);
+		try {
+			await handleOnModify(values);
+			setValues(initialState);
+		} catch (e) {
+			return;
+		}
 	};
 
 	return (
@@ -69,17 +77,17 @@ const FormFaculties = ({
 					title="Ghi chú"
 					name="faculty-note"
 					placeholder="Ghi Chú"
-					style={{marginBottom: 10}}
+					style={{ marginBottom: 10 }}
 					cols="20"
 					rows="10"
 					value={values["faculty-note"]}
 					onChange={handleInputChange}
 				/>
-				<div style={{display: "flex", justifyContent: "space-between"}}>
+				<div style={{ display: "flex", justifyContent: "space-between" }}>
 					<div>
 						{currentFacultyId ? (
 							<Button
-								style={{margin: "0"}}
+								style={{ margin: "0" }}
 								type="submit"
 								className="new"
 								title="Chỉnh sửa khoa"
@@ -89,7 +97,7 @@ const FormFaculties = ({
 							</Button>
 						) : (
 							<Button
-								style={{margin: "0"}}
+								style={{ margin: "0" }}
 								type="submit"
 								className="new"
 								title="Thêm khoa mới vào hệ thống"
@@ -102,7 +110,7 @@ const FormFaculties = ({
 					<div>
 						{currentFacultyId && (
 							<Button
-								style={{margin: "0"}}
+								style={{ margin: "0" }}
 								className="sign-out"
 								title="Hủy chỉnh sửa"
 								onClick={() => {
