@@ -10,7 +10,8 @@
 
 .show-left-menu {
 	overflow: hidden;
-	min-width: 300px;
+	min-width: 250px;
+	max-width: 300px;
 	transition: 0.25s ease;
 }
 
@@ -32,7 +33,6 @@
 .calendar__left-menu {
 	width: 100%;
 }
-
 
 .calendar {
 	font-size: 11px;

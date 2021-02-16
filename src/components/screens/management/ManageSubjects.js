@@ -1,39 +1,19 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import {
 	getAllSubjects,
 	modifySubject,
 	newSubject,
 	removeSubject,
 } from "../../../firebase";
+import { defaultFailCB, readExcel, exists, validNumber } from "../../../utils";
 
 // import components
 import FormSubjects from "./FormSubjects";
-import {Loading} from "../../Components";
-import {confirmAlert} from "react-confirm-alert";
+import { Loading, Button, FileDropzone } from "../../Components";
+import { confirmAlert } from "react-confirm-alert";
 
 //import styles
 import "./Manage.css";
-
-const SubjectListItem = ({
-	index,
-	onClick,
-	onRemove,
-	subjectName,
-	credit,
-	periods,
-}) => {
-	return (
-		<li onClick={onClick} className="list__container-li_item" key={index}>
-			<p className="li__item-search">{index + 1}</p>
-			<p className="li__item-search">{subjectName}</p>
-			<p>{credit}</p>
-			<p>{periods}</p>
-			<span className="btn__trash" onClick={onRemove}>
-				<i className="fas fa-trash-alt" />
-			</span>
-		</li>
-	);
-};
 
 const ManageSubjects = () => {
 	//#region State
@@ -42,6 +22,79 @@ const ManageSubjects = () => {
 	const [currentSubjectId, setCurrentSubjectId] = useState("");
 	const [searchString, setSearchString] = useState("");
 	const [isLoading, setIsLoading] = useState(true);
+	const [excelLoadedItems, setExcelLoadedItems] = useState([]);
+
+	//#endregion
+
+	//#region Components
+
+	const SubjectListItem = ({
+		index,
+		onClick,
+		onRemove,
+		subjectName,
+		credit,
+		periods,
+	}) => {
+		return (
+			<li
+				onClick={onClick}
+				className="list__container-li_item"
+				key={index.toString()}
+			>
+				<p className="li__item-search">{index + 1}</p>
+				<p className="li__item-search">{subjectName}</p>
+				<p>{credit}</p>
+				<p>{periods}</p>
+				<span className="btn__trash trash" onClick={onRemove}>
+					<i className="fas fa-trash-alt" />
+				</span>
+			</li>
+		);
+	};
+
+	const SubjectItemToAdd = ({ onAdd, index, subjectName, credit, periods }) => {
+		return (
+			<li key={index.toString()} className="excel__list-li_item">
+				<div className="vert-align">
+					<p>{subjectName}</p>
+					<div className="hozi-align">
+						<p>
+							{credit && (
+								<>
+									<span
+										style={{
+											color: validNumber(Number.parseInt(credit)) || "red",
+										}}
+									>
+										{credit}
+									</span>{" "}
+									tín
+								</>
+							)}
+						</p>
+						<p>
+							{periods && (
+								<>
+									<span
+										style={{
+											color: validNumber(Number.parseInt(periods)) || "red",
+										}}
+									>
+										{periods}
+									</span>{" "}
+									tiết
+								</>
+							)}
+						</p>
+					</div>
+				</div>
+				<span className="btn__trash add" onClick={onAdd}>
+					<i className="far fa-plus-square" />
+				</span>
+			</li>
+		);
+	};
 
 	//#endregion
 
@@ -50,9 +103,13 @@ const ManageSubjects = () => {
 	useEffect(() => {
 		getAllSubjects((result) => {
 			setSubjectsObj(result);
-			setIsLoading((prev) => false);
+			setIsLoading(false);
 		});
 	}, [isLoading]);
+
+	useEffect(() => {
+		console.log(subjectsObj);
+	}, [subjectsObj]);
 
 	useEffect(() => {
 		const li = document.getElementsByClassName("list__container-li_item");
@@ -66,23 +123,55 @@ const ManageSubjects = () => {
 				li[i].style.display = "none";
 			}
 		}
+		// eslint-disable-next-line
 	}, [searchString]); // search for text in list when searchString change
+
+	useEffect(() => {
+		console.log(currentSubjectId);
+	}, [currentSubjectId]);
 
 	//#endregion
 
 	//#region Methods
 
-	const handleOnAdd = (values) => {
-		if (values["subject-name"] && values["credit"] && values["periods"]) {
-			newSubject(values);
-			setIsLoading(true);
-		}
+	const handleOnAdd = ({
+		values,
+		shouldRemoveChild = false,
+		event = undefined,
+	}) => {
+		//remove li element on add
+		const removeLi = () => {
+			const thisLi = event.target.closest("li");
+			let nodes = Array.from(thisLi.closest("ul").children); // get array
+			let index = nodes.indexOf(thisLi);
+			if (index >= 0) {
+				const tempArr = [...excelLoadedItems];
+				tempArr.splice(index, 1);
+				setExcelLoadedItems(tempArr);
+			}
+		};
+
+		return new Promise((resolve, reject) => {
+			if (!exists(values["subject-name"])) {
+				reject("Không có tên môn học");
+			} else if (
+				!validNumber(values["credit"]) ||
+				!validNumber(values["periods"])
+			) {
+				reject("Dữ liệu không đúng định dạng số");
+			} else {
+				newSubject(values);
+				setIsLoading(true);
+				shouldRemoveChild && removeLi();
+				resolve();
+			}
+		});
 	};
 
 	const handleOnModify = (id, values) => {
 		if (!!Object.keys(values).length) {
 			modifySubject(id, values);
-			setCurrentSubjectId("");
+			setCurrentSubjectId(undefined);
 			setIsLoading(true);
 		}
 	};
@@ -109,6 +198,21 @@ const ManageSubjects = () => {
 		});
 	};
 
+	async function handleDropped(files) {
+		const objHeaders = ["subject-name", "credit", "periods"];
+		const file = files[0];
+		try {
+			const data = await readExcel(file, objHeaders);
+			if (data.length === 0) {
+				setExcelLoadedItems(null);
+			} else {
+				setExcelLoadedItems(data);
+			}
+		} catch (err) {
+			defaultFailCB(err);
+		}
+	}
+
 	//#endregion
 
 	return (
@@ -116,22 +220,70 @@ const ManageSubjects = () => {
 			<div className="mng-container">
 				<div className="form-list__container">
 					<div className="form__container">
-						<FormSubjects
-							{...{
-								subjectsObj,
-								currentSubjectId,
-								setCurrentSubjectId,
-								handleOnAdd,
-								handleOnModify,
-							}}
-						/>
+						{
+							// render cancel button if excelLoaded has at least 1 row
+							!!excelLoadedItems.length && (
+								<Button
+									style={{ marginBottom: 10 }}
+									className="delete"
+									// clear items
+									onClick={() => setExcelLoadedItems([])}
+								>
+									Hủy
+								</Button>
+							)
+						}
+						{
+							// render excel loaded list items if it has at least 1 row or render dropzone_container
+							!!excelLoadedItems.length ? (
+								<ul id="excel__loaded-ul subject-ul">
+									{excelLoadedItems.map((values, index) => (
+										<SubjectItemToAdd
+											index={index}
+											subjectName={values["subject-name"]}
+											credit={values["credit"]}
+											periods={values["periods"]}
+											onAdd={(event) => {
+												handleOnAdd({
+													values,
+													shouldRemoveChild: true,
+													event,
+												})
+													.then((res) => {
+														console.error(res);
+													})
+													.catch((err) => {
+														defaultFailCB(err);
+													});
+											}}
+										/>
+									))}
+								</ul>
+							) : (
+								<FileDropzone {...{ excelLoadedItems, handleDropped }} />
+							)
+						}
+						{
+							// remove form if list item has item
+							!!excelLoadedItems.length || (
+								<FormSubjects
+									{...{
+										subjectsObj,
+										currentSubjectId,
+										setCurrentSubjectId,
+										handleOnAdd,
+										handleOnModify,
+									}}
+								/>
+							)
+						}
 					</div>
 					<div className="list__container subject-list">
 						<div className="list__container-search">
 							<input
 								type="text"
 								className="text__search"
-								onChange={({target}) => setSearchString(target.value)}
+								onChange={({ target }) => setSearchString(target.value)}
 								name="search-string"
 								value={searchString}
 								placeholder="Tìm kiếm..."
@@ -170,6 +322,7 @@ const ManageSubjects = () => {
 			{isLoading && <Loading />}
 		</>
 	);
+
 };
 
 export default ManageSubjects;

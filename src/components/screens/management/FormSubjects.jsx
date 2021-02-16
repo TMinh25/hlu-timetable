@@ -1,9 +1,9 @@
-import React, {useState, useEffect} from "react";
-import {modifySubject, newSubject} from "../../../firebase";
+import React, { useState, useEffect } from "react";
+import { defaultFailCB, selectAllOnFocus } from "../../../utils";
 
 // import components
-import {Button} from "../../Components";
-import {Form} from "semantic-ui-react";
+import { Button } from "../../Components";
+import { Form } from "semantic-ui-react";
 
 // import styles
 
@@ -24,10 +24,11 @@ const FormSubjects = ({
 
 	useEffect(() => {
 		if (currentSubjectId === "") {
-			setValues({...initialState});
+			setValues({ ...initialState });
 		} else {
-			setValues({...subjectsObj[currentSubjectId]});
+			setValues({ ...subjectsObj[currentSubjectId] });
 		}
+		// eslint-disable-next-line
 	}, [currentSubjectId, subjectsObj]);
 
 	// useEffect(() => {
@@ -37,14 +38,26 @@ const FormSubjects = ({
 	// 	}
 	// }, [currentLectureId, lecturesObj, facultiesObj]);
 
+	useEffect(() => {
+		console.log(values);
+	}, [values]);
+
 	const handleInputChange = (e) => {
-		var {name, value} = e.target;
-		setValues({...values, [name]: value});
+		var { name, value, type } = e.target;
+		const typeCheckedValues = {
+			...values,
+			[name]: type === "number" ? parseInt(value, 10) : value,
+		};
+		setValues(typeCheckedValues);
 	};
 
 	const handleButtonAdd = (e) => {
 		e.preventDefault();
-		handleOnAdd(values);
+		try {
+			handleOnAdd({ values });
+		} catch (err) {
+			defaultFailCB(err);
+		}
 		setValues(initialState);
 	};
 
@@ -70,6 +83,7 @@ const FormSubjects = ({
 					name="subject-name"
 					value={values["subject-name"]}
 					onChange={handleInputChange}
+					onFocus={selectAllOnFocus}
 					required
 				/>
 				<Form.Input
@@ -81,6 +95,7 @@ const FormSubjects = ({
 					name="credit"
 					value={values["credit"]}
 					onChange={handleInputChange}
+					onFocus={selectAllOnFocus}
 					required
 				/>
 				<Form.Input
@@ -92,13 +107,14 @@ const FormSubjects = ({
 					name="periods"
 					value={values["periods"]}
 					onChange={handleInputChange}
+					onFocus={selectAllOnFocus}
 					required
 				/>
-				<div style={{display: "flex", justifyContent: "space-between"}}>
+				<div style={{ display: "flex", justifyContent: "space-between" }}>
 					<div>
 						{currentSubjectId ? (
 							<Button
-								style={{margin: 0, height: "100%"}}
+								style={{ margin: 0, height: "100%" }}
 								type="submit"
 								className="new"
 								title="Chỉnh sửa khoa"
@@ -108,7 +124,7 @@ const FormSubjects = ({
 							</Button>
 						) : (
 							<Button
-								style={{margin: 0, height: "100%"}}
+								style={{ margin: 0, height: "100%" }}
 								type="submit"
 								className="new"
 								title="Thêm giảng viên mới"
@@ -121,7 +137,7 @@ const FormSubjects = ({
 					<div>
 						{currentSubjectId && (
 							<Button
-								style={{margin: "0", height: "100%"}}
+								style={{ margin: "0", height: "100%" }}
 								className="sign-out"
 								title="Hủy chỉnh sửa"
 								onClick={cancelModify}

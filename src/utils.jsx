@@ -1,8 +1,6 @@
 import * as XLSX from "xlsx";
 import { toast } from "react-toastify";
 
-// function check for sheet in excel is empty
-
 // read excel as json
 export function readExcel(file, headers) {
 	return new Promise((resolve, reject) => {
@@ -16,7 +14,7 @@ export function readExcel(file, headers) {
 			const ws = wb.Sheets[wsname];
 			const data = XLSX.utils.sheet_to_json(ws, {
 				header: headers,
-				raw: false,
+				raw: true,
 				blankrows: false,
 				defval: null, // giá trị mặc định thay cho null hoặc undefined
 			});
@@ -48,6 +46,19 @@ export function titleCase(str) {
 }
 
 // success notification
-export const defaultSuccessCB = () => toast.success("✌ Thành Công!");
+export const defaultSuccessCB = (msg) =>
+	toast.success(msg ? `✌ Thành Công: ${msg}!` : "✌ Thành Công!");
 // fail notification
-export const defaultFailCB = (err) => toast.error(`🚫 Lỗi: ${err}!`);
+export const defaultFailCB = (err) =>
+	toast.error(err ? `🚫 Lỗi: ${err}!` : "🚫 Lỗi!");
+
+export const exists = (x) => x !== null && x !== undefined && x !== "";
+export const ifExists = (value) => {
+	return new Promise((resolve, reject) => {
+		exists(value) ? resolve(value) : reject();
+	});
+};
+
+export const validNumber = (num) => exists(num) && Number.isInteger(num);
+
+export const selectAllOnFocus = (event) => event.target.select();

@@ -139,17 +139,18 @@ export function setNewFaculty(values, failCB = defaultFailCB) {
 		}
 	});
 	if (values["faculty-name"]) {
-		let object = values;
-		let facID = object["faculty-id"];
+		let facID = values["faculty-id"];
 		// remove the faculty-id prop from object and use it as key
-		delete object["faculty-id"];
-		object["faculty-name"] = titleCase(object["faculty-name"]);
+		delete values["faculty-id"];
+		values["faculty-name"] = titleCase(values["faculty-name"]);
 
 		auth.onAuthStateChanged((user) => {
 			if (user) {
 				userRef(user.uid)
 					.child(`faculties/${facID}`)
-					.set(object, (err) => err && failCB(err.message));
+					.set(values, (err) =>
+						err ? failCB(err.message) : console.log("setNewFaculty success")
+					);
 			}
 		});
 	}
@@ -197,9 +198,11 @@ export function getAllLectures(callback) {
 
 // set new lectures
 export function newLecture(values) {
-	Object.keys(values).map(
-		(key) => (values[key] = values[key].toString().trim())
-	);
+	Object.keys(values).map((key) => {
+		if (!!values[key]) {
+			values[key] = values[key].toString().trim();
+		}
+	});
 	auth.onAuthStateChanged((user) => {
 		if (user) {
 			userRef(user.uid)
@@ -275,9 +278,11 @@ export function getAllSubjects(callback) {
 // set new subject
 export function newSubject(values) {
 	if (!!values["subject-name"]) {
-		Object.keys(values).map(
-			(key) => (values[key] = values[key].toString().trim())
-		);
+		Object.keys(values).map((key) => {
+			if (!!values[key]) {
+				values[key] = values[key].toString().trim();
+			}
+		});
 		values["subject-name"] = values["subject-name"].toString().toUpperCase();
 	}
 	auth.onAuthStateChanged((user) => {

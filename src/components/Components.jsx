@@ -1,5 +1,7 @@
-import React from "react";
-import {Link} from "@reach/router";
+import React, { useCallback } from "react";
+import { Link } from "@reach/router";
+import { defaultFailCB } from "../utils";
+import { useDropzone } from "react-dropzone";
 
 // import components
 import logo from "../logo.svg";
@@ -34,7 +36,7 @@ export const Loading = () => (
 
 //#region Button
 
-export const LinkButton = ({className, title, to, children}) => {
+export const LinkButton = ({ className, title, to, children }) => {
 	const fixedClassName = className ? className : "";
 	return (
 		<>
@@ -45,7 +47,14 @@ export const LinkButton = ({className, title, to, children}) => {
 	);
 };
 
-export const Button = ({title, style, type, className, onClick, children}) => {
+export const Button = ({
+	title,
+	style,
+	type,
+	className,
+	onClick,
+	children,
+}) => {
 	return (
 		<>
 			<button
@@ -111,6 +120,84 @@ export const DropDownHoverButton = ({
 						</Link>
 					)}
 				</ul>
+			</div>
+		</>
+	);
+};
+
+//#endregion
+
+//#region Excel Dropzone
+
+export const FileDropzone = ({ handleDropped, excelLoadedItems }) => {
+	// accepted files for react-dropzone in MIME Type
+	const accept = [
+		"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+		"application/vnd.ms-excel",
+	];
+
+	// handle on file drop with dropzone
+	const onDrop = useCallback((acceptedFiles, fileRejections) => {
+		if (!!fileRejections.length) {
+			defaultFailCB("Tệp tin không phù hợp");
+		} else {
+			handleDropped(acceptedFiles);
+		} // eslint-disable-next-line
+	}, []);
+
+	// get props
+	const {
+		getRootProps,
+		getInputProps,
+		isDragActive,
+		isDragAccept,
+		isDragReject,
+	} = useDropzone({
+		accept,
+		onDrop,
+	});
+
+	function getBorderColor(props) {
+		if (props.isDragAccept) {
+			return "#00e676";
+		}
+		if (props.isDragReject) {
+			return "#ff1744";
+		}
+		if (props.isDragActive) {
+			return "#2196f3";
+		}
+		return "#eeeeee";
+	}
+
+	return (
+		<>
+			<div
+				className="dropzone__container"
+				style={{
+					// expand to full height of parent
+					height: (isDragActive || !!excelLoadedItems.length) && "100%",
+					// change border color on Drag event
+					borderColor: getBorderColor({
+						...getRootProps({
+							isDragActive,
+							isDragAccept,
+							isDragReject,
+						}),
+					}),
+				}}
+				// get props for root container
+				{...getRootProps()}
+			>
+				<input {...getInputProps()} />
+				{isDragActive ? (
+					<p>Thả file vào đây...</p>
+				) : (
+					<p>
+						Kéo thả tệp excel vào đây <br />
+						hoặc nhấn để chọn tệp của bạn!
+					</p>
+				)}
 			</div>
 		</>
 	);

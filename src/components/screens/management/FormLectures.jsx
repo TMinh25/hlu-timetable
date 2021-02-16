@@ -1,8 +1,8 @@
-import React, {useState, useEffect, useContext} from "react";
+import React, { useState, useEffect, useContext } from "react";
 
 // import components
-import {Button} from "../../Components";
-import {Form} from "semantic-ui-react";
+import { Button } from "../../Components";
+import { Form } from "semantic-ui-react";
 
 const FormLectures = ({
 	handleOnModify,
@@ -23,9 +23,9 @@ const FormLectures = ({
 
 	useEffect(() => {
 		if (currentLectureId === "") {
-			setValues({...initialState});
+			setValues({ ...initialState });
 		} else {
-			setValues({...lecturesObj[currentLectureId]});
+			setValues({ ...lecturesObj[currentLectureId] });
 		}
 	}, [currentLectureId, lecturesObj]);
 
@@ -41,13 +41,13 @@ const FormLectures = ({
 	}, [currentLectureId, lecturesObj, facultiesObj]);
 
 	const handleInputChange = (e) => {
-		var {name, value} = e.target;
-		setValues({...values, [name]: value});
+		var { name, value } = e.target;
+		setValues({ ...values, [name]: value });
 	};
 
 	const handleButtonAdd = async (e) => {
 		e.preventDefault();
-		await handleOnAdd(values);
+		await handleOnAdd({ values });
 		setValues(initialState);
 	};
 
@@ -93,7 +93,7 @@ const FormLectures = ({
 					title="Chọn khoa"
 					name="faculty"
 					id="lecture__select-faculty"
-					style={{marginBottom: 10}}
+					style={{ marginBottom: 10 }}
 					onChange={handleInputChange}
 					value={values.faculty}
 				>
@@ -111,11 +111,11 @@ const FormLectures = ({
 							);
 						})}
 				</select>
-				<div style={{display: "flex", justifyContent: "space-between"}}>
+				<div style={{ display: "flex", justifyContent: "space-between" }}>
 					<div>
 						{currentLectureId ? (
 							<Button
-								style={{margin: 0, height: "100%"}}
+								style={{ margin: 0, height: "100%" }}
 								type="submit"
 								className="new"
 								title="Chỉnh sửa khoa"
@@ -125,7 +125,7 @@ const FormLectures = ({
 							</Button>
 						) : (
 							<Button
-								style={{margin: "0", height: "100%"}}
+								style={{ margin: "0", height: "100%" }}
 								type="submit"
 								className="new"
 								title="Thêm giảng viên mới"
@@ -138,7 +138,7 @@ const FormLectures = ({
 					<div>
 						{currentLectureId && (
 							<Button
-								style={{margin: "0", height: "100%"}}
+								style={{ margin: "0", height: "100%" }}
 								className="sign-out"
 								title="Hủy chỉnh sửa"
 								onClick={cancelModify}

@@ -1,6 +1,6 @@
-import React, {useState, useEffect, useContext} from "react";
-import {Router} from "@reach/router";
-import {UserContext} from "../providers/UserProvider";
+import React, { useState, useEffect, useContext } from "react";
+import { Router } from "@reach/router";
+import { UserContext } from "../providers/UserProvider";
 
 // import styles
 import "../App.css";
@@ -43,11 +43,23 @@ const Application = () => {
 		return () => {
 			window.removeEventListener("resize", handleResize);
 		};
-	}, []);
+	}, []); // hide left menu on resize window or if device width is small
+
+	useEffect(() => {
+		let numberInput = document.querySelectorAll("input[type='number']");
+
+		numberInput.forEach((elem) => {
+			elem.addEventListener("keypress", function (e) {
+				if ((e.which != 0 && e.which != 8 && e.which < 48) || e.which > 57) {
+					e.preventDefault();
+				}
+			});
+		});
+	}, []); // set all input with type = number can only type number
 
 	const handleHamburgerClick = () => {
 		setLeftMenuVisible((prev) => !prev);
-	};
+	}; // toggle left menu
 
 	return (
 		<>

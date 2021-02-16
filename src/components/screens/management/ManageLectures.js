@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 
 // import components
 import FormLectures from "./FormLectures";
@@ -8,29 +8,15 @@ import {
 	removeLecture,
 	getAllLectures,
 	getAllFaculties,
+	setNewFaculty,
 } from "../../../firebase";
-import {confirmAlert} from "react-confirm-alert";
-import {Loading} from "../../Components";
+import { defaultFailCB, readExcel, exists } from "../../../utils";
+import { confirmAlert } from "react-confirm-alert";
+import { Loading, Button, FileDropzone } from "../../Components";
+import { getFacId } from "./ManageFaculties";
 
 // import styles
 import "./Manage.css";
-
-const LectureListItem = ({index, name, faculty, onRemove, onClick}) => {
-	return (
-		<>
-			<li key={index} className="list__container-li_item" onClick={onClick}>
-				<p className="li__item-search">{index + 1}</p>
-				<p className="li__item-search">{name}</p>
-				<p className="li__item-search">
-					{faculty !== "defaultValue" ? faculty : "Không"}
-				</p>
-				<span className="btn__trash trash" onClick={() => onRemove(index)}>
-					<i className="fas fa-trash-alt" />
-				</span>
-			</li>
-		</>
-	);
-};
 
 const ManageLectures = () => {
 	//#region Component State
@@ -40,6 +26,41 @@ const ManageLectures = () => {
 	const [currentLectureId, setCurrentLectureId] = useState();
 	const [searchString, setSearchString] = useState("");
 	const [isLoading, setIsLoading] = useState(true);
+	const [excelLoadedItems, setExcelLoadedItems] = useState([]);
+
+	//#endregion
+
+	//#region Components
+
+	const LectureListItem = ({ index, name, faculty, onRemove, onClick }) => {
+		return (
+			<>
+				<li key={index} className="list__container-li_item" onClick={onClick}>
+					<p className="li__item-search">{index + 1}</p>
+					<p className="li__item-search">{name}</p>
+					<p className="li__item-search">
+						{faculty !== "defaultValue" ? faculty : "Không"}
+					</p>
+					<span className="btn__trash trash" onClick={() => onRemove(index)}>
+						<i className="fas fa-trash-alt" />
+					</span>
+				</li>
+			</>
+		);
+	};
+
+	const LectureItemToAdd = ({ onAdd, index, lectureName }) => {
+		return (
+			<li key={index} className="excel__list-li_item">
+				<div>
+					<p>{lectureName}</p>
+				</div>
+				<span className="btn__trash add" onClick={onAdd}>
+					<i className="far fa-plus-square" />
+				</span>
+			</li>
+		);
+	};
 
 	//#endregion
 
@@ -80,13 +101,98 @@ const ManageLectures = () => {
 
 	//#region Component Method
 
-	const handleOnAdd = (values) => {
-		return new Promise((resolve) => {
-			if (!!values["lecture-name"]) {
-				newLecture(values);
-				setIsLoading(true);
+	function handleOnAddFaculty(values) {
+		// Trả về Promise để Form đợi tới khi người dùng chọn tùy chọn
+		return new Promise((resolve, reject) => {
+			console.log(values);
+			if (exists(values["faculty-name"])) {
+				let facID = getFacId(values["faculty-name"]);
+				values["faculty-id"] = facID;
+				if (values["faculty-id"] in facultiesObj) {
+					confirmAlert({
+						title: "Bạn có muốn thay đổi tên khoa?",
+						message: "Mã khoa này đã tồn tại",
+						buttons: [
+							{
+								className: "confirm__cancel",
+								label: "Hủy",
+								onClick: () => reject(),
+							},
+							{
+								className: "new",
+								label: "Thay Đổi",
+								onClick: () => {
+									setNewFaculty(values);
+									resolve();
+								},
+							},
+						],
+					});
+				} else {
+					setNewFaculty(values);
+					resolve();
+				}
 			}
-			resolve(true);
+		});
+	}
+
+	const handleOnAdd = ({
+		values,
+		shouldRemoveChild = false,
+		event = undefined,
+	}) => {
+		//remove li element on add
+		const removeLi = () => {
+			const thisLi = event.target.closest("li");
+			let nodes = Array.from(thisLi.closest("ul").children); // get array
+			let index = nodes.indexOf(thisLi);
+			if (index >= 0) {
+				const tempArr = [...excelLoadedItems];
+				tempArr.splice(index, 1);
+				console.log(tempArr);
+				setExcelLoadedItems(tempArr);
+			}
+		};
+
+		console.log(facultiesObj);
+
+		return new Promise((resolve, reject) => {
+			if (!!values["lecture-name"]) {
+				if (
+					exists(values["faculty"]) &&
+					!(getFacId(values["faculty"]) in facultiesObj)
+				) {
+					confirmAlert({
+						title: "Khoa này hiện tại chưa có trong cơ sở dữ liệu",
+						message: "Bạn muốn thêm khoa này vào database không?",
+						buttons: [
+							{
+								className: "confirm__cancel",
+								label: "Hủy",
+								onClick: () => reject(),
+							},
+							{
+								className: "new",
+								label: "Thêm",
+								onClick: () => {
+									newLecture(values);
+									handleOnAddFaculty({
+										"faculty-name": values["faculty"],
+									});
+									setIsLoading(true);
+									shouldRemoveChild && removeLi();
+									resolve();
+								},
+							},
+						],
+					});
+				} else {
+					newLecture(values);
+					setIsLoading(true);
+					shouldRemoveChild && removeLi();
+					resolve();
+				}
+			}
 		});
 	};
 
@@ -123,6 +229,21 @@ const ManageLectures = () => {
 		});
 	};
 
+	async function handleDropped(files) {
+		const objHeaders = ["lecture-name", "lecture-email", "faculty"];
+		const file = files[0];
+		try {
+			const data = await readExcel(file, objHeaders);
+			if (data.length === 0) {
+				setExcelLoadedItems(null);
+			} else {
+				setExcelLoadedItems(data);
+			}
+		} catch (err) {
+			defaultFailCB(err);
+		}
+	}
+
 	//#endregion
 
 	return (
@@ -130,16 +251,53 @@ const ManageLectures = () => {
 			<div className="mng-container">
 				<div className="form-list__container">
 					<div className="form__container">
-						<FormLectures
-							{...{
-								facultiesObj,
-								lecturesObj,
-								currentLectureId,
-								setCurrentLectureId,
-								handleOnAdd,
-								handleOnModify,
-							}}
-						/>
+						{
+							// render cancel button if excelLoaded has at least 1 row
+							!!excelLoadedItems.length && (
+								<Button
+									style={{ marginBottom: 10 }}
+									className="delete"
+									// clear items
+									onClick={() => setExcelLoadedItems([])}
+								>
+									Hủy
+								</Button>
+							)
+						}
+						{
+							// render excel loaded list items if it has at least 1 row or render dropzone_container
+							!!excelLoadedItems.length ? (
+								<ul id="excel__loaded-ul lecture-ul">
+									{excelLoadedItems.map((values, index) => (
+										<LectureItemToAdd
+											index={index}
+											lectureName={values["lecture-name"]}
+											lectrueEmail={values["lecture-email"]}
+											onAdd={(event) =>
+												handleOnAdd({ values, shouldRemoveChild: true, event })
+											}
+										/>
+									))}
+								</ul>
+							) : (
+								<FileDropzone {...{ excelLoadedItems, handleDropped }} />
+							)
+						}
+						{
+							// remove form if list item has item
+							!!excelLoadedItems.length || (
+								<FormLectures
+									{...{
+										facultiesObj,
+										lecturesObj,
+										currentLectureId,
+										setCurrentLectureId,
+										handleOnAdd,
+										handleOnModify,
+									}}
+								/>
+							)
+						}
 					</div>
 
 					<div className="list__container lecture-list">
@@ -147,7 +305,7 @@ const ManageLectures = () => {
 							<input
 								type="text"
 								className="text__search"
-								onChange={({target}) => setSearchString(target.value)}
+								onChange={({ target }) => setSearchString(target.value)}
 								name="search-string"
 								value={searchString}
 								placeholder="Tìm kiếm..."

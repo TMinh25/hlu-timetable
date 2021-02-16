@@ -28,6 +28,7 @@ body {
 }
 
 *::-webkit-scrollbar-track {
+	border-radius: 5px;
 	background: var(--scrollbarBG);
 }
 

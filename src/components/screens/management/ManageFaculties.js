@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 
 // import components
 import FormFaculties from "./FormFaculties";
@@ -8,25 +8,22 @@ import {
 	removeFaculty,
 } from "../../../firebase";
 import { confirmAlert } from "react-confirm-alert";
-import { Loading, Button } from "../../Components";
-import { useDropzone } from "react-dropzone";
-import { readExcel, defaultFailCB } from "../../../utils";
+import { Loading, Button, FileDropzone } from "../../Components";
+import { readExcel, defaultFailCB, exists } from "../../../utils";
 
 // import styles
 import "./Manage.css";
 
-const getFacId = (facName) =>
-	facName
-		.trim()
-		.split(" ")
-		.map((word) => word[0].toUpperCase())
-		.join("");
-
-// accepted files for react-dropzone in MIME Type
-const accept = [
-	"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-	"application/vnd.ms-excel",
-];
+export function getFacId(facName) {
+	if (exists(facName)) {
+		return facName
+			.toString()
+			.trim()
+			.split(" ")
+			.map((word) => word[0].toUpperCase())
+			.join("");
+	}
+}
 
 const ManageFaculties = () => {
 	//#region Component State
@@ -96,30 +93,12 @@ const ManageFaculties = () => {
 		}
 	}, [searchString]); // search for text in list when searchString change
 
-	useEffect(() => {
-		console.error(excelLoadedItems);
-	}, [excelLoadedItems]); // show data
+	// useEffect(() => {
+	// 	console.error(excelLoadedItems);
+	// }, [excelLoadedItems]); // show data
 
 	// handle on file drop with dropzone
-	const onDrop = useCallback((acceptedFiles, fileRejections) => {
-		if (!!fileRejections.length) {
-			defaultFailCB("Tệp tin không phù hợp");
-		} else {
-			handleExcelLoad(acceptedFiles[0]);
-		} // eslint-disable-next-line
-	}, []);
-
-	// get props
-	const {
-		getRootProps,
-		getInputProps,
-		isDragActive,
-		isDragAccept,
-		isDragReject,
-	} = useDropzone({
-		accept,
-		onDrop,
-	});
+	const handleDropped = (files) => handleExcelLoad(files[0]);
 
 	//#endregion
 
@@ -131,17 +110,15 @@ const ManageFaculties = () => {
 		event = undefined,
 	}) {
 		//remove li element on add
-		const removeLi = (shouldRemoveChild, event) => {
-			if (shouldRemoveChild) {
-				const thisLi = event.target.closest("li");
-				let nodes = Array.from(thisLi.closest("ul").children); // get array
-				let index = nodes.indexOf(thisLi);
-				if (index >= 0) {
-					const tempArr = [...excelLoadedItems];
-					tempArr.splice(index, 1);
-					console.log(tempArr);
-					setExcelLoadedItems(tempArr);
-				}
+		const removeLi = () => {
+			const thisLi = event.target.closest("li");
+			let nodes = Array.from(thisLi.closest("ul").children); // get array
+			let index = nodes.indexOf(thisLi);
+			if (index >= 0) {
+				const tempArr = [...excelLoadedItems];
+				tempArr.splice(index, 1);
+				console.log(tempArr);
+				setExcelLoadedItems(tempArr);
 			}
 		};
 		// Trả về Promise để Form đợi tới khi người dùng chọn tùy chọn
@@ -158,17 +135,15 @@ const ManageFaculties = () => {
 							{
 								className: "confirm__cancel",
 								label: "Hủy",
-								onClick: () => {
-									reject();
-								},
+								onClick: () => reject(),
 							},
 							{
-								className: "sign-out",
+								className: "new",
 								label: "Thay Đổi",
 								onClick: () => {
 									setNewFaculty(values);
 									resolve();
-									removeLi(shouldRemoveChild, event);
+									shouldRemoveChild && removeLi();
 								},
 							},
 						],
@@ -176,7 +151,7 @@ const ManageFaculties = () => {
 				} else {
 					setNewFaculty(values);
 					resolve();
-					removeLi(shouldRemoveChild, event);
+					shouldRemoveChild && removeLi();
 				}
 			}
 		});
@@ -197,12 +172,10 @@ const ManageFaculties = () => {
 							{
 								className: "confirm__cancel",
 								label: "Hủy",
-								onClick: () => {
-									resolve();
-								},
+								onClick: () => resolve(),
 							},
 							{
-								className: "sign-out",
+								className: "new",
 								label: "Thay Đổi",
 								onClick: () => {
 									removeFaculty(currentFacultyId);
@@ -260,19 +233,6 @@ const ManageFaculties = () => {
 		}
 	}
 
-	function getBorderColor(props) {
-		if (props.isDragAccept) {
-			return "#00e676";
-		}
-		if (props.isDragReject) {
-			return "#ff1744";
-		}
-		if (props.isDragActive) {
-			return "#2196f3";
-		}
-		return "#eeeeee";
-	}
-
 	//#endregion
 
 	return isLoading ? (
@@ -309,41 +269,12 @@ const ManageFaculties = () => {
 								))}
 							</ul>
 						) : (
-							<>
-								<div
-									className="dropzone__container"
-									style={{
-										// expand to full height of parent
-										height:
-											(isDragActive || !!excelLoadedItems.length) && "100%",
-										// change border color on Drag event
-										borderColor: getBorderColor({
-											...getRootProps({
-												isDragActive,
-												isDragAccept,
-												isDragReject,
-											}),
-										}),
-									}}
-									// get props for root container
-									{...getRootProps()}
-								>
-									<input {...getInputProps()} />
-									{isDragActive ? (
-										<p>Thả file vào đây...</p>
-									) : (
-										<p>
-											Kéo thả tệp excel vào đây <br />
-											hoặc nhấn để chọn tệp của bạn!
-										</p>
-									)}
-								</div>
-							</>
+							<FileDropzone {...{ excelLoadedItems, handleDropped }} />
 						)
 					}
 					{
-						// remove form on file drag or if list item has item
-						isDragActive || !!excelLoadedItems.length || (
+						// remove form on list item has item
+						!!excelLoadedItems.length || (
 							<FormFaculties
 								{...{
 									facultiesObj,
