@@ -1,3 +1,5 @@
+import React, { useEffect } from "react";
+
 import * as XLSX from "xlsx";
 import { toast } from "react-toastify";
 
@@ -62,3 +64,15 @@ export const ifExists = (value) => {
 export const validNumber = (num) => exists(num) && Number.isInteger(num);
 
 export const selectAllOnFocus = (event) => event.target.select();
+
+export const ImportScript = (resourceUrl) => {
+	useEffect(() => {
+		const script = document.createElement("script");
+		script.src = resourceUrl;
+		script.async = true;
+		document.body.appendChild(script);
+		return () => {
+			document.body.removeChild(script);
+		};
+	}, [resourceUrl]);
+};

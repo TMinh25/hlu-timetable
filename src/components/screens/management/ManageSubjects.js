@@ -57,7 +57,13 @@ const ManageSubjects = () => {
 		return (
 			<li key={index.toString()} className="excel__list-li_item">
 				<div className="vert-align">
-					<p>{subjectName}</p>
+					<p>
+						{exists(subjectName) ? (
+							subjectName
+						) : (
+							<span style={{ color: "red" }}>Không có tên môn</span>
+						)}
+					</p>
 					<div className="hozi-align">
 						<p>
 							{credit && (
@@ -153,12 +159,12 @@ const ManageSubjects = () => {
 
 		return new Promise((resolve, reject) => {
 			if (!exists(values["subject-name"])) {
-				reject("Không có tên môn học");
+				defaultFailCB("Không có tên môn học");
 			} else if (
 				!validNumber(values["credit"]) ||
 				!validNumber(values["periods"])
 			) {
-				reject("Dữ liệu không đúng định dạng số");
+				defaultFailCB("Dữ liệu không đúng định dạng số");
 			} else {
 				newSubject(values);
 				setIsLoading(true);
@@ -243,18 +249,17 @@ const ManageSubjects = () => {
 											subjectName={values["subject-name"]}
 											credit={values["credit"]}
 											periods={values["periods"]}
-											onAdd={(event) => {
-												handleOnAdd({
-													values,
-													shouldRemoveChild: true,
-													event,
-												})
-													.then((res) => {
-														console.error(res);
-													})
-													.catch((err) => {
-														defaultFailCB(err);
+											onAdd={async (event) => {
+												try {
+													const res = await handleOnAdd({
+														values,
+														shouldRemoveChild: true,
+														event,
 													});
+													console.error(res);
+												} catch (err) {
+													defaultFailCB(err);
+												}
 											}}
 										/>
 									))}
@@ -322,7 +327,6 @@ const ManageSubjects = () => {
 			{isLoading && <Loading />}
 		</>
 	);
-
 };
 
 export default ManageSubjects;

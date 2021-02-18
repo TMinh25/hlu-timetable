@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 
 // import components
-import {auth, userRef} from "../../firebase";
+import { auth, userRef } from "../../firebase";
 import NotFound from "./NotFound";
+import LeftMenu from "../LeftMenu";
 
 const TimeTable = (props) => {
 	const [semester, setSemester] = useState({});
@@ -19,7 +20,7 @@ const TimeTable = (props) => {
 				.child(`semesters/${props.timeTableId}`)
 				.on("value", (snapshot) => {
 					if (snapshot.val() != null) {
-						setSemester({...snapshot.val()});
+						setSemester({ ...snapshot.val() });
 					} else {
 						setSemester({});
 					}

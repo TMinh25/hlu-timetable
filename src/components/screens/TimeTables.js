@@ -1,10 +1,10 @@
-import React, {useEffect, useState, useContext} from "react";
+import React, { useEffect, useState, useContext } from "react";
 
 // import components
-import {Loading, LinkButton, Button} from "../Components";
-import {removeSemester, getAllSemester} from "../../firebase";
-import {Link} from "@reach/router";
-import {confirmAlert} from "react-confirm-alert";
+import { Loading, LinkButton, Button } from "../Components";
+import { removeSemester, getAllSemester } from "../../firebase";
+import { Link } from "@reach/router";
+import { confirmAlert } from "react-confirm-alert";
 
 // import styles
 import "./TimeTables.css";
@@ -28,15 +28,20 @@ function getTimeString(t) {
 	}`;
 }
 
-const TimeTableListItem = ({id, name, time, numberOfWeeks, onDelete}) => {
+const TimeTableListItem = ({
+	id,
+	name,
+	time,
+	numberOfWeeks,
+	onDelete,
+	onClickLi,
+}) => {
 	let liTitle = `${name}\nSố tuần học: ${numberOfWeeks}`;
 	return (
-		<li title={liTitle} key={id} className="timetable__li">
+		<li title={liTitle} key={id} className="timetable__li" onClick={onClickLi}>
 			<div className="content__li-container">
 				<Link to={`/timetable/${id}`} className="timetable__li-link">
-					<div className="li__name">
-						{/* <i className="fas fa-table" /> */}✌ {name}
-					</div>
+					<div className="li__name">✌ {name}</div>
 					<div className="li__time">
 						<i className="far fa-clock" /> {getTimeString(time)}
 					</div>
@@ -49,7 +54,7 @@ const TimeTableListItem = ({id, name, time, numberOfWeeks, onDelete}) => {
 	);
 };
 
-const TimeTables = () => {
+const TimeTables = (props) => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [semesterObject, setSemesterObject] = useState({});
 
@@ -107,6 +112,7 @@ const TimeTables = () => {
 												semesterObject[id]["semester-info"]["number-of-weeks"]
 											}
 											time={semesterObject[id]["semester-info"]["time-created"]}
+											onClickLi={() => props.setLeftMenuVisible(false)}
 										/>
 									))}
 							</ul>

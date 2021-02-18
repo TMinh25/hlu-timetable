@@ -12,7 +12,7 @@ import NavBar from "./NavBar";
 import LeftMenu from "./LeftMenu";
 
 // import screens
-import Home from "./screens/Home";
+import Home from "./screens/Homepage/Home";
 import TimeTableNew from "./screens/TimeTableNew";
 import TeacherTimeTable from "./screens/TeacherTimeTable";
 import ScheduleTimeTable from "./screens/ScheduleTimeTable";
@@ -64,6 +64,9 @@ const Application = () => {
 	return (
 		<>
 			<NavBar
+				onLogoClick={() => {
+					setLeftMenuVisible(false);
+				}}
 				onHamburgerClick={handleHamburgerClick}
 				showHamburger={currentUser}
 			/>
@@ -79,7 +82,7 @@ const Application = () => {
 					<ManageLecture path="mng-lectures" />
 					<ManageSubjects path="mng-subjects" />
 					<TimeTableNew path="new-timetable" />
-					<TimeTables path="timetable" />
+					<TimeTables path="timetable" {...{ setLeftMenuVisible }} />
 					<TimeTable path="timetable/:timeTableId" />
 					<NotFound default />
 				</Router>

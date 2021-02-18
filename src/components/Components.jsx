@@ -11,8 +11,8 @@ import "./Components.css";
 
 //#region Logo & Loading
 
-export const Logo = () => (
-	<Link to="/">
+export const Logo = (props) => (
+	<Link to="/" onClick={props.onClick}>
 		<div className="app-logo-container">
 			<img src={logo} className="app-logo" alt="logo" />
 			<p>

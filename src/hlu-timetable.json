@@ -99,6 +99,15 @@
 					},
 					"__comment__": "null là không có tiết"
 				}
+			},
+			"assignments": {
+				"MÃ GIẢNG VIÊN": {
+					"__comment__": "mã phân công được dùng trong thời khóa biểu",
+					"MÃ PHÂN CÔNG": {
+						"subject-id": "MÃ MÔN HỌC",
+						"class-teaching": "LỚP DẠY"
+					}
+				}
 			}
 		}
 	},
@@ -119,15 +128,6 @@
 			"lecture-name": "TÊN GIẢNG VIÊN",
 			"lecture-email": "EMAIL GIẢNG VIÊN",
 			"faculty": "GIẢNG VIÊN THUỘC KHOA NÀO, null LÀ KHÔNG THUỘC VỀ KHOA NÀO"
-		}
-	},
-	"assignments": {
-		"MÃ GIẢNG VIÊN": {
-			"__comment__": "mã phân công được dùng trong thời khóa biểu",
-			"MÃ PHÂN CÔNG": {
-				"subject-id": "MÃ MÔN HỌC",
-				"class-teaching": "LỚP DẠY"
-			}
 		}
 	}
 }

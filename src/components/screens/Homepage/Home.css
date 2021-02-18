@@ -1,0 +1,14 @@
+.probootstrap-footer-social li a {
+	font-size: 30px;
+	display: flex !important;
+	justify-content: center !important;
+	align-items: center !important;
+}
+
+.social-github a:hover {
+	color: whitesmoke !important;
+}
+
+.social-facebook a:hover {
+	color: #0084ff !important;
+}

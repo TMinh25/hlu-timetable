@@ -1,16 +1,16 @@
-import React, {useContext, useState, useEffect} from "react";
-import {signInWithGoogle, signOut} from "../firebase";
+import React, { useContext, useState, useEffect } from "react";
+import { signInWithGoogle, signOut } from "../firebase";
 
 // import components
-import {Logo, Button as MyButton} from "./Components";
-import {UserContext} from "../providers/UserProvider";
+import { Logo, Button as MyButton } from "./Components";
+import { UserContext } from "../providers/UserProvider";
 import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 
 // import styles
 import "./NavBar.css";
 
-const NavBar = ({onLogoClick, onHamburgerClick, showHamburger}) => {
+const NavBar = ({ onLogoClick, onHamburgerClick, showHamburger }) => {
 	const user = useContext(UserContext);
 	const [showModule, setShowModule] = useState(false);
 
@@ -85,12 +85,14 @@ const NavBar = ({onLogoClick, onHamburgerClick, showHamburger}) => {
 					</IconButton>
 				)}
 
-				<Logo style={onLogoClick && {cursor: "pointer"}} />
+				<Logo
+					style={onLogoClick && { cursor: "pointer" }}
+					onClick={onLogoClick}
+				/>
 
 				<div className="sign-in-container">
 					{!!user ? (
 						<>
-							{/* <div className="avatar-container" onClick={() => toggleModule()}> */}
 							<img
 								className="nav-avatar"
 								src={
@@ -100,7 +102,6 @@ const NavBar = ({onLogoClick, onHamburgerClick, showHamburger}) => {
 								alt="avatar"
 								onClick={() => toggleModule()}
 							/>
-							{/* </div> */}
 						</>
 					) : (
 						<>
