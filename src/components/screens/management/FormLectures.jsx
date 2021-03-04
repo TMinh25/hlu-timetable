@@ -29,9 +29,9 @@ const FormLectures = ({
 		}
 	}, [currentLectureId, lecturesObj]);
 
-	useEffect(() => {
-		console.log(currentLectureId, values);
-	}, [values, currentLectureId]);
+	// useEffect(() => {
+	// 	console.log(currentLectureId, values);
+	// }, [values, currentLectureId]);
 
 	useEffect(() => {
 		if (currentLectureId) {

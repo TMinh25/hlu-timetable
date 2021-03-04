@@ -1,7 +1,7 @@
-import React, {Component, createContext} from "react";
+import React, { Component, createContext } from "react";
 
 // import components
-import {auth} from "../firebase";
+import { auth, userRef } from "../firebase";
 
 export const UserContext = createContext({
 	user: null,
@@ -16,10 +16,10 @@ class UserProvider extends Component {
 
 		// set new user
 		this.setUser = (newUser) => {
-			this.setState({user: newUser}, () => {
+			this.setState({ user: newUser }, () => {
 				if (!!newUser) {
 					console.log("User: ");
-					console.log(this.state.user);
+					console.log(this.state);
 				}
 			});
 		};
@@ -31,13 +31,13 @@ class UserProvider extends Component {
 			if (!!user) {
 				console.log("signed in");
 				this.setUser(user);
-				// userRef(userAuth.uid)
-				// 	.child("loged-history/")
-				// 	.set({"loged in": new Date().toString()}, (err) => {
-				// 		if (err) {
-				// 			console.warn("failed to write data to firebase: " + err.message);
-				// 		}
-				// 	});
+				userRef(user.uid)
+					.child("setting/")
+					.set({ "loged-history": new Date().toString() }, (err) => {
+						if (err) {
+							console.warn("failed to write data to firebase: " + err.message);
+						}
+					});
 			} else {
 				console.log("not signed in");
 				this.setUser(null);

@@ -42,7 +42,7 @@ const TimeTableListItem = ({
 			<div className="content__li-container">
 				<Link to={`/timetable/${id}`} className="timetable__li-link">
 					<div className="li__name">✌ {name}</div>
-					<div className="li__time">
+					<div className="li__time" style={{ fontSize: "1.8vmin" }}>
 						<i className="far fa-clock" /> {getTimeString(time)}
 					</div>
 				</Link>

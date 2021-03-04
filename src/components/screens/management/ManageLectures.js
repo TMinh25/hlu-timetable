@@ -104,7 +104,6 @@ const ManageLectures = () => {
 	function handleOnAddFaculty(values) {
 		// Trả về Promise để Form đợi tới khi người dùng chọn tùy chọn
 		return new Promise((resolve, reject) => {
-			console.log(values);
 			if (exists(values["faculty-name"])) {
 				let facID = getFacId(values["faculty-name"]);
 				values["faculty-id"] = facID;
@@ -149,12 +148,9 @@ const ManageLectures = () => {
 			if (index >= 0) {
 				const tempArr = [...excelLoadedItems];
 				tempArr.splice(index, 1);
-				console.log(tempArr);
 				setExcelLoadedItems(tempArr);
 			}
 		};
-
-		console.log(facultiesObj);
 
 		return new Promise((resolve, reject) => {
 			if (!!values["lecture-name"]) {
@@ -244,6 +240,13 @@ const ManageLectures = () => {
 		}
 	}
 
+	const handleDownloadTemplateFile = () =>
+		window.open(
+			"https://drive.google.com/file/d/15h5VvMQOtWwKoNRKzAWQaW62vctDx-jd/view?usp=sharing",
+			"_blank",
+			""
+		);
+
 	//#endregion
 
 	return (
@@ -280,7 +283,13 @@ const ManageLectures = () => {
 									))}
 								</ul>
 							) : (
-								<FileDropzone {...{ excelLoadedItems, handleDropped }} />
+								<FileDropzone
+									{...{
+										excelLoadedItems,
+										handleDropped,
+										handleDownloadTemplateFile,
+									}}
+								/>
 							)
 						}
 						{

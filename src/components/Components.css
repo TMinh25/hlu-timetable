@@ -258,3 +258,23 @@
 }
 
 /*#endregion*/
+
+/*#region Tabs */
+
+.tab-list {
+	padding-left: 0;
+}
+
+.tab-list-item {
+	display: inline-block;
+	list-style: none;
+	padding: 0.5rem 1rem;
+}
+
+.tab-list-active {
+	border: solid #ccc;
+	border-radius: 5px;
+	border-width: 1px;
+}
+
+/*#endregion */

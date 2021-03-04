@@ -114,10 +114,6 @@ const ManageSubjects = () => {
 	}, [isLoading]);
 
 	useEffect(() => {
-		console.log(subjectsObj);
-	}, [subjectsObj]);
-
-	useEffect(() => {
 		const li = document.getElementsByClassName("list__container-li_item");
 		for (let i = 0; i < Object.keys(subjectsObj).length; i++) {
 			const item = li[i].getElementsByClassName("li__item-search")[0];
@@ -131,10 +127,6 @@ const ManageSubjects = () => {
 		}
 		// eslint-disable-next-line
 	}, [searchString]); // search for text in list when searchString change
-
-	useEffect(() => {
-		console.log(currentSubjectId);
-	}, [currentSubjectId]);
 
 	//#endregion
 
@@ -219,6 +211,13 @@ const ManageSubjects = () => {
 		}
 	}
 
+	const handleDownloadTemplateFile = () =>
+		window.open(
+			"https://drive.google.com/file/d/1rTYsYcXKhHf1Cb0jGqLjqiY1edQW-5Z3/view?usp=sharing",
+			"_blank",
+			""
+		);
+
 	//#endregion
 
 	return (
@@ -265,7 +264,13 @@ const ManageSubjects = () => {
 									))}
 								</ul>
 							) : (
-								<FileDropzone {...{ excelLoadedItems, handleDropped }} />
+								<FileDropzone
+									{...{
+										excelLoadedItems,
+										handleDropped,
+										handleDownloadTemplateFile,
+									}}
+								/>
 							)
 						}
 						{

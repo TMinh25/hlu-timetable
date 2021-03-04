@@ -1,10 +1,11 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { Link } from "@reach/router";
 import { defaultFailCB } from "../utils";
 import { useDropzone } from "react-dropzone";
 
 // import components
 import logo from "../logo.svg";
+import PropTypes from "prop-types";
 
 // import styles
 import "./Components.css";
@@ -129,7 +130,11 @@ export const DropDownHoverButton = ({
 
 //#region Excel Dropzone
 
-export const FileDropzone = ({ handleDropped, excelLoadedItems }) => {
+export const FileDropzone = ({
+	handleDropped,
+	excelLoadedItems,
+	handleDownloadTemplateFile,
+}) => {
 	// accepted files for react-dropzone in MIME Type
 	const accept = [
 		"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -189,18 +194,115 @@ export const FileDropzone = ({ handleDropped, excelLoadedItems }) => {
 				// get props for root container
 				{...getRootProps()}
 			>
-				<input {...getInputProps()} />
-				{isDragActive ? (
-					<p>Thả file vào đây...</p>
-				) : (
-					<p>
-						Kéo thả tệp excel vào đây <br />
-						hoặc nhấn để chọn tệp của bạn!
-					</p>
-				)}
+				<div>
+					<input {...getInputProps()} />
+					{isDragActive ? (
+						<p>Thả file vào đây...</p>
+					) : (
+						<p>
+							Kéo thả tệp excel vào đây <br />
+							hoặc nhấn để chọn tệp của bạn!
+						</p>
+					)}
+				</div>
 			</div>
+			{isDragActive || !!excelLoadedItems.length || (
+				<Button
+					onClick={handleDownloadTemplateFile}
+					style={{ marginBottom: 10 }}
+					className="new"
+				>
+					Tải file excel mẫu
+				</Button>
+			)}
 		</>
 	);
 };
+
+//#endregion
+
+//#region Tabs Components
+
+export class Tab extends React.Component {
+	static propTypes = {
+		activeTab: PropTypes.string.isRequired,
+		label: PropTypes.string.isRequired,
+		onClick: PropTypes.func.isRequired,
+	};
+
+	onClick = () => {
+		const { label, onClick } = this.props;
+		onClick(label);
+	};
+
+	render() {
+		const {
+			onClick,
+			props: { activeTab, label },
+		} = this;
+
+		let className = "tab-list-item";
+
+		if (activeTab === label) {
+			className += " tab-list-active";
+		}
+
+		return (
+			<li className={className} onClick={onClick}>
+				{label}
+			</li>
+		);
+	}
+}
+
+export class Tabs extends React.Component {
+	static propTypes = {
+		children: PropTypes.instanceOf(Array).isRequired,
+	};
+
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			activeTab: this.props.children[0].props.label,
+		};
+	}
+
+	onClickTabItem = (tab) => {
+		this.setState({ activeTab: tab });
+	};
+	render() {
+		const {
+			onClickTabItem,
+			props: { children },
+			state: { activeTab },
+		} = this;
+
+		return (
+			<div className="tabs">
+				<ol className="tab-list">
+					{children.map((child) => {
+						const { label } = child.props;
+
+						return (
+							<Tab
+								activeTab={activeTab}
+								key={label}
+								label={label}
+								onClick={onClickTabItem}
+							/>
+						);
+					})}
+				</ol>
+				<div className="tab-content">
+					{children.map((child) => {
+						if (child.props.label !== activeTab) return undefined;
+						return child.props.children;
+					})}
+				</div>
+			</div>
+		);
+	}
+}
 
 //#endregion

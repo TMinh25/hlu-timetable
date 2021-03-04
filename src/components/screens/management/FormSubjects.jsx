@@ -38,9 +38,9 @@ const FormSubjects = ({
 	// 	}
 	// }, [currentLectureId, lecturesObj, facultiesObj]);
 
-	useEffect(() => {
-		console.log(values);
-	}, [values]);
+	// useEffect(() => {
+	// 	console.log(values);
+	// }, [values]);
 
 	const handleInputChange = (e) => {
 		var { name, value, type } = e.target;

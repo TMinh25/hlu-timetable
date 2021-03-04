@@ -27,9 +27,9 @@ const FormFaculties = ({
 		}
 	}, [currentFacultyId, facultiesObj]);
 
-	useEffect(() => {
-		console.log(values);
-	}, [values]);
+	// useEffect(() => {
+	// 	console.log(values);
+	// }, [values]);
 
 	const handleInputChange = (e) => {
 		var { name, value } = e.target;

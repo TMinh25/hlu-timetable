@@ -1,11 +1,11 @@
-import React, {useState, useEffect, useContext} from "react";
+import React, { useState, useEffect, useContext } from "react";
 
 // import components
-import {setNewSemester} from "../../firebase";
-import {UserContext} from "../../providers/UserProvider";
+import { setNewSemester } from "../../firebase";
+import { UserContext } from "../../providers/UserProvider";
 import Calendar from "react-calendar";
-import {Button} from "../Components";
-import {useNavigate} from "@reach/router";
+import { Button } from "../Components";
+import { useNavigate } from "@reach/router";
 
 // import styles
 import "./TimeTableNew.css";
@@ -39,7 +39,6 @@ const TimeTableNew = () => {
 	};
 
 	useEffect(() => {
-		// console.log(values);
 		if (Object.keys(values).length) {
 			setNewSemester(values);
 		}
@@ -57,7 +56,8 @@ const TimeTableNew = () => {
 			{!!currentUser ? (
 				<>
 					<h1>Cùng nhau tạo thời khóa biểu mới!</h1>
-					<div>Bước đầu: Chọn thời gian mà kì học của bạn diễn ra</div>
+					{/* <div>Bước đầu: Chọn thời gian mà kì học của bạn diễn ra</div> */}
+					<br />
 					<form onSubmit={handleOnSubmit}>
 						<label>
 							<span className="label__new">Tên thời khóa biểu</span>
@@ -65,7 +65,7 @@ const TimeTableNew = () => {
 								className="sem-name__input"
 								name="sem-name"
 								value={semName}
-								onChange={({target}) => setSemName(target.value)}
+								onChange={({ target }) => setSemName(target.value)}
 								placeholder="Tên kì học có thể giúp bạn dễ ghi nhớ hơn..."
 							/>
 						</label>
@@ -105,13 +105,13 @@ const TimeTableNew = () => {
 							</div>
 						</section>
 						<Button
-							style={{marginLeft: "auto", width: "25%"}}
+							style={{ marginLeft: "auto", width: "25%" }}
 							className="new"
 							type="submit"
 							onClick={handleOnSubmit}
 						>
 							Tạo mới{" "}
-							<i style={{marginLeft: 10}} className="fas fa-arrow-right" />
+							<i style={{ marginLeft: 10 }} className="fas fa-arrow-right" />
 						</Button>
 					</form>
 				</>

@@ -86,11 +86,8 @@ export function setNewSemester(values) {
 				values,
 				// failed to write data
 				(err) => {
-					if (err) {
+					err &&
 						console.warn("failed to write data to firebase: " + err.message);
-					} else {
-						// console.log(values);
-					}
 				}
 			);
 	});

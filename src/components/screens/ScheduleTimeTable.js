@@ -20,7 +20,7 @@ const ScheduleTimeTable = () => {
 				items: ".board-item",
 				dragEnabled: true,
 				dragAxis: "xy",
-				dragPlaceholder: {enabled: true},
+				dragPlaceholder: { enabled: true },
 				dragSort: function () {
 					return columnGrids;
 				},
@@ -28,8 +28,8 @@ const ScheduleTimeTable = () => {
 				dragAutoScroll: {
 					targets: (item) => {
 						return [
-							{element: window, priority: 0},
-							{element: item.getGrid().getElement().parentNode, priority: 1},
+							{ element: window, priority: 0 },
+							{ element: item.getGrid().getElement().parentNode, priority: 1 },
 						];
 					},
 				},
@@ -48,18 +48,6 @@ const ScheduleTimeTable = () => {
 					item.getElement().style.height = "";
 					item.getGrid().refreshItems([item]);
 				});
-			// .on("dragEnd", (item, event) => {
-			// 	// console.log(item, event);
-			// 	for (const column of columns) {
-			// 		var lessonCount = 0;
-			// 		for (const child of column.children) {
-			// 			// console.log(parseInt(child.getAttribute("data-lessonCount")));
-			// 			lessonCount += parseInt(child.getAttribute("data-lessonCount"));
-			// 			// console.log(child);
-			// 		}
-			// 		console.log(lessonCount);
-			// 	}
-			// });
 
 			columnGrids.push(grid);
 		});

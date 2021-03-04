@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 import * as XLSX from "xlsx";
 import { toast } from "react-toastify";
+import { confirmAlert } from "react-confirm-alert";
 
 // read excel as json
 export function readExcel(file, headers) {
@@ -47,14 +48,20 @@ export function titleCase(str) {
 	return splitStr.join(" ");
 }
 
+//#region notification
+
 // success notification
 export const defaultSuccessCB = (msg) =>
 	toast.success(msg ? `✌ Thành Công: ${msg}!` : "✌ Thành Công!");
+
 // fail notification
 export const defaultFailCB = (err) =>
 	toast.error(err ? `🚫 Lỗi: ${err}!` : "🚫 Lỗi!");
 
+//#endregion
+
 export const exists = (x) => x !== null && x !== undefined && x !== "";
+
 export const ifExists = (value) => {
 	return new Promise((resolve, reject) => {
 		exists(value) ? resolve(value) : reject();
@@ -76,3 +83,40 @@ export const ImportScript = (resourceUrl) => {
 		};
 	}, [resourceUrl]);
 };
+
+export function getHeaderRow(file) {
+	return new Promise((resolve, reject) => {
+		const fileReader = new FileReader();
+		fileReader.readAsArrayBuffer(file);
+
+		fileReader.onload = (e) => {
+			const bufferArray = e.target.result;
+			const wb = XLSX.read(bufferArray, { type: "buffer" });
+			const wsname = wb.SheetNames[0];
+			const ws = wb.Sheets[wsname];
+
+			var headers = [];
+			var range = XLSX.utils.decode_range(ws["!ref"]);
+			var C,
+				R = range.s.r; /* start in the first row */
+			/* walk every column in the range */
+			for (C = range.s.c; C <= range.e.c; ++C) {
+				var cell =
+					ws[
+						XLSX.utils.encode_cell({ c: C, r: R })
+					]; /* find the cell in the first row */
+
+				var hdr = "UNKNOWN " + C; // <-- replace with your desired default
+				if (cell && cell.t) hdr = XLSX.utils.format_cell(cell);
+
+				headers.push(hdr);
+			}
+
+			resolve(headers);
+		};
+
+		fileReader.onerror = (error) => {
+			reject(error);
+		};
+	});
+}

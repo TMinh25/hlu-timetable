@@ -405,7 +405,7 @@ a {
 }
 
 /* styling input */
-input:not([type="file"]),
+input:not([type="file"]):not([type="checkbox"]),
 textarea,
 option,
 select {
@@ -427,6 +427,8 @@ option:hover {
 
 input:not([type="file"]):hover,
 input:not([type="file"]):focus,
+input:not([type="checkbox"]):hover,
+input:not([type="checkbox"]):focus,
 textarea:hover,
 textarea:focus,
 select:hover,

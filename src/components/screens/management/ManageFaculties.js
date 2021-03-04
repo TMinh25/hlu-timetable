@@ -9,7 +9,8 @@ import {
 } from "../../../firebase";
 import { confirmAlert } from "react-confirm-alert";
 import { Loading, Button, FileDropzone } from "../../Components";
-import { readExcel, defaultFailCB, exists } from "../../../utils";
+import { readExcel, defaultFailCB, exists, getHeaderRow } from "../../../utils";
+import excelTemplateAlert from "../../../excel-template-images/faculties.png";
 
 // import styles
 import "./Manage.css";
@@ -93,16 +94,19 @@ const ManageFaculties = () => {
 		}
 	}, [searchString]); // search for text in list when searchString change
 
-	// useEffect(() => {
-	// 	console.error(excelLoadedItems);
-	// }, [excelLoadedItems]); // show data
+	//#endregion
+
+	//#region Component Method
 
 	// handle on file drop with dropzone
 	const handleDropped = (files) => handleExcelLoad(files[0]);
 
-	//#endregion
-
-	//#region Component Method
+	const handleDownloadTemplateFile = () =>
+		window.open(
+			"https://drive.google.com/file/d/16xqql9RI8iowKy_q1tuC7BCkE0J8YmlN/view?usp=sharing",
+			"_blank",
+			""
+		);
 
 	function handleOnAdd({
 		values,
@@ -117,13 +121,11 @@ const ManageFaculties = () => {
 			if (index >= 0) {
 				const tempArr = [...excelLoadedItems];
 				tempArr.splice(index, 1);
-				console.log(tempArr);
 				setExcelLoadedItems(tempArr);
 			}
 		};
 		// Trả về Promise để Form đợi tới khi người dùng chọn tùy chọn
 		return new Promise((resolve, reject) => {
-			console.log(values);
 			if (values["faculty-name"] !== "") {
 				let facID = getFacId(values["faculty-name"]);
 				values["faculty-id"] = facID;
@@ -223,10 +225,19 @@ const ManageFaculties = () => {
 		const objHeaders = ["faculty-name", "faculty-note"];
 		try {
 			const data = await readExcel(file, objHeaders);
-			if (data.length === 0) {
-				setExcelLoadedItems(null);
+			const headers = await getHeaderRow(file);
+			if (
+				headers.length > 0 &&
+				headers[0].toUpperCase() === "Tên khoa".toUpperCase() &&
+				headers[1].toUpperCase() === "ghi chú".toUpperCase()
+			) {
+				if (data.length === 0) {
+					setExcelLoadedItems(null);
+				} else {
+					setExcelLoadedItems(data);
+				}
 			} else {
-				setExcelLoadedItems(data);
+				throw new Error("Tệp excel không đúng tên cột");
 			}
 		} catch (err) {
 			defaultFailCB(err);
@@ -269,7 +280,13 @@ const ManageFaculties = () => {
 								))}
 							</ul>
 						) : (
-							<FileDropzone {...{ excelLoadedItems, handleDropped }} />
+							<FileDropzone
+								{...{
+									excelLoadedItems,
+									handleDropped,
+									handleDownloadTemplateFile,
+								}}
+							/>
 						)
 					}
 					{

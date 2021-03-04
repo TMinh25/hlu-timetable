@@ -20,7 +20,7 @@ import ManageFaculties from "./screens/management/ManageFaculties";
 import ManageLecture from "./screens/management/ManageLectures";
 import ManageSubjects from "./screens/management/ManageSubjects";
 import TimeTables from "./screens/TimeTables";
-import TimeTable from "./screens/TimeTable";
+import TimeTable from "./screens/timetable/TimeTable";
 import NotFound from "./screens/NotFound";
 
 const Application = () => {
@@ -29,10 +29,10 @@ const Application = () => {
 
 	useEffect(() => {
 		const handleResize = () => {
-			if (window.innerWidth <= 850) {
+			if (window.innerWidth <= 1000) {
 				setLeftMenuVisible(false);
 			}
-			if (window.innerWidth > 850) {
+			if (window.innerWidth > 1000) {
 				setLeftMenuVisible(true);
 			}
 		};
@@ -74,7 +74,7 @@ const Application = () => {
 				{currentUser && (
 					<LeftMenu visible={leftMenuVisible} showScheduler={true} />
 				)}
-				<Router className="main-container">
+				<Router className="main-container" id="main-container">
 					<Home path="/" />
 					<TeacherTimeTable path="teacher-time-table" />
 					<ScheduleTimeTable path="schedule-timetable" />
@@ -83,7 +83,7 @@ const Application = () => {
 					<ManageSubjects path="mng-subjects" />
 					<TimeTableNew path="new-timetable" />
 					<TimeTables path="timetable" {...{ setLeftMenuVisible }} />
-					<TimeTable path="timetable/:timeTableId" />
+					<TimeTable path="timetable/:timeTableId/*" />
 					<NotFound default />
 				</Router>
 			</main>
