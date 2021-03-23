@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "../../Components";
 import { Form } from "semantic-ui-react";
 
-const FormLectures = ({
+const FormClassManage = ({
   handleOnModify,
   handleOnAdd,
   currentLectureId,
@@ -154,4 +154,4 @@ const FormLectures = ({
   );
 };
 
-export default FormLectures;
+export default FormClassManage;

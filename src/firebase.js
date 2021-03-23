@@ -4,13 +4,13 @@ import "firebase/database";
 import { titleCase, defaultSuccessCB, defaultFailCB } from "./utils";
 
 var firebaseConfig = {
-	apiKey: "AIzaSyAvou0hUxm9CUqZUN7pRmq6ooHDqHy52x0",
-	authDomain: "hlu-timetable.firebaseapp.com",
-	databaseURL: "https://hlu-timetable-default-rtdb.firebaseio.com",
-	projectId: "hlu-timetable",
-	storageBucket: "hlu-timetable.appspot.com",
-	messagingSenderId: "728227473654",
-	appId: "1:728227473654:web:82ad634bdc4ae6cbfde4d7",
+  apiKey: "AIzaSyAvou0hUxm9CUqZUN7pRmq6ooHDqHy52x0",
+  authDomain: "hlu-timetable.firebaseapp.com",
+  databaseURL: "https://hlu-timetable-default-rtdb.firebaseio.com",
+  projectId: "hlu-timetable",
+  storageBucket: "hlu-timetable.appspot.com",
+  messagingSenderId: "728227473654",
+  appId: "1:728227473654:web:82ad634bdc4ae6cbfde4d7",
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
@@ -21,36 +21,36 @@ export var database = firebase.database();
 export const userRef = (userID) => database.ref(userID);
 
 export function currentUserQuery() {
-	auth.onAuthStateChanged((user) => {
-		if (user) {
-			return userRef(user.uid);
-		}
-	});
-	return;
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      return userRef(user.uid);
+    }
+  });
+  return;
 }
 
 // change the loged in user
 export function signInWithGoogle() {
-	var googleAuthProvider = new firebase.auth.GoogleAuthProvider();
-	googleAuthProvider.setCustomParameters({
-		prompt: "select_account",
-	});
-	auth.signInWithPopup(googleAuthProvider);
+  var googleAuthProvider = new firebase.auth.GoogleAuthProvider();
+  googleAuthProvider.setCustomParameters({
+    prompt: "select_account",
+  });
+  return auth.signInWithPopup(googleAuthProvider);
 }
 
 // sign out current user
 export function signOut(callback) {
-	auth
-		.signOut()
-		.then(() => {
-			// Sign-out successful.
-			console.log("Sign-out successful.");
-			callback();
-		})
-		.catch((err) => {
-			// An error happened.
-			console.log("Sign-out unsuccessful: " + err);
-		});
+  auth
+    .signOut()
+    .then(() => {
+      // Sign-out successful.
+      console.log("Sign-out successful.");
+      callback();
+    })
+    .catch((err) => {
+      // An error happened.
+      console.log("Sign-out unsuccessful: " + err);
+    });
 }
 
 //#region Semester: Quản lý kì học
@@ -58,53 +58,53 @@ export function signOut(callback) {
 // write new semester or modify in database
 
 export function getAllSemester(callback) {
-	auth.onAuthStateChanged((user) => {
-		if (!!user) {
-			userRef(user.uid)
-				.child("semesters")
-				.on("value", (snapshot) => {
-					if (snapshot.val() != null) {
-						callback(snapshot.val());
-					} else {
-						callback({});
-					}
-				});
-		}
-	});
+  auth.onAuthStateChanged((user) => {
+    if (!!user) {
+      userRef(user.uid)
+        .child("semesters")
+        .on("value", (snapshot) => {
+          if (snapshot.val() != null) {
+            callback(snapshot.val());
+          } else {
+            callback({});
+          }
+        });
+    }
+  });
 }
 
 export function setNewSemester(values) {
-	Object.keys(values).map(
-		(key) => (values[key] = values[key].toString().toString().trim())
-	);
-	auth.onAuthStateChanged((user) => {
-		userRef(user.uid)
-			.child(`semesters`)
-			.push()
-			.child("semester-info")
-			.set(
-				values,
-				// failed to write data
-				(err) => {
-					err &&
-						console.warn("failed to write data to firebase: " + err.message);
-				}
-			);
-	});
+  Object.keys(values).forEach(
+    (key) => (values[key] = values[key].toString().toString().trim())
+  );
+  auth.onAuthStateChanged((user) => {
+    userRef(user.uid)
+      .child(`semesters`)
+      .push()
+      .child("semesterInfo")
+      .set(
+        values,
+        // failed to write data
+        (err) => {
+          err &&
+            console.warn("failed to write data to firebase: " + err.message);
+        }
+      );
+  });
 }
 
 export function removeSemester(
-	semID,
-	successCB = defaultSuccessCB,
-	failCB = defaultFailCB
+  semID,
+  successCB = defaultSuccessCB,
+  failCB = defaultFailCB
 ) {
-	auth.onAuthStateChanged((user) => {
-		if (user) {
-			userRef(user.uid)
-				.child(`semesters/${semID}`)
-				.remove((err) => (err ? failCB(err.message) : successCB()));
-		}
-	});
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      userRef(user.uid)
+        .child(`semesters/${semID}`)
+        .remove((err) => (err ? failCB(err.message) : successCB()));
+    }
+  });
 }
 
 //#endregion
@@ -113,63 +113,63 @@ export function removeSemester(
 
 // get all faculties in database
 export function getAllFaculties(callback) {
-	auth.onAuthStateChanged((user) => {
-		if (!!user) {
-			userRef(user.uid)
-				.child("faculties")
-				.on("value", (snapshot) => {
-					if (snapshot.val() != null) {
-						callback(snapshot.val());
-					} else {
-						callback({});
-					}
-				});
-		}
-	});
+  auth.onAuthStateChanged((user) => {
+    if (!!user) {
+      userRef(user.uid)
+        .child("faculties")
+        .on("value", (snapshot) => {
+          if (snapshot.val() != null) {
+            callback(snapshot.val());
+          } else {
+            callback({});
+          }
+        });
+    }
+  });
 }
 
 // add and modify faculty to database
 export function setNewFaculty(values, failCB = defaultFailCB) {
-	Object.keys(values).map((key) => {
-		if (!!values[key]) {
-			values[key] = values[key].toString().trim();
-		}
-	});
-	if (values["faculty-name"]) {
-		let facID = values["faculty-id"];
-		// remove the faculty-id prop from object and use it as key
-		delete values["faculty-id"];
-		values["faculty-name"] = titleCase(values["faculty-name"]);
+  Object.keys(values).forEach((key) => {
+    if (!!values[key]) {
+      values[key] = values[key].toString().trim();
+    }
+  });
+  if (values["faculty-name"]) {
+    let facID = values["faculty-id"];
+    // remove the faculty-id prop from object and use it as key
+    delete values["faculty-id"];
+    values["faculty-name"] = titleCase(values["faculty-name"]);
 
-		auth.onAuthStateChanged((user) => {
-			if (user) {
-				userRef(user.uid)
-					.child(`faculties/${facID}`)
-					.set(values, (err) =>
-						err ? failCB(err.message) : console.log("setNewFaculty success")
-					);
-			}
-		});
-	}
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        userRef(user.uid)
+          .child(`faculties/${facID}`)
+          .set(values, (err) =>
+            err ? failCB(err.message) : console.log("setNewFaculty success")
+          );
+      }
+    });
+  }
 }
 
 // remove faculty
 export function removeFaculty(
-	id,
-	successCB = defaultSuccessCB,
-	failCB = defaultFailCB
+  id,
+  successCB = defaultSuccessCB,
+  failCB = defaultFailCB
 ) {
-	if (id) {
-		auth.onAuthStateChanged((user) => {
-			if (user) {
-				userRef(user.uid)
-					.child(`faculties/${id}`)
-					.remove((err) => (err ? failCB(err.message) : successCB()));
-			}
-		});
-	} else {
-		failCB("Không có khoa nào được chọn");
-	}
+  if (id) {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        userRef(user.uid)
+          .child(`faculties/${id}`)
+          .remove((err) => (err ? failCB(err.message) : successCB()));
+      }
+    });
+  } else {
+    failCB("Không có khoa nào được chọn");
+  }
 }
 
 //#endregion
@@ -178,77 +178,77 @@ export function removeFaculty(
 
 // get all lectures in database
 export function getAllLectures(callback) {
-	auth.onAuthStateChanged((user) => {
-		if (user) {
-			userRef(user.uid)
-				.child("lectures")
-				.once("value", (snapshot) => {
-					if (snapshot.val() !== null) {
-						callback(snapshot.val());
-					} else {
-						callback({});
-					}
-				});
-		}
-	});
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      userRef(user.uid)
+        .child("lectures")
+        .once("value", (snapshot) => {
+          if (snapshot.val() !== null) {
+            callback(snapshot.val());
+          } else {
+            callback({});
+          }
+        });
+    }
+  });
 }
 
 // set new lectures
 export function newLecture(values) {
-	Object.keys(values).map((key) => {
-		if (!!values[key]) {
-			values[key] = values[key].toString().trim();
-		}
-	});
-	auth.onAuthStateChanged((user) => {
-		if (user) {
-			userRef(user.uid)
-				.child("lectures")
-				.push(values, (err) => {
-					err ? console.warn(err) : console.log("newLecture success!");
-				});
-		}
-	});
+  Object.keys(values).forEach((key) => {
+    if (!!values[key]) {
+      values[key] = values[key].toString().trim();
+    }
+  });
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      userRef(user.uid)
+        .child("lectures")
+        .push(values, (err) => {
+          err ? console.warn(err) : console.log("newLecture success!");
+        });
+    }
+  });
 }
 
 // modify lecture by id
 export function modifyLecture(
-	id,
-	values,
-	successCB = defaultSuccessCB,
-	failCB = defaultFailCB
+  id,
+  values,
+  successCB = defaultSuccessCB,
+  failCB = defaultFailCB
 ) {
-	Object.keys(values).map(
-		(key) => (values[key] = values[key].toString().trim())
-	);
-	auth.onAuthStateChanged((user) => {
-		if (user) {
-			userRef(user.uid)
-				.child(`lectures/${id}`)
-				.set(values, (err) => {
-					err ? failCB(err.message) : successCB();
-				});
-		}
-	});
+  Object.keys(values).forEach(
+    (key) => (values[key] = values[key].toString().trim())
+  );
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      userRef(user.uid)
+        .child(`lectures/${id}`)
+        .set(values, (err) => {
+          err ? failCB(err.message) : successCB();
+        });
+    }
+  });
 }
 
 // remove lecture by id
 export function removeLecture(
-	id,
-	successCB = defaultSuccessCB,
-	failCB = defaultFailCB
+  id,
+  successCB = defaultSuccessCB,
+  failCB = defaultFailCB
 ) {
-	if (id) {
-		auth.onAuthStateChanged((user) => {
-			if (user) {
-				userRef(user.uid)
-					.child(`lectures/${id}`)
-					.remove((err) => (err ? failCB(err) : successCB()));
-			}
-		});
-	} else {
-		console.warn("No Lectures ID was set!");
-	}
+  if (id) {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        userRef(user.uid)
+          .child(`lectures/${id}`)
+          .remove((err) => (err ? failCB(err) : successCB()));
+      }
+    });
+  } else {
+    console.warn("No Lectures ID was set!");
+  }
 }
 
 //#endregion
@@ -257,81 +257,81 @@ export function removeLecture(
 
 // get all subjects in database
 export function getAllSubjects(callback) {
-	auth.onAuthStateChanged((user) => {
-		if (user) {
-			userRef(user.uid)
-				.child("subjects")
-				.once("value", (snapshot) => {
-					if (snapshot.val() !== null) {
-						callback(snapshot.val());
-					} else {
-						callback({});
-					}
-				});
-		}
-	});
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      userRef(user.uid)
+        .child("subjects")
+        .once("value", (snapshot) => {
+          if (snapshot.val() !== null) {
+            callback(snapshot.val());
+          } else {
+            callback({});
+          }
+        });
+    }
+  });
 }
 
 // set new subject
 export function newSubject(values) {
-	if (!!values["subject-name"]) {
-		Object.keys(values).map((key) => {
-			if (!!values[key]) {
-				values[key] = values[key].toString().trim();
-			}
-		});
-		values["subject-name"] = values["subject-name"].toString().toUpperCase();
-	}
-	auth.onAuthStateChanged((user) => {
-		if (user) {
-			userRef(user.uid)
-				.child("subjects")
-				.push(values, (err) => {
-					err ? console.warn(err) : console.log("newSubject success!");
-				});
-		}
-	});
+  if (!!values["subject-name"]) {
+    Object.keys(values).forEach((key) => {
+      if (!!values[key]) {
+        values[key] = values[key].toString().trim();
+      }
+    });
+    values["subject-name"] = values["subject-name"].toString().toUpperCase();
+  }
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      userRef(user.uid)
+        .child("subjects")
+        .push(values, (err) => {
+          err ? console.warn(err) : console.log("newSubject success!");
+        });
+    }
+  });
 }
 
 // modify lecture by id
 export function modifySubject(
-	id,
-	values,
-	successCB = defaultSuccessCB,
-	failCB = defaultFailCB
+  id,
+  values,
+  successCB = defaultSuccessCB,
+  failCB = defaultFailCB
 ) {
-	if (!!values["subject-name"]) {
-		Object.keys(values).map(
-			(key) => (values[key] = values[key].toString().trim())
-		);
-		values["subject-name"] = values["subject-name"].toString().toUpperCase();
-	}
-	auth.onAuthStateChanged((user) => {
-		if (user) {
-			userRef(user.uid)
-				.child(`subjects/${id}`)
-				.set(values, (err) => (err ? failCB(err.message) : successCB()));
-		}
-	});
+  if (!!values["subject-name"]) {
+    Object.keys(values).forEach(
+      (key) => (values[key] = values[key].toString().trim())
+    );
+    values["subject-name"] = values["subject-name"].toString().toUpperCase();
+  }
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      userRef(user.uid)
+        .child(`subjects/${id}`)
+        .set(values, (err) => (err ? failCB(err.message) : successCB()));
+    }
+  });
 }
 
 // remove lecture by id
 export function removeSubject(
-	id,
-	successCB = defaultSuccessCB,
-	failCB = defaultFailCB
+  id,
+  successCB = defaultSuccessCB,
+  failCB = defaultFailCB
 ) {
-	if (id) {
-		auth.onAuthStateChanged((user) => {
-			if (user) {
-				userRef(user.uid)
-					.child(`subjects/${id}`)
-					.remove((err) => (err ? failCB(err.message) : successCB()));
-			}
-		});
-	} else {
-		console.warn("No Subject ID was set!");
-	}
+  if (id) {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        userRef(user.uid)
+          .child(`subjects/${id}`)
+          .remove((err) => (err ? failCB(err.message) : successCB()));
+      }
+    });
+  } else {
+    console.warn("No Subject ID was set!");
+  }
 }
 
 //#endregion

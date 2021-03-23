@@ -10,7 +10,6 @@ import {
 import { confirmAlert } from "react-confirm-alert";
 import { Loading, Button, FileDropzone } from "../../Components";
 import { readExcel, defaultFailCB, exists, getHeaderRow } from "../../../utils";
-import excelTemplateAlert from "../../../excel-template-images/faculties.png";
 
 // import styles
 import "./Manage.css";

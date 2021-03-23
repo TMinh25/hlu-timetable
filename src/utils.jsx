@@ -2,7 +2,6 @@ import { useEffect } from "react";
 
 import * as XLSX from "xlsx";
 import { toast } from "react-toastify";
-import { confirmAlert } from "react-confirm-alert";
 
 // read excel as json
 export function readExcel(file, headers) {
