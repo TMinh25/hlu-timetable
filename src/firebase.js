@@ -105,7 +105,14 @@ export function removeClass(
     if (user) {
       userRef(user.uid)
         .child(`semesters/${semID}/classes/${facID}/${classID}`)
-        .remove((err) => (err ? failCB(err.message) : successCB()));
+        .remove((err) => {
+          if (err) {
+            failCB(err.message);
+          } else {
+            successCB();
+            console.log("removeClass success!");
+          }
+        });
     }
   });
 }
@@ -145,8 +152,11 @@ export function setNewSemester(values) {
         values,
         // failed to write data
         (err) => {
-          err &&
+          if (err) {
             console.warn("failed to write data to firebase: " + err.message);
+          } else {
+            console.log("setNewSemester success!");
+          }
         }
       );
   });
@@ -161,7 +171,14 @@ export function removeSemester(
     if (user) {
       userRef(user.uid)
         .child(`semesters/${semID}`)
-        .remove((err) => (err ? failCB(err.message) : successCB()));
+        .remove((err) => {
+          if (err) {
+            failCB(err.message);
+          } else {
+            successCB();
+            console.log("removeSemester success!");
+          }
+        });
     }
   });
 }
@@ -223,7 +240,14 @@ export function removeFaculty(
       if (user) {
         userRef(user.uid)
           .child(`faculties/${id}`)
-          .remove((err) => (err ? failCB(err.message) : successCB()));
+          .remove((err) => {
+            if (err) {
+              failCB(err.message);
+            } else {
+              successCB();
+              console.log("removeFaculty success!");
+            }
+          });
       }
     });
   } else {
@@ -285,7 +309,12 @@ export function modifyLecture(
       userRef(user.uid)
         .child(`lectures/${id}`)
         .set(values, (err) => {
-          err ? failCB(err.message) : successCB();
+          if (err) {
+            failCB(err.message);
+          } else {
+            successCB();
+            console.log("modifyLecture success!");
+          }
         });
     }
   });
@@ -302,11 +331,18 @@ export function removeLecture(
       if (user) {
         userRef(user.uid)
           .child(`lectures/${id}`)
-          .remove((err) => (err ? failCB(err) : successCB()));
+          .remove((err) => {
+            if (err) {
+              failCB(err);
+            } else {
+              successCB();
+              console.log("removeLecture success!");
+            }
+          });
       }
     });
   } else {
-    console.warn("No Lectures ID was set!");
+    console.warn("Không có ID giảng viên!");
   }
 }
 
@@ -369,7 +405,14 @@ export function modifySubject(
     if (user) {
       userRef(user.uid)
         .child(`subjects/${id}`)
-        .set(values, (err) => (err ? failCB(err.message) : successCB()));
+        .set(values, (err) => {
+          if (err) {
+            failCB(err.message);
+          } else {
+            successCB();
+            console.log("modifySubject success!");
+          }
+        });
     }
   });
 }
@@ -385,11 +428,18 @@ export function removeSubject(
       if (user) {
         userRef(user.uid)
           .child(`subjects/${id}`)
-          .remove((err) => (err ? failCB(err.message) : successCB()));
+          .remove((err) => {
+            if (err) {
+              failCB(err.message);
+            } else {
+              successCB();
+              console.log("removeSubject success!");
+            }
+          });
       }
     });
   } else {
-    console.warn("No Subject ID was set!");
+    console.warn("Không có môn học nào được chọn!");
   }
 }
 
