@@ -12,9 +12,10 @@ var firebaseConfig = {
   messagingSenderId: "728227473654",
   appId: "1:728227473654:web:82ad634bdc4ae6cbfde4d7",
 };
+
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
-//  setPersistence(firebaseAuth.Auth.Persistence.LOCAL)
+
 export const auth = firebase.auth();
 export var database = firebase.database();
 
@@ -52,6 +53,64 @@ export function signOut(callback) {
       console.log("Sign-out unsuccessful: " + err);
     });
 }
+
+//#region Semester: Quản lý kì học
+
+// write new semester or modify in database
+
+export function getAllClass(semID, callback) {
+  auth.onAuthStateChanged((user) => {
+    if (!!user) {
+      userRef(user.uid)
+        .child(`semesters/${semID}/classes`)
+        .on("value", (snapshot) => {
+          if (snapshot.val() != null) {
+            callback(snapshot.val());
+          } else {
+            callback({});
+          }
+        });
+    }
+  });
+}
+
+export function setNewClass(semID, values) {
+  Object.keys(values).forEach(
+    (key) => (values[key] = values[key].toString().toString().trim())
+  );
+  let { faculty, className, ...copiedObj } = values;
+
+  // console.warn(copiedObj, values);
+
+  auth.onAuthStateChanged((user) => {
+    userRef(user.uid)
+      .child(`semesters/${semID}/classes/${values.faculty}/${values.className}`)
+      .set(copiedObj, (err) => {
+        // failed to write data
+        err
+          ? console.warn("failed to write data to firebase: " + err.message)
+          : console.log("setNewClass success!");
+      });
+  });
+}
+
+export function removeClass(
+  semID,
+  facID,
+  classID,
+  successCB = defaultSuccessCB,
+  failCB = defaultFailCB
+) {
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      userRef(user.uid)
+        .child(`semesters/${semID}/classes/${facID}/${classID}`)
+        .remove((err) => (err ? failCB(err.message) : successCB()));
+    }
+  });
+}
+
+//#endregion
 
 //#region Semester: Quản lý kì học
 

@@ -1,214 +1,212 @@
 .manage__form input {
-	margin-bottom: 12px !important;
+  margin-bottom: 12px !important;
 }
 
 .form-list__container {
-	width: 100%;
-	height: 100%;
-	/* overflow: hidden; */
-	display: flex;
-	/* grid-template-columns: 30% 70%; */
+  width: 100%;
+  height: 100%;
+  /* overflow: hidden; */
+  display: flex;
+  /* grid-template-columns: 30% 70%; */
 }
 
 .form__container {
-	display: flex;
-	flex: 1;
-	max-width: 350px;
-	height: 100%;
-	max-height: inherit;
-	flex-direction: column;
-	margin-right: 10px;
-	overflow-y: auto;
+  display: flex;
+  flex: 1;
+  max-width: 350px;
+  height: 100%;
+  max-height: inherit;
+  flex-direction: column;
+  margin-right: 10px;
+  overflow-y: auto;
 }
 
 .list__container {
-	flex: 3;
-	max-height: inherit;
-	overflow-y: auto;
-	margin-left: 10px;
+  flex: 3;
+  max-height: inherit;
+  overflow-y: auto;
+  margin-left: 10px;
 }
 
 .list__container > ul {
-	padding-top: 10px;
+  padding-top: 10px;
 }
 
 .list__container-search {
-	background-color: #06090f;
-	border-radius: 3px;
-	position: -webkit-sticky; /* Safari */
-	position: sticky;
-	top: 0;
+  background-color: #06090f;
+  border-radius: 3px;
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
+  top: 0;
 }
 
 .mng-container {
-	height: 100%;
-	overflow: hidden;
+  height: 100%;
+  overflow: hidden;
 }
 
 .facuties-list__container {
-	height: 100%;
-	padding: 10px 0px 10px 20px;
+  height: 100%;
+  padding: 10px 0px 10px 20px;
 }
 
 .faculties-list__table {
-	width: 100%;
-	height: 100%;
-	border: 1px solid #21262d;
-	border-radius: 5px;
-	border-collapse: collapse;
-	width: 100%;
-	overflow-y: auto;
+  width: 100%;
+  height: 100%;
+  border: 1px solid #21262d;
+  border-radius: 5px;
+  border-collapse: collapse;
+  width: 100%;
+  overflow-y: auto;
 }
 
 .faculties-list__table td {
-	border: none;
-	text-align: left;
-	padding: 5px 10px;
+  border: none;
+  text-align: left;
+  padding: 5px 10px;
 }
 
 .faculties-list__table tr {
-	height: 35px;
+  height: 35px;
 }
 
 .faculties-list__table thead td {
-	height: 40px;
-	background: #0d1117;
+  height: 40px;
+  background: #0d1117;
 }
 
 .faculties-list__table thead th {
-	/* padding-right: 10px; */
-	position: sticky;
-	top: 0;
+  /* padding-right: 10px; */
+  position: sticky;
+  top: 0;
 }
 
 .faculties-list__table tbody {
-	/* overflow: scroll; */
-	scrollbar-width: thin;
-	scrollbar-color: var(--thumbBG) var(--scrollbarBG);
+  /* overflow: scroll; */
+  scrollbar-width: thin;
+  scrollbar-color: var(--thumbBG) var(--scrollbarBG);
 }
 
 .faculties-list__table tbody::-webkit-scrollbar {
-	width: 11px;
+  width: 11px;
 }
 
 .faculties-list__table tbody::-webkit-scrollbar-track {
-	background: var(--scrollbarBG);
+  background: var(--scrollbarBG);
 }
 
 .faculties-list__table tbody::-webkit-scrollbar-thumb {
-	background-color: var(--thumbBG);
-	border-radius: 6px;
-	border: 3px solid var(--scrollbarBG);
+  background-color: var(--thumbBG);
+  border-radius: 6px;
+  border: 3px solid var(--scrollbarBG);
 }
 
 .action__td {
-	text-align: center;
+  text-align: center;
 }
 
 .action__td > span {
-	margin-right: 10px;
-	cursor: pointer;
+  margin-right: 10px;
+  cursor: pointer;
 }
 
 .list__header {
-	display: grid;
-	background-color: #252a31;
-	padding: 10px 20px;
-	padding-right: 0;
+  display: grid;
+  background-color: #252a31;
+  padding: 10px 20px;
+  padding-right: 0;
 }
 
 .list__container-li_item,
 .excel__list-li_item {
-	display: grid;
-	grid-template-columns: 3fr 1fr;
-	line-height: 1.4;
-	background-color: #41474d;
-	margin-bottom: 10px;
-	border-radius: 2px;
-	padding: 0 0 0 20px;
-	align-items: center;
-	cursor: pointer;
-}
-
-.lecture-ul .excel__list-li_item {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  line-height: 1.4;
+  background-color: #41474d;
+  margin-bottom: 10px;
+  border-radius: 2px;
+  padding: 0 0 0 20px;
+  align-items: center;
+  cursor: pointer;
 }
 
 .list__container-li_item > p,
 .excel__list-li_item > p {
-	display: flex;
-	align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .text__search {
-	width: 50%;
-	margin-bottom: 5px;
+  width: 50%;
+  margin-bottom: 5px;
 }
 
 .btn__trash {
-	justify-self: flex-end;
-	margin-left: auto;
-	padding: 13px 20px;
+  justify-self: flex-end;
+  margin-left: auto;
+  padding: 13px 20px;
 }
 
 .list__container-li_item .btn__trash:hover {
-	color: #f06e6e;
+  color: #f06e6e;
 }
 
 .trash {
-	color: #f02828;
+  color: #f02828;
 }
 
 .add {
-	color: #238636;
+  color: #238636;
 }
 
 .subject-list .list__header,
 .subject-list .list__container-li_item {
-	grid-template-columns: 1fr 6fr 1.5fr 1.5fr 1fr;
+  grid-template-columns: 1fr 6fr 1.5fr 1.5fr 1fr;
 }
 
 .lecture-list .list__header,
 .lecture-list .list__container-li_item {
-	grid-template-columns: 1fr 6fr 6fr 1fr;
+  grid-template-columns: 1fr 6fr 6fr 1fr;
 }
 
 .faculties-list .list__header,
 .faculties-list .list__container-li_item {
-	grid-template-columns: 1fr 3fr 8fr 1fr;
+  grid-template-columns: 1fr 3fr 8fr 1fr;
 }
 
 .dropzone__container {
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	align-items: center;
-	padding: 10px 15px;
-	margin-bottom: 10px;
-	border-width: 2px;
-	border-radius: 2px;
-	border-style: dashed;
-	text-align: center;
-	background-color: #22303c;
-	color: #bdbdbd;
-	outline: none;
-	transition: border 0.24s ease-in-out;
-	width: 100%;
-	max-height: inherit;
-	overflow-y: auto;
-	cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  border-width: 2px;
+  border-radius: 2px;
+  border-style: dashed;
+  text-align: center;
+  background-color: #22303c;
+  color: #bdbdbd;
+  outline: none;
+  transition: border 0.24s ease-in-out;
+  width: 100%;
+  min-height: 100px;
+  max-height: inherit;
+  overflow-y: auto;
+  cursor: pointer;
 }
 
 .excel__list-li_item .vert-align {
-	padding: 10px 0;
+  padding: 10px 0;
 }
 
 .react-confirm-big {
-	width: 500px !important;
+  width: 500px !important;
 }
 
 .react-confirm-alert-body img {
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-	margin-bottom: 10px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 10px;
 }

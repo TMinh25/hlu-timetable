@@ -24,71 +24,71 @@ import TimeTable from "./screens/timetable/TimeTable";
 import NotFound from "./screens/NotFound";
 
 const Application = () => {
-	const [leftMenuVisible, setLeftMenuVisible] = useState(true);
-	const currentUser = useContext(UserContext);
+  const [leftMenuVisible, setLeftMenuVisible] = useState(true);
+  const currentUser = useContext(UserContext);
 
-	useEffect(() => {
-		const handleResize = () => {
-			if (window.innerWidth <= 1000) {
-				setLeftMenuVisible(false);
-			}
-			if (window.innerWidth > 1000) {
-				setLeftMenuVisible(true);
-			}
-		};
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 1000) {
+        setLeftMenuVisible(false);
+      }
+      if (window.innerWidth > 1000) {
+        setLeftMenuVisible(true);
+      }
+    };
 
-		window.addEventListener("resize", () => {
-			handleResize();
-		});
-		return () => {
-			window.removeEventListener("resize", handleResize);
-		};
-	}, []); // hide left menu on resize window or if device width is small
+    window.addEventListener("resize", () => {
+      handleResize();
+    });
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []); // hide left menu on resize window or if device width is small
 
-	useEffect(() => {
-		let numberInput = document.querySelectorAll("input[type='number']");
+  useEffect(() => {
+    let numberInput = document.querySelectorAll("input[type='number']");
 
-		numberInput.forEach((elem) => {
-			elem.addEventListener("keypress", function (e) {
-				if ((e.which != 0 && e.which != 8 && e.which < 48) || e.which > 57) {
-					e.preventDefault();
-				}
-			});
-		});
-	}, []); // set all input with type = number can only type number
+    numberInput.forEach((elem) => {
+      elem.addEventListener("keypress", function (e) {
+        if ((e.which != 0 && e.which != 8 && e.which < 48) || e.which > 57) {
+          e.preventDefault();
+        }
+      });
+    });
+  }, []); // set all input with type = number can only type number
 
-	const handleHamburgerClick = () => {
-		setLeftMenuVisible((prev) => !prev);
-	}; // toggle left menu
+  const handleHamburgerClick = () => {
+    setLeftMenuVisible((prev) => !prev);
+  }; // toggle left menu
 
-	return (
-		<>
-			<NavBar
-				onLogoClick={() => {
-					setLeftMenuVisible(false);
-				}}
-				onHamburgerClick={handleHamburgerClick}
-				showHamburger={currentUser}
-			/>
-			<main>
-				{currentUser && (
-					<LeftMenu visible={leftMenuVisible} showScheduler={true} />
-				)}
-				<Router className="main-container" id="main-container">
-					<Home path="/" />
-					<TeacherTimeTable path="teacher-time-table" />
-					<ScheduleTimeTable path="schedule-timetable" />
-					<ManageFaculties path="mng-faculties" />
-					<ManageLecture path="mng-lectures" />
-					<ManageSubjects path="mng-subjects" />
-					<TimeTableNew path="new-timetable" />
-					<TimeTables path="timetable" {...{ setLeftMenuVisible }} />
-					<TimeTable path="timetable/:timeTableId/*" />
-					<NotFound default />
-				</Router>
-			</main>
-		</>
-	);
+  return (
+    <>
+      <NavBar
+        onLogoClick={() => {
+          setLeftMenuVisible(false);
+        }}
+        onHamburgerClick={handleHamburgerClick}
+        showHamburger={currentUser}
+      />
+      <main>
+        {currentUser && (
+          <LeftMenu visible={leftMenuVisible} showScheduler={true} />
+        )}
+        <Router className="main-container" id="main-container">
+          <Home path="/" />
+          <TeacherTimeTable path="teacher-time-table" />
+          <ScheduleTimeTable path="schedule-timetable" />
+          <ManageFaculties path="mng-faculties" />
+          <ManageLecture path="mng-lectures" />
+          <ManageSubjects path="mng-subjects" />
+          <TimeTableNew path="new-timetable" />
+          <TimeTables path="timetable" {...{ setLeftMenuVisible }} />
+          <TimeTable path="timetable/:semId/*" />
+          <NotFound default />
+        </Router>
+      </main>
+    </>
+  );
 };
 
 export default Application;

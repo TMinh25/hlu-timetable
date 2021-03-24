@@ -9,95 +9,100 @@
         "number-of-weeks": "SỐ TUẦN HỌC HỌC KÌ"
       },
       "classes": {
-        "MÃ LỚP": {
-          "class-name": "TÊN LỚP",
-          "timetable": {
-            "t2": [
-              "tiết 1",
-              "tiết 2",
-              "tiết 3",
-              "tiết 4",
-              "tiết 5",
-              "tiết 6",
-              "tiết 7",
-              "tiết 8",
-              "tiết 9",
-              "tiết 10"
-            ],
-            "t3": [
-              "tiết 1",
-              "tiết 2",
-              "tiết 3",
-              "tiết 4",
-              "tiết 5",
-              "tiết 6",
-              "tiết 7",
-              "tiết 8",
-              "tiết 9",
-              "tiết 10"
-            ],
-            "t4": [
-              "tiết 1",
-              "tiết 2",
-              "tiết 3",
-              "tiết 4",
-              "tiết 5",
-              "tiết 6",
-              "tiết 7",
-              "tiết 8",
-              "tiết 9",
-              "tiết 10"
-            ],
-            "t5": [
-              "tiết 1",
-              "tiết 2",
-              "tiết 3",
-              "tiết 4",
-              "tiết 5",
-              "tiết 6",
-              "tiết 7",
-              "tiết 8",
-              "tiết 9",
-              "tiết 10"
-            ],
-            "t6": [
-              "tiết 1",
-              "tiết 2",
-              "tiết 3",
-              "tiết 4",
-              "tiết 5",
-              "tiết 6",
-              "tiết 7",
-              "tiết 8",
-              "tiết 9",
-              "tiết 10"
-            ],
-            "t7": [
-              "tiết 1",
-              "tiết 2",
-              "tiết 3",
-              "tiết 4",
-              "tiết 5",
-              "tiết 6",
-              "tiết 7",
-              "tiết 8",
-              "tiết 9",
-              "tiết 10"
-            ],
-            "CN": [
-              "tiết 1",
-              "tiết 2",
-              "tiết 3",
-              "tiết 4",
-              "tiết 5",
-              "tiết 6",
-              "tiết 7",
-              "tiết 8",
-              "tiết 9",
-              "tiết 10"
-            ]
-          },
-          "__comment__": "null là không có tiết"
+        "TÊN KHOA": {
+          "TÊN LỚP": {
+            "classInfo": {
+              "classType": "HỆ LỚP",
+              "classSize": "number"
+            },
+            "timetable": {
+              "t2": [
+                "tiết 1",
+                "tiết 2",
+                "tiết 3",
+                "tiết 4",
+                "tiết 5",
+                "tiết 6",
+                "tiết 7",
+                "tiết 8",
+                "tiết 9",
+                "tiết 10"
+              ],
+              "t3": [
+                "tiết 1",
+                "tiết 2",
+                "tiết 3",
+                "tiết 4",
+                "tiết 5",
+                "tiết 6",
+                "tiết 7",
+                "tiết 8",
+                "tiết 9",
+                "tiết 10"
+              ],
+              "t4": [
+                "tiết 1",
+                "tiết 2",
+                "tiết 3",
+                "tiết 4",
+                "tiết 5",
+                "tiết 6",
+                "tiết 7",
+                "tiết 8",
+                "tiết 9",
+                "tiết 10"
+              ],
+              "t5": [
+                "tiết 1",
+                "tiết 2",
+                "tiết 3",
+                "tiết 4",
+                "tiết 5",
+                "tiết 6",
+                "tiết 7",
+                "tiết 8",
+                "tiết 9",
+                "tiết 10"
+              ],
+              "t6": [
+                "tiết 1",
+                "tiết 2",
+                "tiết 3",
+                "tiết 4",
+                "tiết 5",
+                "tiết 6",
+                "tiết 7",
+                "tiết 8",
+                "tiết 9",
+                "tiết 10"
+              ],
+              "t7": [
+                "tiết 1",
+                "tiết 2",
+                "tiết 3",
+                "tiết 4",
+                "tiết 5",
+                "tiết 6",
+                "tiết 7",
+                "tiết 8",
+                "tiết 9",
+                "tiết 10"
+              ],
+              "CN": [
+                "tiết 1",
+                "tiết 2",
+                "tiết 3",
+                "tiết 4",
+                "tiết 5",
+                "tiết 6",
+                "tiết 7",
+                "tiết 8",
+                "tiết 9",
+                "tiết 10"
+              ]
+            },
+            "__comment__": "null là không có tiết"
+          }
         }
       },
       "assignments": {

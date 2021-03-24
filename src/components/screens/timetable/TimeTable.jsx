@@ -14,7 +14,7 @@ import ManageClass from "../management/ManageClass";
 const Home = (props) => {
   return (
     <>
-      <Link to="class-timetable">asd</Link>
+      <Link to="class-timetable">forward</Link>
     </>
   );
 };
@@ -22,7 +22,7 @@ const Home = (props) => {
 const ClassTimeTable = (props) => {
   const context = useContext(SemContext);
 
-  const { semValues, currentTimeTable, semesterInfo } = context;
+  const { currentTimeTable, semesterInfo } = context;
 
   useEffect(() => {
     console.log(context);
@@ -34,13 +34,13 @@ const ClassTimeTable = (props) => {
     <>
       {exists(context) && (
         <div>
-          <Link to="../">asasdd</Link>
+          <Link to="../">back</Link>
           <h1>{exists(currentTimeTable) && currentTimeTable.label} asd</h1>
-          <h1>
+          {/* <h1>
             id:
             {Object.keys(semesterInfo).length && semesterInfo["user-named"]}
-          </h1>
-          <p>note: {props.timeTableId}</p>
+          </h1> */}
+          <p>note: {props.semId}</p>
         </div>
       )}
     </>
@@ -50,13 +50,12 @@ const ClassTimeTable = (props) => {
 const TimeTableNav = (props) => {
   const context = useContext(SemContext);
 
-  const { groupedOptions, semValues, semesterInfo } = context;
+  const { groupedOptions, semesterInfo } = context;
 
   const { setCurrentTimeTable } = props;
 
   return (
     <>
-      <h3>{exists(semesterInfo) && semesterInfo["user-named"]}</h3>
       <div className="timetable-nav">
         {exists(groupedOptions) && (
           <Select
@@ -77,20 +76,26 @@ const TimeTableNav = (props) => {
                 ...provided,
                 width: 500,
                 maxHeight: 400,
+                marginRight: 10,
                 overFlow: "hidden",
               }),
             }}
           />
         )}
-        <LinkButton to="class-timetable">asd</LinkButton>
-        <LinkButton to="mng-classes">asd</LinkButton>
+        <LinkButton to="mng-classes" style={{ marginRight: 10 }}>
+          Lớp
+        </LinkButton>
+        <LinkButton to="mng-assignments">Phân công giảng dạy</LinkButton>
       </div>
+      <h3 style={{ marginBottom: 10 }}>
+        {exists(semesterInfo) && semesterInfo["user-named"]}
+      </h3>
     </>
   );
 };
 
 const TimeTable = (props) => {
-  const { timeTableId } = props;
+  const { semId } = props;
 
   const [currentTimeTable, setCurrentTimeTable] = useState(null);
 
@@ -100,7 +105,7 @@ const TimeTable = (props) => {
 
   return (
     <>
-      <SemProvider {...{ timeTableId, currentTimeTable, setCurrentTimeTable }}>
+      <SemProvider {...{ semId, currentTimeTable, setCurrentTimeTable }}>
         <TimeTableNav
           {...{
             currentTimeTable,
@@ -108,11 +113,11 @@ const TimeTable = (props) => {
           }}
           path="/"
         />
-        {/* <Router primary={false}></Router> */}
         <Router>
           <Home path="/" />
           <ClassTimeTable path="class-timetable" />
           <ManageClass path="mng-classes" />
+          <ManageClass path="mng-assignments" />
           <NotFound default />
         </Router>
       </SemProvider>

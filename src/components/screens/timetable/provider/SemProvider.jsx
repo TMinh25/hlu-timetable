@@ -14,7 +14,7 @@ export const SemContext = createContext({
 
 export const SemProvider = (props) => {
   const [values, setValues] = useState({});
-  const { timeTableId, children } = props;
+  const { semId, children } = props;
 
   const [lecturesObj, setLecturesObj] = useState({});
   const [subjectsObj, setSubjectsObj] = useState({});
@@ -82,7 +82,7 @@ export const SemProvider = (props) => {
   useEffect(() => {
     if (!!auth.currentUser) {
       userRef(auth.currentUser.uid)
-        .child(`semesters/${timeTableId}`)
+        .child(`semesters/${semId}`)
         .on("value", (snapshot) => {
           if (snapshot.val() != null) {
             setValues({ ...values, ...snapshot.val() });
@@ -92,7 +92,11 @@ export const SemProvider = (props) => {
         });
     }
     // eslint-disable-next-line
-  }, [auth.currentUser, timeTableId]); // similar to componentDidMount()
+  }, [auth.currentUser, semId]); // similar to componentDidMount()
+
+  useEffect(() => {
+    console.log(values);
+  }, [values]);
 
   return (
     <SemContext.Provider value={{ ...values, ...props }}>
@@ -103,5 +107,5 @@ export const SemProvider = (props) => {
 
 SemProvider.propsType = {
   children: PropTypes.node,
-  timeTableId: PropTypes.string.isRequired,
+  semId: PropTypes.string.isRequired,
 };

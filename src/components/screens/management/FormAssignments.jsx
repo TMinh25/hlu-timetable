@@ -4,42 +4,42 @@ import React, { useState, useEffect } from "react";
 import { Button } from "../../Components";
 import { Form } from "semantic-ui-react";
 
-const FormClassManage = ({
-  facultiesObj,
-  classObj,
-  currentClassId,
-  setCurrentClassId,
-  handleOnAdd,
+const FormAssignments = ({
   handleOnModify,
+  handleOnAdd,
+  currentLectureId,
+  lecturesObj,
+  facultiesObj,
+  setCurrentLectureId,
 }) => {
   const initialState = {
-    className: "",
-    classSize: "",
-    classType: "defaultValue",
+    "lecture-name": "",
+    "lecture-email": "",
+    // faculty: "--- Khoa ---",
     faculty: "defaultValue",
   };
 
   const [values, setValues] = useState(initialState);
 
   useEffect(() => {
-    console.log(values);
-  }, [values]);
-
-  useEffect(() => {
-    if (currentClassId === "") {
+    if (currentLectureId === "") {
       setValues({ ...initialState });
     } else {
-      setValues({ ...classObj[currentClassId] });
+      setValues({ ...lecturesObj[currentLectureId] });
     }
     // eslint-disable-next-line
-  }, [currentClassId, classObj]);
+  }, [currentLectureId, lecturesObj]);
+
+  // useEffect(() => {
+  // 	console.log(currentLectureId, values);
+  // }, [values, currentLectureId]);
 
   useEffect(() => {
-    if (currentClassId) {
+    if (currentLectureId) {
       document.getElementById("lecture__select-faculty").value =
-        classObj[currentClassId]["faculty"];
+        lecturesObj[currentLectureId]["faculty"];
     }
-  }, [currentClassId, classObj, facultiesObj]);
+  }, [currentLectureId, lecturesObj, facultiesObj]);
 
   const handleInputChange = (e) => {
     var { name, value } = e.target;
@@ -54,12 +54,12 @@ const FormClassManage = ({
 
   const handleButtonModify = async (e) => {
     e.preventDefault();
-    const resolve = await handleOnModify(currentClassId, values);
+    const resolve = await handleOnModify(currentLectureId, values);
     resolve && setValues(initialState);
   };
 
   const cancelModify = () => {
-    setCurrentClassId("");
+    setCurrentLectureId("");
     setValues(initialState);
   };
 
@@ -67,55 +67,33 @@ const FormClassManage = ({
     <>
       <Form id="manage__form">
         <Form.Input
-          label="Tên Lớp"
-          title="Tên Lớp"
+          label="Họ tên"
+          title="Họ tên giảng viên"
           className="left-align"
-          placeholder="Tên Lớp"
+          placeholder="Họ tên giảng viên"
           type="text"
-          name="className"
-          id="className"
+          name="lecture-name"
+          id="lecture-name"
+          value={values["lecture-name"]}
           onChange={handleInputChange}
-          value={values["className"]}
           required
           autoFocus
         />
         <Form.Input
-          label="Sĩ Số Lớp"
-          title="Sĩ Số Lớp"
-          className="left-align"
-          placeholder="Sĩ Số Lớp"
-          type="number"
-          name="classSize"
-          id="classSize"
+          label="Email"
+          title="Email"
+          placeholder="Email"
+          id="lecture-email"
+          type="email"
+          name="lecture-email"
+          value={values["lecture-email"]}
           onChange={handleInputChange}
-          value={values["classSize"]}
-          required
-          autoFocus
         />
-        <label htmlFor="class__select-faculty">Chọn Hệ</label>
-        <select
-          title="Chọn Hệ"
-          name="classType"
-          id="class__select-faculty"
-          style={{ marginBottom: 10 }}
-          onChange={handleInputChange}
-          value={values["classType"]}
-        >
-          <option disabled key="default" value="defaultValue">
-            --- Hệ ---
-          </option>
-          <option value="Cao Đẳng" key="CĐ">
-            Cao Đẳng
-          </option>
-          <option value="Đại Học" key="ĐH">
-            Đại Học
-          </option>
-        </select>
-        <label htmlFor="class__select-class_type">Chọn Khoa</label>
+        <label htmlFor="lecture__select-faculty">Chọn Khoa</label>
         <select
           title="Chọn khoa"
           name="faculty"
-          id="class__select-class_type"
+          id="lecture__select-faculty"
           style={{ marginBottom: 10 }}
           onChange={handleInputChange}
           value={values.faculty}
@@ -136,7 +114,7 @@ const FormClassManage = ({
         </select>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <div>
-            {currentClassId ? (
+            {currentLectureId ? (
               <Button
                 style={{ margin: 0, height: "100%" }}
                 type="submit"
@@ -159,7 +137,7 @@ const FormClassManage = ({
             )}
           </div>
           <div>
-            {currentClassId && (
+            {currentLectureId && (
               <Button
                 style={{ margin: "0", height: "100%" }}
                 className="sign-out"
@@ -176,4 +154,4 @@ const FormClassManage = ({
   );
 };
 
-export default FormClassManage;
+export default FormAssignments;

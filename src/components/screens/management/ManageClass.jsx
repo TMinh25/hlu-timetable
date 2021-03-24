@@ -3,21 +3,34 @@ import React, { useEffect, useState } from "react";
 // import components
 import FormClassManage from "./FormClassManage";
 import {
-  newLecture,
-  modifyLecture,
-  removeLecture,
-  getAllLectures,
   getAllFaculties,
-  setNewFaculty,
+  getAllClass,
+  setNewClass,
+  removeClass,
 } from "../../../firebase";
 import { defaultFailCB, readExcel, exists } from "../../../utils";
 import { confirmAlert } from "react-confirm-alert";
 import { Loading, Button, FileDropzone } from "../../Components";
+import PropTypes from "prop-types";
+
+import {
+  makeStyles,
+  Box,
+  Collapse,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+  Paper,
+} from "@material-ui/core";
 
 // import styles
 import "./Manage.css";
 
-export function getFacId(facName) {
+function getFacId(facName) {
   if (exists(facName)) {
     return facName
       .toString()
@@ -28,42 +41,151 @@ export function getFacId(facName) {
   }
 }
 
-const ManageClass = () => {
+const useRowStyles = makeStyles({
+  root: {
+    "& > *": {
+      borderBottom: "unset",
+    },
+  },
+});
+
+function createData(facultyName, classList) {
+  return {
+    facultyName,
+    classList,
+  };
+}
+
+function Row(props) {
+  const { row } = props;
+  const [open, setOpen] = useState(false);
+  const classes = useRowStyles();
+
+  const { onRemove } = props;
+
+  useEffect(() => {
+    console.log(open);
+  }, [open]);
+
+  return (
+    <>
+      <TableRow
+        className={`${classes.root} list_item-search-contain`}
+        style={{
+          maxHeight: 699,
+          overflow: "hidden",
+          cursor: "pointer",
+        }}
+        onClick={() => setOpen((prevState) => !prevState)}
+      >
+        <TableCell component="th" scope="row" align="left">
+          {row.facultyName}
+        </TableCell>
+        <TableCell align="middle">{row.classList.length}</TableCell>
+      </TableRow>
+      <TableRow>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+          <Collapse
+            in={open}
+            timeout="auto"
+            unmountOnExit
+            style={{
+              borderBottom: "1px solid whtiesmoke",
+            }}
+          >
+            <Box margin={1}>
+              <Typography variant="h6" gutterBottom component="div">
+                Danh Sách Lớp
+              </Typography>
+              <Table size="small" aria-label="purchases">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>STT</TableCell>
+                    <TableCell>Tên Lớp</TableCell>
+                    <TableCell>Hệ</TableCell>
+                    <TableCell>Sĩ Số Lớp</TableCell>
+                    <TableCell />
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {row.classList.map((classRow, index) => (
+                    <TableRow key={index} className="list_item-search">
+                      <TableCell
+                        component="th"
+                        scope="row"
+                        className="item-to_search"
+                      >
+                        {index + 1}
+                      </TableCell>
+                      <TableCell className="item-to_search">
+                        {classRow.className}
+                      </TableCell>
+                      <TableCell className="item-to_search">
+                        {classRow.classType}
+                      </TableCell>
+                      <TableCell>{classRow.classSize}</TableCell>
+                      <TableCell
+                        align="right"
+                        onClick={() =>
+                          onRemove(row.facultyName, classRow.className)
+                        }
+                        style={{ cursor: "pointer" }}
+                      >
+                        <i class="fas fa-trash" />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Box>
+          </Collapse>
+        </TableCell>
+      </TableRow>
+    </>
+  );
+}
+
+Row.propTypes = {
+  row: PropTypes.shape({
+    facultyName: PropTypes.string.isRequired,
+    classList: PropTypes.arrayOf(
+      PropTypes.shape({
+        className: PropTypes.string.isRequired,
+        classType: PropTypes.string.isRequired,
+        classSize: PropTypes.number.isRequired,
+      })
+    ).isRequired,
+  }).isRequired,
+};
+
+const ManageClass = (props) => {
   //#region Component State
 
-  const [lecturesObj, setLecturesObj] = useState({});
+  const [classObj, setClassObj] = useState({});
   const [facultiesObj, setFacultiesObj] = useState({});
-  const [currentLectureId, setCurrentLectureId] = useState();
+  const [currentClassId, setCurrentClassId] = useState();
   const [searchString, setSearchString] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [excelLoadedItems, setExcelLoadedItems] = useState([]);
+
+  const [originalRows, setOriginalRows] = useState([]);
 
   //#endregion
 
   //#region Components
 
-  const ClassListItem = ({ index, name, faculty, onRemove, onClick }) => {
+  const LectureItemToAdd = ({ onAdd, index, className, faculty }) => {
     return (
-      <>
-        <li key={index} className="list__container-li_item" onClick={onClick}>
-          <p className="li__item-search">{index + 1}</p>
-          <p className="li__item-search">{name}</p>
-          <p className="li__item-search">
-            {faculty !== "defaultValue" ? faculty : "Không"}
-          </p>
-          <span className="btn__trash trash" onClick={() => onRemove(index)}>
-            <i className="fas fa-trash-alt" />
-          </span>
-        </li>
-      </>
-    );
-  };
-
-  const LectureItemToAdd = ({ onAdd, index, lectureName }) => {
-    return (
-      <li key={index} className="excel__list-li_item">
+      <li
+        key={index}
+        className="excel__list-li_item"
+        style={{ gridTemplateColumns: "4fr 3fr 1fr" }}
+      >
         <div>
-          <p>{lectureName}</p>
+          <p>{className}</p>
+        </div>
+        <div>
+          <p>{getFacId(faculty)}</p>
         </div>
         <span className="btn__trash add" onClick={onAdd}>
           <i className="far fa-plus-square" />
@@ -77,24 +199,51 @@ const ManageClass = () => {
   //#region Hooks
 
   useEffect(() => {
-    getAllLectures((result) => {
-      setLecturesObj(result);
+    getAllClass(props.semId, (result) => {
+      setClassObj(result);
     });
     getAllFaculties((result) => {
       setFacultiesObj(result);
       setIsLoading(false);
     });
-  }, [isLoading]); // similar to fetching lectures list on componentUpdate()
+  }, [isLoading, props.semId]);
 
   useEffect(() => {
-    const li = document.getElementsByClassName("list__container-li_item");
+    let tableRows = [];
+    Object.keys(classObj).forEach((facKey) => {
+      tableRows = [
+        ...tableRows,
+        createData(
+          facKey,
+          Object.keys(classObj[facKey]).map((classKey) => ({
+            className: classKey,
+            classType: classObj[facKey][classKey]["classType"],
+            classSize: classObj[facKey][classKey]["classSize"],
+          }))
+        ),
+      ];
+    });
+
+    setOriginalRows(tableRows);
+  }, [classObj]);
+
+  // useEffect(() => {
+  //   console.log(classObj);
+  // }, [classObj]);
+
+  // useEffect(() => {
+  //   console.log({ ...props, classObj });
+  // }, [props, classObj]);
+
+  useEffect(() => {
+    const li = document.getElementsByClassName("list_item-search");
     for (let i = 0; i < li.length; i++) {
-      const items = li[i].querySelectorAll(".li__item-search");
+      const items = li[i].querySelectorAll(".item-to_search");
       let isInclude = [];
       items.forEach((item) => {
         let txtValue = item.textContent || item.innerHTML;
         isInclude.push(
-          txtValue.toLowerCase().includes(searchString.toLowerCase())
+          txtValue.toLowerCase().includes(searchString.trim().toLowerCase())
             ? true
             : false
         );
@@ -102,6 +251,11 @@ const ManageClass = () => {
       if (isInclude.some((item) => item === true)) {
         li[i].style.display = "";
       } else {
+        // const container = li[i].closest(".list_item-search-contain");
+
+        // console.log("container");
+        // console.log(container);
+        // container.style.display = "none";
         li[i].style.display = "none";
       }
     }
@@ -111,46 +265,12 @@ const ManageClass = () => {
 
   //#region Component Method
 
-  function handleOnAddFaculty(values) {
-    // Trả về Promise để Form đợi tới khi người dùng chọn tùy chọn
-    return new Promise((resolve, reject) => {
-      if (exists(values["faculty-name"])) {
-        let facID = getFacId(values["faculty-name"]);
-        values["faculty-id"] = facID;
-        if (values["faculty-id"] in facultiesObj) {
-          confirmAlert({
-            title: "Bạn có muốn thay đổi tên khoa?",
-            message: "Mã khoa này đã tồn tại",
-            buttons: [
-              {
-                className: "confirm__cancel",
-                label: "Hủy",
-                onClick: () => reject(),
-              },
-              {
-                className: "new",
-                label: "Thay Đổi",
-                onClick: () => {
-                  setNewFaculty(values);
-                  resolve();
-                },
-              },
-            ],
-          });
-        } else {
-          setNewFaculty(values);
-          resolve();
-        }
-      }
-    });
-  }
-
-  const handleOnAdd = ({
+  function handleOnAdd({
     values,
     shouldRemoveChild = false,
     event = undefined,
-  }) => {
-    //remove li element on add
+  }) {
+    // remove li element on add
     const removeLi = () => {
       const thisLi = event.target.closest("li");
       let nodes = Array.from(thisLi.closest("ul").children); // get array
@@ -163,14 +283,15 @@ const ManageClass = () => {
     };
 
     return new Promise((resolve, reject) => {
-      if (!!values["lecture-name"]) {
+      if (!!values["className"]) {
         if (
-          exists(values["faculty"]) &&
-          !(getFacId(values["faculty"]) in facultiesObj)
+          exists(values["className"]) &&
+          exists(classObj[values["faculty"]]) &&
+          values["className"] in classObj[values["faculty"]]
         ) {
           confirmAlert({
-            title: "Khoa này hiện tại chưa có trong cơ sở dữ liệu",
-            message: "Bạn muốn thêm khoa này vào database không?",
+            title: "Lớp này đã tồn tại trong cơ sở dữ liệu",
+            message: "Bạn muốn thay đổi thông tin của lớp này?",
             buttons: [
               {
                 className: "confirm__cancel",
@@ -181,10 +302,7 @@ const ManageClass = () => {
                 className: "new",
                 label: "Thêm",
                 onClick: () => {
-                  newLecture(values);
-                  handleOnAddFaculty({
-                    "faculty-name": values["faculty"],
-                  });
+                  setNewClass(props.semId, values);
                   setIsLoading(true);
                   shouldRemoveChild && removeLi();
                   resolve();
@@ -193,27 +311,16 @@ const ManageClass = () => {
             ],
           });
         } else {
-          newLecture(values);
+          setNewClass(props.semId, values);
           setIsLoading(true);
           shouldRemoveChild && removeLi();
           resolve();
         }
       }
     });
-  };
+  }
 
-  const handleOnModify = (id, values) => {
-    return new Promise((resolve) => {
-      if (!!Object.keys(values).length) {
-        modifyLecture(id, values);
-        setCurrentLectureId("");
-        setIsLoading(true);
-      }
-      resolve(true);
-    });
-  };
-
-  const handleOnRemove = (id) => {
+  const handleOnRemove = (facId, classId) => {
     confirmAlert({
       title: "Bạn có chắc muốn xóa khoa này?",
       message: "Bạn sẽ không thể truy cập lại thông tin này",
@@ -226,8 +333,7 @@ const ManageClass = () => {
           className: "sign-out",
           label: "Xóa",
           onClick: () => {
-            removeLecture(id);
-            setCurrentLectureId("");
+            removeClass(props.semId, facId, classId);
             setIsLoading(true);
           },
         },
@@ -236,7 +342,7 @@ const ManageClass = () => {
   };
 
   async function handleDropped(files) {
-    const objHeaders = ["lecture-name", "lecture-email", "faculty"];
+    const objHeaders = ["faculty", "className", "classType", "classSize"];
     const file = files[0];
     try {
       const data = await readExcel(file, objHeaders);
@@ -244,6 +350,7 @@ const ManageClass = () => {
         setExcelLoadedItems(null);
       } else {
         setExcelLoadedItems(data);
+        console.log(data);
       }
     } catch (err) {
       defaultFailCB(err);
@@ -252,7 +359,7 @@ const ManageClass = () => {
 
   const handleDownloadTemplateFile = () =>
     window.open(
-      "https://drive.google.com/file/d/15h5VvMQOtWwKoNRKzAWQaW62vctDx-jd/view?usp=sharing",
+      "https://drive.google.com/file/d/19AczyMhfMR7AL0oAup2HYKkgGG-vUB_G/view?usp=sharing",
       "_blank",
       ""
     );
@@ -280,12 +387,12 @@ const ManageClass = () => {
             {
               // render excel loaded list items if it has at least 1 row or render dropzone_container
               !!excelLoadedItems.length ? (
-                <ul id="excel__loaded-ul lecture-ul">
+                <ul id="excel__loaded-ul class-mng-ul">
                   {excelLoadedItems.map((values, index) => (
                     <LectureItemToAdd
                       index={index}
-                      lectureName={values["lecture-name"]}
-                      lectrueEmail={values["lecture-email"]}
+                      className={values["className"]}
+                      faculty={values["faculty"]}
                       onAdd={(event) =>
                         handleOnAdd({ values, shouldRemoveChild: true, event })
                       }
@@ -308,11 +415,10 @@ const ManageClass = () => {
                 <FormClassManage
                   {...{
                     facultiesObj,
-                    lecturesObj,
-                    currentLectureId,
-                    setCurrentLectureId,
+                    classObj,
+                    currentClassId,
+                    setCurrentClassId,
                     handleOnAdd,
-                    handleOnModify,
                   }}
                 />
               )
@@ -329,31 +435,34 @@ const ManageClass = () => {
                 value={searchString}
                 placeholder="Tìm kiếm..."
               />
-              <div className="list__header">
-                <h5>STT</h5>
-                <h5>Tên giảng viên</h5>
-                <h5>Khoa</h5>
-              </div>
             </div>
-            {!!Object.keys(lecturesObj).length ? (
-              <ul>
-                {Object.keys(lecturesObj)
-                  .reverse()
-                  .map((id, index) => {
-                    return (
-                      <ClassListItem
-                        index={index}
-                        name={lecturesObj[id]["lecture-name"]}
-                        faculty={lecturesObj[id]["faculty"]}
-                        onRemove={() => handleOnRemove(id)}
-                        onClick={() => setCurrentLectureId(id)}
-                      />
-                    );
-                  })}
-              </ul>
+            {!!Object.keys(classObj).length ? (
+              <TableContainer
+                component={Paper}
+                style={{ maxHeight: "100%", overflow: "auto" }}
+              >
+                <Table aria-label="collapsible table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell align="left">
+                        <b>Khoa</b>
+                      </TableCell>
+                      <TableCell align="middle">
+                        <b>Số Lượng Lớp</b>
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {originalRows.map((row) => (
+                      <Row key={row.name} row={row} onRemove={handleOnRemove} />
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             ) : (
               <p>no lecture</p>
             )}
+            {/* list of classes */}
           </div>
         </div>
       </div>

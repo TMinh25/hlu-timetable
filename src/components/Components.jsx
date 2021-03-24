@@ -37,11 +37,12 @@ export const Loading = () => (
 
 //#region Button
 
-export const LinkButton = ({ className, title, to, children }) => {
+export const LinkButton = (props) => {
+  const { children, className } = props;
   const fixedClassName = className ? className : "";
   return (
     <>
-      <Link {...{ title, to }} className={`button ${fixedClassName}`}>
+      <Link {...props} className={`button ${fixedClassName}`}>
         {children}
       </Link>
     </>
