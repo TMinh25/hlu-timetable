@@ -1,10 +1,11 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 
 // import components
 import { Loading, LinkButton, Button } from "../Components";
 import { removeSemester, getAllSemester } from "../../firebase";
 import { Link } from "@reach/router";
 import { confirmAlert } from "react-confirm-alert";
+import PropTypes from "prop-types";
 
 // import styles
 import "./TimeTables.css";
@@ -28,22 +29,21 @@ function getTimeString(t) {
   }`;
 }
 
-const TimeTableListItem = ({
-  id,
-  name,
-  time,
-  numberOfWeeks,
-  onDelete,
-  onClickLi,
-}) => {
-  let liTitle = `${name}\nSố tuần học: ${numberOfWeeks}`;
+const TimeTableListItem = (props) => {
+  const { id, value, onDelete, onClick } = props;
+
+  const { userNamed, timeCreated, numberOfWeeks } = value["semesterInfo"];
+  let title = `${userNamed}\nSố tuần học: ${numberOfWeeks}`;
+
+  const restProps = { title, onClick };
+
   return (
-    <li title={liTitle} key={id} className="timetable__li" onClick={onClickLi}>
+    <li className="timetable__li" {...restProps}>
       <div className="content__li-container">
         <Link to={`/timetable/${id}`} className="timetable__li-link">
-          <div className="li__name">✌ {name}</div>
+          <div className="li__name">✌ {userNamed}</div>
           <div className="li__time" style={{ fontSize: "1.8vmin" }}>
-            <i className="far fa-clock" /> {getTimeString(time)}
+            <i className="far fa-clock" /> {getTimeString(timeCreated)}
           </div>
         </Link>
       </div>
@@ -52,6 +52,17 @@ const TimeTableListItem = ({
       </Button>
     </li>
   );
+};
+
+TimeTableListItem.propTypes = {
+  id: PropTypes.string,
+  value: PropTypes.shape({
+    userNamed: PropTypes.string,
+    timeCreated: PropTypes.instanceOf(Date),
+    numberOfWeeks: PropTypes.string,
+  }),
+  onDelete: PropTypes.func,
+  onClick: PropTypes.func,
 };
 
 const TimeTables = (props) => {
@@ -103,15 +114,12 @@ const TimeTables = (props) => {
               <ul>
                 {Object.keys(semesterObject)
                   .reverse()
-                  .map((id) => (
+                  .map((id, index) => (
                     <TimeTableListItem
+                      key={index}
                       id={id}
                       onDelete={() => handleOnDelete(id)}
-                      name={semesterObject[id]["semesterInfo"]["user-named"]}
-                      numberOfWeeks={
-                        semesterObject[id]["semesterInfo"]["number-of-weeks"]
-                      }
-                      time={semesterObject[id]["semesterInfo"]["time-created"]}
+                      value={semesterObject[id]}
                       onClickLi={() => props.setLeftMenuVisible(false)}
                     />
                   ))}

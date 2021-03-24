@@ -24,11 +24,11 @@ const ClassTimeTable = (props) => {
 
   const { currentTimeTable, semesterInfo } = context;
 
-  useEffect(() => {
-    console.log(context);
+  // useEffect(() => {
+  //   console.log(context);
 
-    console.log(semesterInfo);
-  }, [context, semesterInfo]);
+  //   console.log(semesterInfo);
+  // }, [context, semesterInfo]);
 
   return (
     <>
@@ -89,6 +89,12 @@ const TimeTableNav = (props) => {
       </div>
       <h3 style={{ marginBottom: 10 }}>
         {exists(semesterInfo) && semesterInfo["user-named"]}
+        {exists(props.currentTimeTable) ? (
+          <>
+            {" "}
+            <i className="fas fa-angle-right" /> {props.currentTimeTable.label}
+          </>
+        ) : null}
       </h3>
     </>
   );
@@ -99,9 +105,9 @@ const TimeTable = (props) => {
 
   const [currentTimeTable, setCurrentTimeTable] = useState(null);
 
-  useEffect(() => {
-    console.log(currentTimeTable);
-  }, [currentTimeTable]);
+  // useEffect(() => {
+  //   console.log(currentTimeTable);
+  // }, [currentTimeTable]);
 
   return (
     <>

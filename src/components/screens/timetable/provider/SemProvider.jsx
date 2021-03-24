@@ -94,9 +94,9 @@ export const SemProvider = (props) => {
     // eslint-disable-next-line
   }, [auth.currentUser, semId]); // similar to componentDidMount()
 
-  useEffect(() => {
-    console.log(values);
-  }, [values]);
+  // useEffect(() => {
+  //   console.log(values);
+  // }, [values]);
 
   return (
     <SemContext.Provider value={{ ...values, ...props }}>

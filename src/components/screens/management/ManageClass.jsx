@@ -11,43 +11,20 @@ import {
 import { defaultFailCB, readExcel, exists } from "../../../utils";
 import { confirmAlert } from "react-confirm-alert";
 import { Loading, Button, FileDropzone } from "../../Components";
-import PropTypes from "prop-types";
-
+import { getFacId } from "./ManageFaculties";
 import {
-  makeStyles,
-  Box,
-  Collapse,
+  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
-  Paper,
 } from "@material-ui/core";
+import ClassRow from "./TableRowClass";
 
 // import styles
 import "./Manage.css";
-
-function getFacId(facName) {
-  if (exists(facName)) {
-    return facName
-      .toString()
-      .trim()
-      .split(" ")
-      .map((word) => word[0].toUpperCase())
-      .join("");
-  }
-}
-
-const useRowStyles = makeStyles({
-  root: {
-    "& > *": {
-      borderBottom: "unset",
-    },
-  },
-});
 
 function createData(facultyName, classList) {
   return {
@@ -55,108 +32,6 @@ function createData(facultyName, classList) {
     classList,
   };
 }
-
-function Row(props) {
-  const { row } = props;
-  const [open, setOpen] = useState(false);
-  const classes = useRowStyles();
-
-  const { onRemove } = props;
-
-  useEffect(() => {
-    console.log(open);
-  }, [open]);
-
-  return (
-    <>
-      <TableRow
-        className={`${classes.root} list_item-search-contain`}
-        style={{
-          maxHeight: 699,
-          overflow: "hidden",
-          cursor: "pointer",
-        }}
-        onClick={() => setOpen((prevState) => !prevState)}
-      >
-        <TableCell component="th" scope="row" align="left">
-          {row.facultyName}
-        </TableCell>
-        <TableCell align="middle">{row.classList.length}</TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse
-            in={open}
-            timeout="auto"
-            unmountOnExit
-            style={{
-              borderBottom: "1px solid whtiesmoke",
-            }}
-          >
-            <Box margin={1}>
-              <Typography variant="h6" gutterBottom component="div">
-                Danh Sách Lớp
-              </Typography>
-              <Table size="small" aria-label="purchases">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>STT</TableCell>
-                    <TableCell>Tên Lớp</TableCell>
-                    <TableCell>Hệ</TableCell>
-                    <TableCell>Sĩ Số Lớp</TableCell>
-                    <TableCell />
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {row.classList.map((classRow, index) => (
-                    <TableRow key={index} className="list_item-search">
-                      <TableCell
-                        component="th"
-                        scope="row"
-                        className="item-to_search"
-                      >
-                        {index + 1}
-                      </TableCell>
-                      <TableCell className="item-to_search">
-                        {classRow.className}
-                      </TableCell>
-                      <TableCell className="item-to_search">
-                        {classRow.classType}
-                      </TableCell>
-                      <TableCell>{classRow.classSize}</TableCell>
-                      <TableCell
-                        align="right"
-                        onClick={() =>
-                          onRemove(row.facultyName, classRow.className)
-                        }
-                        style={{ cursor: "pointer" }}
-                      >
-                        <i class="fas fa-trash" />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
-    </>
-  );
-}
-
-Row.propTypes = {
-  row: PropTypes.shape({
-    facultyName: PropTypes.string.isRequired,
-    classList: PropTypes.arrayOf(
-      PropTypes.shape({
-        className: PropTypes.string.isRequired,
-        classType: PropTypes.string.isRequired,
-        classSize: PropTypes.number.isRequired,
-      })
-    ).isRequired,
-  }).isRequired,
-};
 
 const ManageClass = (props) => {
   //#region Component State
@@ -251,11 +126,6 @@ const ManageClass = (props) => {
       if (isInclude.some((item) => item === true)) {
         li[i].style.display = "";
       } else {
-        // const container = li[i].closest(".list_item-search-contain");
-
-        // console.log("container");
-        // console.log(container);
-        // container.style.display = "none";
         li[i].style.display = "none";
       }
     }
@@ -387,7 +257,7 @@ const ManageClass = (props) => {
             {
               // render excel loaded list items if it has at least 1 row or render dropzone_container
               !!excelLoadedItems.length ? (
-                <ul id="excel__loaded-ul class-mng-ul">
+                <ul id="excel__loaded-ul">
                   {excelLoadedItems.map((values, index) => (
                     <LectureItemToAdd
                       index={index}
@@ -447,14 +317,18 @@ const ManageClass = (props) => {
                       <TableCell align="left">
                         <b>Khoa</b>
                       </TableCell>
-                      <TableCell align="middle">
+                      <TableCell align="center">
                         <b>Số Lượng Lớp</b>
                       </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {originalRows.map((row) => (
-                      <Row key={row.name} row={row} onRemove={handleOnRemove} />
+                    {originalRows.map((row, index) => (
+                      <ClassRow
+                        key={index}
+                        row={row}
+                        onRemove={handleOnRemove}
+                      />
                     ))}
                   </TableBody>
                 </Table>

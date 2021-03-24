@@ -21,9 +21,9 @@ const FormClassManage = ({
 
   const [values, setValues] = useState(initialState);
 
-  useEffect(() => {
-    console.log(values);
-  }, [values]);
+  // useEffect(() => {
+  //   console.log(values);
+  // }, [values]);
 
   useEffect(() => {
     if (currentClassId === "") {
@@ -65,7 +65,7 @@ const FormClassManage = ({
 
   return (
     <>
-      <Form id="manage__form">
+      <Form id="manage__form" onSubmit={handleOnAdd}>
         <Form.Input
           label="Tên Lớp"
           title="Tên Lớp"
@@ -73,9 +73,8 @@ const FormClassManage = ({
           placeholder="Tên Lớp"
           type="text"
           name="className"
-          id="className"
-          onChange={handleInputChange}
           value={values["className"]}
+          onChange={handleInputChange}
           required
           autoFocus
         />
@@ -86,20 +85,19 @@ const FormClassManage = ({
           placeholder="Sĩ Số Lớp"
           type="number"
           name="classSize"
-          id="classSize"
-          onChange={handleInputChange}
           value={values["classSize"]}
+          onChange={handleInputChange}
           required
           autoFocus
         />
         <label htmlFor="class__select-faculty">Chọn Hệ</label>
         <select
           title="Chọn Hệ"
-          name="classType"
           id="class__select-faculty"
           style={{ marginBottom: 10 }}
-          onChange={handleInputChange}
+          name="classType"
           value={values["classType"]}
+          onChange={handleInputChange}
         >
           <option disabled key="default" value="defaultValue">
             --- Hệ ---
@@ -114,11 +112,11 @@ const FormClassManage = ({
         <label htmlFor="class__select-class_type">Chọn Khoa</label>
         <select
           title="Chọn khoa"
-          name="faculty"
           id="class__select-class_type"
           style={{ marginBottom: 10 }}
+          name="faculty"
+          value={values["faculty"]}
           onChange={handleInputChange}
-          value={values.faculty}
         >
           <option disabled key="default" value="defaultValue">
             {Object.keys(facultiesObj).length
