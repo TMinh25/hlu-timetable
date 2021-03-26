@@ -13,13 +13,14 @@ const FormAssignments = ({
   setCurrentLectureId,
 }) => {
   const initialState = {
-    "lecture-name": "",
-    "lecture-email": "",
     // faculty: "--- Khoa ---",
     faculty: "defaultValue",
+    // faculty: "--- Giảng Viên ---",
+    lectureID: "defaultValue",
   };
 
   const [values, setValues] = useState(initialState);
+  const [lectureOptions, setLectureOptions] = useState([]);
 
   useEffect(() => {
     if (currentLectureId === "") {
@@ -40,6 +41,14 @@ const FormAssignments = ({
         lecturesObj[currentLectureId]["faculty"];
     }
   }, [currentLectureId, lecturesObj, facultiesObj]);
+
+  useEffect(() => {
+    setLectureOptions(
+      Object.keys(lecturesObj).map((key) => {
+        return { label: lecturesObj[key]["lecture-name"], value: key };
+      })
+    );
+  }, [lecturesObj]);
 
   const handleInputChange = (e) => {
     var { name, value } = e.target;
@@ -66,29 +75,6 @@ const FormAssignments = ({
   return (
     <>
       <Form id="manage__form">
-        <Form.Input
-          label="Họ tên"
-          title="Họ tên giảng viên"
-          className="left-align"
-          placeholder="Họ tên giảng viên"
-          type="text"
-          name="lecture-name"
-          id="lecture-name"
-          value={values["lecture-name"]}
-          onChange={handleInputChange}
-          required
-          autoFocus
-        />
-        <Form.Input
-          label="Email"
-          title="Email"
-          placeholder="Email"
-          id="lecture-email"
-          type="email"
-          name="lecture-email"
-          value={values["lecture-email"]}
-          onChange={handleInputChange}
-        />
         <label htmlFor="lecture__select-faculty">Chọn Khoa</label>
         <select
           title="Chọn khoa"
@@ -96,7 +82,7 @@ const FormAssignments = ({
           id="lecture__select-faculty"
           style={{ marginBottom: 10 }}
           onChange={handleInputChange}
-          value={values.faculty}
+          value={values["faculty"]}
         >
           <option disabled key="default" value="defaultValue">
             {Object.keys(facultiesObj).length
@@ -104,13 +90,33 @@ const FormAssignments = ({
               : "Không có khoa nào"}
           </option>
           {Object.keys(facultiesObj).length &&
-            Object.keys(facultiesObj).map((id) => {
+            Object.keys(facultiesObj).map((id, index) => {
               return (
-                <option value={facultiesObj[id]["faculty-name"]} key={id}>
+                <option value={facultiesObj[id]["faculty-name"]} key={index}>
                   {facultiesObj[id]["faculty-name"]}
                 </option>
               );
             })}
+        </select>
+        <label htmlFor="lecture__select-lecture">Chọn Khoa</label>
+        <select
+          title="Chọn khoa"
+          name="lectureID"
+          id="lecture__select-lecture"
+          style={{ marginBottom: 10 }}
+          onChange={handleInputChange}
+          value={values["lectureID"]}
+        >
+          <option disabled key="default" value="defaultValue">
+            {Object.keys(lecturesObj).length
+              ? "--- Giảng Viên ---"
+              : "Không có giảng viên nào"}
+          </option>
+          {lectureOptions.map((lecture, index) => (
+            <option value={lecture["value"]} key={index}>
+              {lecture["label"]}
+            </option>
+          ))}
         </select>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <div>

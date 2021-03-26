@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useState, useContext } from "react";
 // import components
 import NotFound from "../NotFound";
 import { Router, Link } from "@reach/router";
@@ -10,6 +10,7 @@ import "./styles.css";
 import { exists } from "../../../utils";
 import { LinkButton } from "../../Components";
 import ManageClass from "../management/ManageClass";
+import ManageAssignments from "../management/ManageAssigments";
 
 const Home = (props) => {
   return (
@@ -88,7 +89,7 @@ const TimeTableNav = (props) => {
         <LinkButton to="mng-assignments">Phân công giảng dạy</LinkButton>
       </div>
       <h3 style={{ marginBottom: 10 }}>
-        {exists(semesterInfo) && semesterInfo["user-named"]}
+        {exists(semesterInfo) && semesterInfo["userNamed"]}
         {exists(props.currentTimeTable) ? (
           <>
             {" "}
@@ -117,13 +118,12 @@ const TimeTable = (props) => {
             currentTimeTable,
             setCurrentTimeTable,
           }}
-          path="/"
         />
         <Router>
           <Home path="/" />
           <ClassTimeTable path="class-timetable" />
           <ManageClass path="mng-classes" />
-          <ManageClass path="mng-assignments" />
+          <ManageAssignments path="mng-assignments" />
           <NotFound default />
         </Router>
       </SemProvider>

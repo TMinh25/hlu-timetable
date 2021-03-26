@@ -48,7 +48,7 @@ const TimeTableListItem = (props) => {
         </Link>
       </div>
       <Button title="Xóa" onClick={onDelete} className="sign-out btn__li">
-        <i className="fas fa-times" />
+        <i class="far fa-trash" />
       </Button>
     </li>
   );

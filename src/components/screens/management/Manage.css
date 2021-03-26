@@ -204,9 +204,30 @@
   width: 500px !important;
 }
 
-.react-confirm-alert-body img {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 10px;
+.items-body-content {
+  padding: 10px;
+  padding-right: 0px;
+  display: grid;
+  grid-template-columns: 10fr 1fr;
+  font-size: 13px;
+  grid-gap: 10px;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.items-body-content i {
+  align-self: center;
+  font-size: 15px;
+  font-weight: bold;
+  animation: icon 1s infinite forwards;
+}
+
+@keyframes icon {
+  0%,
+  100% {
+    transform: translate(0px);
+  }
+  50% {
+    transform: translate(3px);
+  }
 }

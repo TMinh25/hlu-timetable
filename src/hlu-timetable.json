@@ -9,108 +9,110 @@
         "number-of-weeks": "SỐ TUẦN HỌC HỌC KÌ"
       },
       "classes": {
-        "TÊN KHOA": {
-          "MÃ LỚP": {
-            "classInfo": {
-              "classType": "HỆ LỚP",
-              "classSize": "number"
-            },
-            "timetable": {
-              "t2": [
-                "tiết 1",
-                "tiết 2",
-                "tiết 3",
-                "tiết 4",
-                "tiết 5",
-                "tiết 6",
-                "tiết 7",
-                "tiết 8",
-                "tiết 9",
-                "tiết 10"
-              ],
-              "t3": [
-                "tiết 1",
-                "tiết 2",
-                "tiết 3",
-                "tiết 4",
-                "tiết 5",
-                "tiết 6",
-                "tiết 7",
-                "tiết 8",
-                "tiết 9",
-                "tiết 10"
-              ],
-              "t4": [
-                "tiết 1",
-                "tiết 2",
-                "tiết 3",
-                "tiết 4",
-                "tiết 5",
-                "tiết 6",
-                "tiết 7",
-                "tiết 8",
-                "tiết 9",
-                "tiết 10"
-              ],
-              "t5": [
-                "tiết 1",
-                "tiết 2",
-                "tiết 3",
-                "tiết 4",
-                "tiết 5",
-                "tiết 6",
-                "tiết 7",
-                "tiết 8",
-                "tiết 9",
-                "tiết 10"
-              ],
-              "t6": [
-                "tiết 1",
-                "tiết 2",
-                "tiết 3",
-                "tiết 4",
-                "tiết 5",
-                "tiết 6",
-                "tiết 7",
-                "tiết 8",
-                "tiết 9",
-                "tiết 10"
-              ],
-              "t7": [
-                "tiết 1",
-                "tiết 2",
-                "tiết 3",
-                "tiết 4",
-                "tiết 5",
-                "tiết 6",
-                "tiết 7",
-                "tiết 8",
-                "tiết 9",
-                "tiết 10"
-              ],
-              "CN": [
-                "tiết 1",
-                "tiết 2",
-                "tiết 3",
-                "tiết 4",
-                "tiết 5",
-                "tiết 6",
-                "tiết 7",
-                "tiết 8",
-                "tiết 9",
-                "tiết 10"
-              ]
-            },
-            "__comment__": "null là không có tiết"
+        "MÃ LỚP": {
+          "className": "TÊN LỚP",
+          "classType": "HỆ LỚP",
+          "classSize": "number",
+          "faculty": "TÊN KHOA",
+          "timetable": {
+            "t2": [
+              "tiết 1",
+              "tiết 2",
+              "tiết 3",
+              "tiết 4",
+              "tiết 5",
+              "tiết 6",
+              "tiết 7",
+              "tiết 8",
+              "tiết 9",
+              "tiết 10"
+            ],
+            "t3": [
+              "tiết 1",
+              "tiết 2",
+              "tiết 3",
+              "tiết 4",
+              "tiết 5",
+              "tiết 6",
+              "tiết 7",
+              "tiết 8",
+              "tiết 9",
+              "tiết 10"
+            ],
+            "t4": [
+              "tiết 1",
+              "tiết 2",
+              "tiết 3",
+              "tiết 4",
+              "tiết 5",
+              "tiết 6",
+              "tiết 7",
+              "tiết 8",
+              "tiết 9",
+              "tiết 10"
+            ],
+            "t5": [
+              "tiết 1",
+              "tiết 2",
+              "tiết 3",
+              "tiết 4",
+              "tiết 5",
+              "tiết 6",
+              "tiết 7",
+              "tiết 8",
+              "tiết 9",
+              "tiết 10"
+            ],
+            "t6": [
+              "tiết 1",
+              "tiết 2",
+              "tiết 3",
+              "tiết 4",
+              "tiết 5",
+              "tiết 6",
+              "tiết 7",
+              "tiết 8",
+              "tiết 9",
+              "tiết 10"
+            ],
+            "t7": [
+              "tiết 1",
+              "tiết 2",
+              "tiết 3",
+              "tiết 4",
+              "tiết 5",
+              "tiết 6",
+              "tiết 7",
+              "tiết 8",
+              "tiết 9",
+              "tiết 10"
+            ],
+            "CN": [
+              "tiết 1",
+              "tiết 2",
+              "tiết 3",
+              "tiết 4",
+              "tiết 5",
+              "tiết 6",
+              "tiết 7",
+              "tiết 8",
+              "tiết 9",
+              "tiết 10"
+            ]
           }
         }
       },
       "assignments": {
         "MÃ GIẢNG VIÊN": {
-          "__comment__": "mã phân công được dùng trong thời khóa biểu",
           "MÃ PHÂN CÔNG": {
-            "subject-id": "MÃ MÔN HỌC",
-            "class-teaching": "LỚP DẠY"
+            "subjectID": "MÃ MÔN HỌC",
+            "numberOfTest": "number",
+            "classTeaching": "LỚP DẠY"
+          },
+          "MÃ PHÂN CÔNG 2": {
+            "subjectID": "MÃ MÔN HỌC",
+            "numberOfTest": "number",
+            "classTeaching": "LỚP DẠY"
           }
         }
       }

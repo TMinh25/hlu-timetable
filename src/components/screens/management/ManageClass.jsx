@@ -85,16 +85,27 @@ const ManageClass = (props) => {
 
   useEffect(() => {
     let tableRows = [];
-    Object.keys(classObj).forEach((facKey) => {
+    let facultyList = [];
+
+    Object.keys(classObj).forEach((classKey) => {
+      const facultyName = classObj[classKey]["faculty"];
+      if (!facultyList.includes(facultyName)) {
+        facultyList.push(facultyName);
+      }
+    });
+
+    facultyList.forEach((facultyName) => {
       tableRows = [
         ...tableRows,
         createData(
-          facKey,
-          Object.keys(classObj[facKey]).map((classKey) => ({
-            className: classKey,
-            classType: classObj[facKey][classKey]["classType"],
-            classSize: classObj[facKey][classKey]["classSize"],
-          }))
+          facultyName,
+          Object.values(classObj).filter((classValue, i) => {
+            if (classValue["faculty"] === facultyName) {
+              const classId = Object.keys(classObj)[i];
+              return { ...classValue, classId };
+            }
+            return null;
+          })
         ),
       ];
     });
@@ -203,7 +214,7 @@ const ManageClass = (props) => {
           className: "sign-out",
           label: "Xóa",
           onClick: () => {
-            removeClass(props.semId, facId, classId);
+            removeClass(props.semId, classId);
             setIsLoading(true);
           },
         },
@@ -334,7 +345,7 @@ const ManageClass = (props) => {
                 </Table>
               </TableContainer>
             ) : (
-              <p>no lecture</p>
+              <p>no class</p>
             )}
             {/* list of classes */}
           </div>

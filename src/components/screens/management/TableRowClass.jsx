@@ -86,12 +86,10 @@ export default function ClassRow(props) {
                       <TableCell>{classRow.classSize}</TableCell>
                       <TableCell
                         align="right"
-                        onClick={() =>
-                          onRemove(row.facultyName, classRow.className)
-                        }
+                        onClick={() => onRemove(classRow.classId)}
                         style={{ cursor: "pointer" }}
                       >
-                        <i className="fas fa-trash" />
+                        <i className="far fa-trash" />
                       </TableCell>
                     </TableRow>
                   ))}

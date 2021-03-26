@@ -54,7 +54,7 @@ export function signOut(callback) {
     });
 }
 
-//#region Semester: Quản lý kì học
+//#region Semester: Quản lý lớp
 
 // write new semester or modify in database
 
@@ -78,14 +78,13 @@ export function setNewClass(semID, values) {
   Object.keys(values).forEach(
     (key) => (values[key] = values[key].toString().toString().trim())
   );
-  let { faculty, className, ...copiedObj } = values;
 
   // console.warn(copiedObj, values);
 
   auth.onAuthStateChanged((user) => {
     userRef(user.uid)
-      .child(`semesters/${semID}/classes/${values.faculty}/${values.className}`)
-      .set(copiedObj, (err) => {
+      .child(`semesters/${semID}/classes/`)
+      .push(values, (err) => {
         // failed to write data
         err
           ? console.warn("failed to write data to firebase: " + err.message)
@@ -96,7 +95,6 @@ export function setNewClass(semID, values) {
 
 export function removeClass(
   semID,
-  facID,
   classID,
   successCB = defaultSuccessCB,
   failCB = defaultFailCB
@@ -104,7 +102,7 @@ export function removeClass(
   auth.onAuthStateChanged((user) => {
     if (user) {
       userRef(user.uid)
-        .child(`semesters/${semID}/classes/${facID}/${classID}`)
+        .child(`semesters/${semID}/classes/${classID}`)
         .remove((err) => {
           if (err) {
             failCB(err.message);
@@ -188,19 +186,21 @@ export function removeSemester(
 //#region Faculties: Quản Lý Khoa
 
 // get all faculties in database
-export function getAllFaculties(callback) {
-  auth.onAuthStateChanged((user) => {
-    if (!!user) {
-      userRef(user.uid)
-        .child("faculties")
-        .on("value", (snapshot) => {
-          if (snapshot.val() != null) {
-            callback(snapshot.val());
-          } else {
-            callback({});
-          }
-        });
-    }
+export function getAllFaculties() {
+  return new Promise((resolve) => {
+    auth.onAuthStateChanged((user) => {
+      if (!!user) {
+        userRef(user.uid)
+          .child("faculties")
+          .on("value", (snapshot) => {
+            if (snapshot.val() != null) {
+              resolve(snapshot.val());
+            } else {
+              resolve({});
+            }
+          });
+      }
+    });
   });
 }
 
@@ -260,19 +260,21 @@ export function removeFaculty(
 //#region Lectures: Quản lý nhân sự, giảng viên
 
 // get all lectures in database
-export function getAllLectures(callback) {
-  auth.onAuthStateChanged((user) => {
-    if (user) {
-      userRef(user.uid)
-        .child("lectures")
-        .once("value", (snapshot) => {
-          if (snapshot.val() !== null) {
-            callback(snapshot.val());
-          } else {
-            callback({});
-          }
-        });
-    }
+export function getAllLectures() {
+  return new Promise((resolve, reject) => {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        userRef(user.uid)
+          .child("lectures")
+          .once("value", (snapshot) => {
+            if (snapshot.val() !== null) {
+              resolve(snapshot.val());
+            } else {
+              resolve({});
+            }
+          });
+      }
+    });
   });
 }
 

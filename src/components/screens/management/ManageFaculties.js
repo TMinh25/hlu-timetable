@@ -45,7 +45,7 @@ const ManageFaculties = () => {
       <p className="li__item-search">{id}</p>
       <p className="li__item-search">{facultyName}</p>
       <span className="btn__trash trash" onClick={onRemove}>
-        <i className="fas fa-trash-alt" />
+        <i className="far fa-trash" />
       </span>
     </li>
   );

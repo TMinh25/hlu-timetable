@@ -5,7 +5,6 @@ import { UserContext } from "../providers/UserProvider";
 // import styles
 import "../App.css";
 import "react-calendar/dist/Calendar.css";
-// import {createMuiTheme, ThemeProvider} from "@material-ui/core/styles";
 
 // import components
 import NavBar from "./NavBar";
@@ -70,7 +69,7 @@ const Application = () => {
         onHamburgerClick={handleHamburgerClick}
         showHamburger={currentUser}
       />
-      <main>
+      <main id="application">
         {currentUser && (
           <LeftMenu visible={leftMenuVisible} showScheduler={true} />
         )}

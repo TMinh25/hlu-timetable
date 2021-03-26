@@ -16,17 +16,8 @@ import { Loading, Button, FileDropzone } from "../../Components";
 
 // import styles
 import "./Manage.css";
-
-export function getFacId(facName) {
-  if (exists(facName)) {
-    return facName
-      .toString()
-      .trim()
-      .split(" ")
-      .map((word) => word[0].toUpperCase())
-      .join("");
-  }
-}
+import { Collapse } from "@material-ui/core";
+import { Image, Input, List, Segment } from "semantic-ui-react";
 
 const ManageAssignments = () => {
   //#region Component State
@@ -36,54 +27,65 @@ const ManageAssignments = () => {
   const [currentLectureId, setCurrentLectureId] = useState();
   const [searchString, setSearchString] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [excelLoadedItems, setExcelLoadedItems] = useState([]);
 
   //#endregion
 
   //#region Components
-
-  const ClassListItem = ({ index, name, faculty, onRemove, onClick }) => {
-    return (
-      <>
-        <li key={index} className="list__container-li_item" onClick={onClick}>
-          <p className="li__item-search">{index + 1}</p>
-          <p className="li__item-search">{name}</p>
-          <p className="li__item-search">
-            {faculty !== "defaultValue" ? faculty : "Không"}
-          </p>
-          <span className="btn__trash trash" onClick={() => onRemove(index)}>
-            <i className="fas fa-trash-alt" />
-          </span>
-        </li>
-      </>
-    );
-  };
-
-  const LectureItemToAdd = ({ onAdd, index, lectureName }) => {
-    return (
-      <li key={index} className="excel__list-li_item">
-        <div>
-          <p>{lectureName}</p>
-        </div>
-        <span className="btn__trash add" onClick={onAdd}>
-          <i className="far fa-plus-square" />
-        </span>
-      </li>
-    );
-  };
 
   //#endregion
 
   //#region Hooks
 
   useEffect(() => {
-    getAllLectures((result) => {
-      setLecturesObj(result);
-    });
-    getAllFaculties((result) => {
-      setFacultiesObj(result);
-      setIsLoading(false);
-    });
+    async function fetchData() {
+      var [allLectures, allFaculties] = await Promise.all([
+        getAllLectures(),
+        getAllFaculties(),
+      ]).then(setIsLoading(false));
+
+      if (exists(allFaculties)) {
+        setFacultiesObj(allFaculties);
+        console.log(allFaculties);
+      }
+
+      if (exists(allLectures)) {
+        setLecturesObj(allLectures);
+        console.log(allLectures);
+        var lecturesCategorizedFac = {};
+        // tableRows = [
+        //   ...tableRows,
+        //   createData(
+        //     facultyName,
+        //     Object.values(classObj).filter((classValue, i) => {
+        //       if (classValue["faculty"] === facultyName) {
+        //         const classId = Object.keys(classObj)[i];
+        //         return { ...classValue, classId };
+        //       }
+        //       return null;
+        //     })
+        //   ),
+        // ];
+        Object.keys(allFaculties).forEach((facKey) => {
+          lecturesCategorizedFac = {
+            ...lecturesCategorizedFac,
+            [facKey]: Object.values(allLectures).filter((lecture, index) => {
+              console.log(facKey);
+              if (lecture["faculty"] === facKey) {
+                console.log(lecture["faculty"]);
+                return true;
+              }
+              return null;
+            }),
+          };
+        });
+      }
+
+      console.log(lecturesCategorizedFac);
+    }
+
+    if (isLoading === true) {
+      fetchData();
+    }
   }, [isLoading]); // similar to fetching lectures list on componentUpdate()
 
   useEffect(() => {
@@ -107,155 +109,13 @@ const ManageAssignments = () => {
     }
   }, [searchString]); // search for text in list when searchString change
 
+  useEffect(() => {
+    console.log(currentLectureId);
+  }, [currentLectureId]);
+
   //#endregion
 
   //#region Component Method
-
-  function handleOnAddFaculty(values) {
-    // Trả về Promise để Form đợi tới khi người dùng chọn tùy chọn
-    return new Promise((resolve, reject) => {
-      if (exists(values["faculty-name"])) {
-        let facID = getFacId(values["faculty-name"]);
-        values["faculty-id"] = facID;
-        if (values["faculty-id"] in facultiesObj) {
-          confirmAlert({
-            title: "Bạn có muốn thay đổi tên khoa?",
-            message: "Mã khoa này đã tồn tại",
-            buttons: [
-              {
-                className: "confirm__cancel",
-                label: "Hủy",
-                onClick: () => reject(),
-              },
-              {
-                className: "new",
-                label: "Thay Đổi",
-                onClick: () => {
-                  setNewFaculty(values);
-                  resolve();
-                },
-              },
-            ],
-          });
-        } else {
-          setNewFaculty(values);
-          resolve();
-        }
-      }
-    });
-  }
-
-  const handleOnAdd = ({
-    values,
-    shouldRemoveChild = false,
-    event = undefined,
-  }) => {
-    //remove li element on add
-    const removeLi = () => {
-      const thisLi = event.target.closest("li");
-      let nodes = Array.from(thisLi.closest("ul").children); // get array
-      let index = nodes.indexOf(thisLi);
-      if (index >= 0) {
-        const tempArr = [...excelLoadedItems];
-        tempArr.splice(index, 1);
-        setExcelLoadedItems(tempArr);
-      }
-    };
-
-    return new Promise((resolve, reject) => {
-      if (!!values["lecture-name"]) {
-        if (
-          exists(values["faculty"]) &&
-          !(getFacId(values["faculty"]) in facultiesObj)
-        ) {
-          confirmAlert({
-            title: "Khoa này hiện tại chưa có trong cơ sở dữ liệu",
-            message: "Bạn muốn thêm khoa này vào database không?",
-            buttons: [
-              {
-                className: "confirm__cancel",
-                label: "Hủy",
-                onClick: () => reject(),
-              },
-              {
-                className: "new",
-                label: "Thêm",
-                onClick: () => {
-                  newLecture(values);
-                  handleOnAddFaculty({
-                    "faculty-name": values["faculty"],
-                  });
-                  setIsLoading(true);
-                  shouldRemoveChild && removeLi();
-                  resolve();
-                },
-              },
-            ],
-          });
-        } else {
-          newLecture(values);
-          setIsLoading(true);
-          shouldRemoveChild && removeLi();
-          resolve();
-        }
-      }
-    });
-  };
-
-  const handleOnModify = (id, values) => {
-    return new Promise((resolve) => {
-      if (!!Object.keys(values).length) {
-        modifyLecture(id, values);
-        setCurrentLectureId("");
-        setIsLoading(true);
-      }
-      resolve(true);
-    });
-  };
-
-  const handleOnRemove = (id) => {
-    confirmAlert({
-      title: "Bạn có chắc muốn xóa khoa này?",
-      message: "Bạn sẽ không thể truy cập lại thông tin này",
-      buttons: [
-        {
-          className: "confirm__cancel",
-          label: "Hủy",
-        },
-        {
-          className: "sign-out",
-          label: "Xóa",
-          onClick: () => {
-            removeLecture(id);
-            setCurrentLectureId("");
-            setIsLoading(true);
-          },
-        },
-      ],
-    });
-  };
-
-  async function handleDropped(files) {
-    const objHeaders = ["lecture-name", "lecture-email", "faculty"];
-    const file = files[0];
-    try {
-      const data = await readExcel(file, objHeaders);
-      if (data.length === 0) {
-        setExcelLoadedItems(null);
-      } else {
-        setExcelLoadedItems(data);
-      }
-    } catch (err) {
-      defaultFailCB(err);
-    }
-  }
-
-  const handleDownloadTemplateFile = () =>
-    window.open(
-      "https://drive.google.com/file/d/15h5VvMQOtWwKoNRKzAWQaW62vctDx-jd/view?usp=sharing",
-      "_blank",
-      ""
-    );
 
   //#endregion
 
@@ -264,7 +124,31 @@ const ManageAssignments = () => {
       <div className="mng-container">
         <div className="form-list__container">
           <div className="form__container">
-            {
+            <ul>
+              <Input
+                placeholder="Search..."
+                value={searchString}
+                onChange={(e) => setSearchString(e.target.value)}
+              />
+
+              {/* <Collapse in={} timeout="auto" unmountOnExit></Collapse> */}
+              {Object.keys(lecturesObj).map((key) => {
+                return (
+                  <>
+                    <li
+                      className="list__container-li_item items-body-content"
+                      onClick={() => setCurrentLectureId(key)}
+                    >
+                      <span className="li__item-search">
+                        {lecturesObj[key]["lecture-name"]}
+                      </span>
+                      <i className="fa fa-angle-right" />
+                    </li>
+                  </>
+                );
+              })}
+            </ul>
+            {/* {
               // render cancel button if excelLoaded has at least 1 row
               !!excelLoadedItems.length && (
                 <Button
@@ -316,11 +200,11 @@ const ManageAssignments = () => {
                   }}
                 />
               )
-            }
+            } */}
           </div>
 
           <div className="list__container lecture-list">
-            <div className="list__container-search">
+            {/* <div className="list__container-search">
               <input
                 type="text"
                 className="text__search"
@@ -341,7 +225,7 @@ const ManageAssignments = () => {
                   .reverse()
                   .map((id, index) => {
                     return (
-                      <ClassListItem
+                      <AssignmentsListItem
                         index={index}
                         name={lecturesObj[id]["lecture-name"]}
                         faculty={lecturesObj[id]["faculty"]}
@@ -353,7 +237,7 @@ const ManageAssignments = () => {
               </ul>
             ) : (
               <p>no lecture</p>
-            )}
+            )} */}
           </div>
         </div>
       </div>
