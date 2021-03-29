@@ -121,34 +121,34 @@ const ManageAssignments = () => {
 
   return (
     <>
-      <div className="mng-container">
-        <div className="form-list__container">
-          <div className="form__container">
-            <ul>
-              <Input
-                placeholder="Search..."
-                value={searchString}
-                onChange={(e) => setSearchString(e.target.value)}
-              />
-
-              {/* <Collapse in={} timeout="auto" unmountOnExit></Collapse> */}
-              {Object.keys(lecturesObj).map((key) => {
-                return (
-                  <>
-                    <li
-                      className="list__container-li_item items-body-content"
-                      onClick={() => setCurrentLectureId(key)}
-                    >
-                      <span className="li__item-search">
-                        {lecturesObj[key]["lecture-name"]}
-                      </span>
-                      <i className="fa fa-angle-right" />
-                    </li>
-                  </>
-                );
-              })}
-            </ul>
-            {/* {
+      <div className="form-list__container">
+        <div className="list__container">
+          <div className="list__container-search">
+            <Input
+              placeholder="Lọc Giảng Viên..."
+              value={searchString}
+              onChange={(e) => setSearchString(e.target.value)}
+            />
+          </div>
+          <ul>
+            {/* <Collapse in={} timeout="auto" unmountOnExit></Collapse> */}
+            {Object.keys(lecturesObj).map((key) => {
+              return (
+                <>
+                  <li
+                    className="list__container-li_item items-body-content"
+                    onClick={() => setCurrentLectureId(key)}
+                  >
+                    <span className="li__item-search">
+                      {lecturesObj[key]["lecture-name"]}
+                    </span>
+                    <i className="fa fa-angle-right" />
+                  </li>
+                </>
+              );
+            })}
+          </ul>
+          {/* {
               // render cancel button if excelLoaded has at least 1 row
               !!excelLoadedItems.length && (
                 <Button
@@ -201,10 +201,10 @@ const ManageAssignments = () => {
                 />
               )
             } */}
-          </div>
+        </div>
 
-          <div className="list__container lecture-list">
-            {/* <div className="list__container-search">
+        <div className="list__container lecture-list">
+          {/* <div className="list__container-search">
               <input
                 type="text"
                 className="text__search"
@@ -238,7 +238,6 @@ const ManageAssignments = () => {
             ) : (
               <p>no lecture</p>
             )} */}
-          </div>
         </div>
       </div>
       {isLoading && <Loading />}

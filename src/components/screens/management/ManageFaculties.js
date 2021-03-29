@@ -66,10 +66,12 @@ const ManageFaculties = () => {
   //#region Hooks
 
   useEffect(() => {
-    getAllFaculties((res) => {
-      setFacultiesObj(res);
-      setIsLoading(false);
-    });
+    async function fetchData() {
+      const allFaculties = await getAllFaculties();
+      Promise.all([setFacultiesObj(allFaculties), setIsLoading(false)]);
+    }
+
+    fetchData();
   }, []); // fetching faculties list on componentUpdate
 
   useEffect(() => {

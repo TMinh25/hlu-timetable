@@ -67,13 +67,20 @@ const ManageLectures = () => {
   //#region Hooks
 
   useEffect(() => {
-    getAllLectures((result) => {
-      setLecturesObj(result);
-    });
-    getAllFaculties((result) => {
-      setFacultiesObj(result);
-      setIsLoading(false);
-    });
+    async function fetchData() {
+      const [allLectures, allFaculties] = await Promise.all([
+        getAllLectures(),
+        getAllFaculties(),
+      ]);
+
+      Promise.all([
+        setLecturesObj(allLectures),
+        setFacultiesObj(allFaculties),
+        setIsLoading(false),
+      ]);
+    }
+
+    fetchData();
   }, [isLoading]); // similar to fetching lectures list on componentUpdate()
 
   useEffect(() => {

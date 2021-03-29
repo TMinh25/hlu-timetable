@@ -119,13 +119,15 @@ const TimeTable = (props) => {
             setCurrentTimeTable,
           }}
         />
-        <Router>
-          <Home path="/" />
-          <ClassTimeTable path="class-timetable" />
-          <ManageClass path="mng-classes" />
-          <ManageAssignments path="mng-assignments" />
-          <NotFound default />
-        </Router>
+        <div className="mng-container">
+          <Router>
+            <Home path="/" />
+            <ClassTimeTable path="class-timetable" />
+            <ManageClass path="mng-classes" />
+            <ManageAssignments path="mng-assignments" />
+            <NotFound default />
+          </Router>
+        </div>
       </SemProvider>
     </>
   );
