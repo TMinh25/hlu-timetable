@@ -1,93 +1,170 @@
 import React, { useEffect, useState } from "react";
 
 // import components
-import FormAssignments from "./FormAssignments";
 import {
-  newLecture,
-  modifyLecture,
-  removeLecture,
   getAllLectures,
   getAllFaculties,
-  setNewFaculty,
+  getAllSubjects,
+  getAllClass,
+  setNewAssignment,
+  getAssignmentsOfLecture,
 } from "../../../firebase";
-import { defaultFailCB, readExcel, exists } from "../../../utils";
-import { confirmAlert } from "react-confirm-alert";
-import { Loading, Button, FileDropzone } from "../../Components";
+import { exists, titleCase } from "../../../utils";
+// import { confirmAlert } from "react-confirm-alert";
+import { Loading } from "../../Components";
+import { AgGridReact } from "ag-grid-react";
+import NumbericEditor from "./NumbericEditor";
+import ClassSelectEditor from "./ClassSelectEditor";
 
 // import styles
-import "./Manage.css";
-import { Collapse } from "@material-ui/core";
-import { Image, Input, List, Segment } from "semantic-ui-react";
+import "ag-grid-enterprise";
+import "ag-grid-community/dist/styles/ag-grid.css";
+import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
 
-const ManageAssignments = () => {
+import "./Manage.css";
+import { AgGridColumn } from "ag-grid-react/lib/agGridColumn";
+
+function extractValues(mappings) {
+  return Object.values(mappings);
+}
+
+const ManageAssignments = (props) => {
   //#region Component State
+  const [gridApi, setGridApi] = useState(null);
+  const [gridColumnApi, setGridColumnApi] = useState(null);
 
   const [lecturesObj, setLecturesObj] = useState({});
-  const [facultiesObj, setFacultiesObj] = useState({});
+  const [classArr, setClassArr] = useState([]);
+  const [classObj, setClassObj] = useState({});
+  const [rowData, setRowData] = useState([]);
+  const [facultyObj, setFacultiesObj] = useState({});
   const [currentLectureId, setCurrentLectureId] = useState();
   const [searchString, setSearchString] = useState("");
+  const [subjectGridFilter, setSubjectGridFilter] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
-  //#endregion
+  const columnDefs = [
+    {
+      field: "id",
+      headerName: "STT",
+      type: "number",
+      checkboxSelection: true,
+      headerCheckboxSelection: true,
+      editable: false,
+    },
+    {
+      field: "subjectName",
+      headerName: "Tên môn học",
+      type: "string",
+      editable: false,
+    },
+    {
+      field: "credit",
+      headerName: "Số Tín Chỉ",
+      type: "number",
+      editable: false,
+    },
+    {
+      field: "periods",
+      headerName: "Số Tiết",
+      type: "number",
+      editable: false,
+    },
+    {
+      field: "classTeaching",
+      headerName: "Lớp Giảng Dạy",
+      editable: true,
+      cellEditor: "agRichSelectCellEditor",
+      cellEditorParams: {
+        values: Object.keys(classObj),
+      },
+      valueFormatter: (params) => {
+        // lấy tên lớp cho vào select
 
-  //#region Components
+        const classID = params.value;
+
+        const label =
+          classID === "Chọn Lớp" ? "Chọn Lớp" : classObj[classID]["className"];
+
+        return label;
+      },
+    },
+    {
+      field: "numberOfTests",
+      headerName: "Số Bài Kiểm Tra",
+      type: "number",
+      editable: true,
+      // chỉ chấp nhận số
+      valueSetter: numberValueSetter,
+    },
+  ];
+
+  const contextMenuItems = (params) => {
+    var result = ["copy", "copyWithHeaders", "separator", "export"];
+    return result;
+  };
 
   //#endregion
 
   //#region Hooks
 
+  // Lấy dữ liệu từ firebase (async)
   useEffect(() => {
     async function fetchData() {
-      var [allLectures, allFaculties] = await Promise.all([
+      var [
+        allLectures,
+        allFaculties,
+        allSubjects,
+        allClasses,
+      ] = await Promise.all([
         getAllLectures(),
         getAllFaculties(),
+        getAllSubjects(),
+        getAllClass(props.semId),
       ]).then(setIsLoading(false));
 
       if (exists(allFaculties)) {
         setFacultiesObj(allFaculties);
-        console.log(allFaculties);
+        // console.log(allFaculties);
+      }
+
+      if (exists(allSubjects)) {
+        const subjectRows = Object.keys(allSubjects).map(
+          (subjectKey, index) => {
+            return {
+              id: index + 1,
+              subjectId: subjectKey,
+              subjectName: titleCase(allSubjects[subjectKey]["subject-name"]),
+              credit: allSubjects[subjectKey]["credit"],
+              periods: allSubjects[subjectKey]["periods"],
+              classTeaching: "Chọn Lớp",
+              numberOfTests: 0,
+            };
+          }
+        );
+
+        setRowData(subjectRows);
+        // console.log(subjectRows);
       }
 
       if (exists(allLectures)) {
         setLecturesObj(allLectures);
-        console.log(allLectures);
-        var lecturesCategorizedFac = {};
-        // tableRows = [
-        //   ...tableRows,
-        //   createData(
-        //     facultyName,
-        //     Object.values(classObj).filter((classValue, i) => {
-        //       if (classValue["faculty"] === facultyName) {
-        //         const classId = Object.keys(classObj)[i];
-        //         return { ...classValue, classId };
-        //       }
-        //       return null;
-        //     })
-        //   ),
-        // ];
-        Object.keys(allFaculties).forEach((facKey) => {
-          lecturesCategorizedFac = {
-            ...lecturesCategorizedFac,
-            [facKey]: Object.values(allLectures).filter((lecture, index) => {
-              console.log(facKey);
-              if (lecture["faculty"] === facKey) {
-                console.log(lecture["faculty"]);
-                return true;
-              }
-              return null;
-            }),
-          };
-        });
+        // console.log(allLectures);
       }
-
-      console.log(lecturesCategorizedFac);
+      if (exists(allClasses)) {
+        setClassObj(allClasses);
+        // console.log(allClasses);
+      }
     }
 
     if (isLoading === true) {
       fetchData();
     }
+
+    // eslint-disable-next-line
   }, [isLoading]); // similar to fetching lectures list on componentUpdate()
 
+  // tìm kiếm giảng viên nếu searchString thay đổi
   useEffect(() => {
     const li = document.getElementsByClassName("list__container-li_item");
     for (let i = 0; i < li.length; i++) {
@@ -96,7 +173,7 @@ const ManageAssignments = () => {
       items.forEach((item) => {
         let txtValue = item.textContent || item.innerHTML;
         isInclude.push(
-          txtValue.toLowerCase().includes(searchString.toLowerCase())
+          txtValue.trim().toLowerCase().includes(searchString.toLowerCase())
             ? true
             : false
         );
@@ -110,28 +187,93 @@ const ManageAssignments = () => {
   }, [searchString]); // search for text in list when searchString change
 
   useEffect(() => {
-    console.log(currentLectureId);
-  }, [currentLectureId]);
+    // console.log(currentLectureId);
+
+    if (currentLectureId && gridApi) {
+      getAssignmentsOfLecture(props.semId, currentLectureId).then(
+        (fetchedRes) => {
+          const result = fetchedRes;
+          if (result.length > 0) {
+            let allAssignmentsOfLecture = {};
+            console.log(result);
+
+            result.forEach((value) => {
+              allAssignmentsOfLecture = {
+                ...allAssignmentsOfLecture,
+                [value["subjectId"]]: value,
+              };
+            });
+
+            console.log(allAssignmentsOfLecture);
+
+            gridApi.forEachNode((rowNode) => {
+              if (rowNode?.data?.subjectId in allAssignmentsOfLecture) {
+                rowNode.setData(
+                  allAssignmentsOfLecture[rowNode.data.subjectId]
+                );
+                rowNode.setSelected(true, false);
+              } else {
+                rowNode.setData({
+                  ...rowNode.data,
+                  classTeaching: "Chọn Lớp",
+                  numberOfTests: "0",
+                });
+                rowNode.setSelected(false, false);
+              }
+            });
+          } else {
+            gridApi.forEachNode((rowNode) => {
+              rowNode.setData({
+                ...rowNode.data,
+                classTeaching: "Chọn Lớp",
+                numberOfTests: "0",
+              });
+            });
+            gridApi.deselectAll();
+          }
+        }
+      );
+    }
+
+    // eslint-disable-next-line
+  }, [currentLectureId, gridApi]);
+
+  // hàm callback khi bảng sẵn sàng nhận dữ liệu
+  function onGridReady(params) {
+    setGridApi(params.api);
+    setGridColumnApi(params.columnApi);
+  }
 
   //#endregion
 
   //#region Component Method
+
+  function numberValueSetter(params) {
+    if (isNaN(parseInt(params.newValue)) || !isFinite(params.newValue)) {
+      return false; // don't set invalid numbers!
+    }
+
+    params.data.numberOfTests = params.newValue;
+
+    return true;
+  }
 
   //#endregion
 
   return (
     <>
       <div className="form-list__container">
-        <div className="list__container">
-          <div className="list__container-search">
-            <Input
+        <div style={{ flex: "1" }}>
+          <div className="list__container-search" style={{ marginBottom: 10 }}>
+            <input
+              style={{ marginBottom: 10 }}
+              className="search-input-assignments"
               placeholder="Lọc Giảng Viên..."
               value={searchString}
               onChange={(e) => setSearchString(e.target.value)}
             />
           </div>
           <ul>
-            {/* <Collapse in={} timeout="auto" unmountOnExit></Collapse> */}
             {Object.keys(lecturesObj).map((key) => {
               return (
                 <>
@@ -148,96 +290,68 @@ const ManageAssignments = () => {
               );
             })}
           </ul>
-          {/* {
-              // render cancel button if excelLoaded has at least 1 row
-              !!excelLoadedItems.length && (
-                <Button
-                  style={{ marginBottom: 10 }}
-                  className="delete"
-                  // clear items
-                  onClick={() => setExcelLoadedItems([])}
-                >
-                  Hủy
-                </Button>
-              )
-            }
-            {
-              // render excel loaded list items if it has at least 1 row or render dropzone_container
-              !!excelLoadedItems.length ? (
-                <ul id="excel__loaded-ul lecture-ul">
-                  {excelLoadedItems.map((values, index) => (
-                    <LectureItemToAdd
-                      index={index}
-                      lectureName={values["lecture-name"]}
-                      lectrueEmail={values["lecture-email"]}
-                      onAdd={(event) =>
-                        handleOnAdd({ values, shouldRemoveChild: true, event })
-                      }
-                    />
-                  ))}
-                </ul>
-              ) : (
-                <FileDropzone
-                  {...{
-                    excelLoadedItems,
-                    handleDropped,
-                    handleDownloadTemplateFile,
-                  }}
-                />
-              )
-            }
-            {
-              // remove form if list item has item
-              !!excelLoadedItems.length || (
-                <FormAssignments
-                  {...{
-                    facultiesObj,
-                    lecturesObj,
-                    currentLectureId,
-                    setCurrentLectureId,
-                    handleOnAdd,
-                    handleOnModify,
-                  }}
-                />
-              )
-            } */}
         </div>
 
-        <div className="list__container lecture-list">
-          {/* <div className="list__container-search">
-              <input
-                type="text"
-                className="text__search"
-                onChange={({ target }) => setSearchString(target.value)}
-                name="search-string"
-                value={searchString}
-                placeholder="Tìm kiếm..."
-              />
-              <div className="list__header">
-                <h5>STT</h5>
-                <h5>Tên giảng viên</h5>
-                <h5>Khoa</h5>
-              </div>
-            </div>
-            {!!Object.keys(lecturesObj).length ? (
-              <ul>
-                {Object.keys(lecturesObj)
-                  .reverse()
-                  .map((id, index) => {
-                    return (
-                      <AssignmentsListItem
-                        index={index}
-                        name={lecturesObj[id]["lecture-name"]}
-                        faculty={lecturesObj[id]["faculty"]}
-                        onRemove={() => handleOnRemove(id)}
-                        onClick={() => setCurrentLectureId(id)}
-                      />
+        <div style={{ marginLeft: 30, flex: "3" }}>
+          <input
+            style={{ marginBottom: "10 !important" }}
+            className="search-input-assignments"
+            placeholder="Tìm Môn Học..."
+            value={subjectGridFilter}
+            onChange={(e) => {
+              setSubjectGridFilter(e.target.value);
+              gridApi.setQuickFilter(e.target.value);
+            }}
+          />
+
+          <div className="ag-theme-alpine-dark" style={{ height: 750 }}>
+            {rowData.length && currentLectureId && classObj ? (
+              <>
+                <AgGridReact
+                  {...{ onGridReady, rowData, columnDefs }}
+                  defaultColDef={{
+                    flex: 1,
+                    minWidth: 130,
+                    editable: true,
+                    resizable: true,
+                    lockPosition: true,
+                    menuTabs: [],
+                  }}
+                  components={{
+                    numbericCellEditor: NumbericEditor,
+                  }}
+                  enableRangeSelection={true}
+                  pagination={true}
+                  paginationPageSize={15}
+                  rowSelection="multiple"
+                  suppressRowClickSelection={true}
+                  suppressDragLeaveHidesColumns={true}
+                  getContextMenuItems={contextMenuItems}
+                  overlayNoRowsTemplate={
+                    "Bạn chưa có dữ liệu nào trong cơ sở dữ liệu"
+                  }
+                  onSelectionChanged={() => {
+                    var selectedRows = gridApi.getSelectedRows();
+                    setNewAssignment(
+                      props.semId,
+                      currentLectureId,
+                      selectedRows
                     );
-                  })}
-              </ul>
+                  }}
+                  onCellEditingStopped={() => {
+                    var selectedRows = gridApi.getSelectedRows();
+                    setNewAssignment(
+                      props.semId,
+                      currentLectureId,
+                      selectedRows
+                    );
+                  }}
+                ></AgGridReact>
+              </>
             ) : (
-              <p>no lecture</p>
-            )} */}
+              <h1>no data</h1>
+            )}
+          </div>
         </div>
       </div>
       {isLoading && <Loading />}
