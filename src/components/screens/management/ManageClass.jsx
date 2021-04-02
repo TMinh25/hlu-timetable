@@ -12,29 +12,18 @@ import { defaultFailCB, readExcel, exists } from "../../../utils";
 import { confirmAlert } from "react-confirm-alert";
 import { Loading, Button, FileDropzone } from "../../Components";
 import { getFacId } from "./ManageFaculties";
-import {
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from "@material-ui/core";
-import ClassRow from "./TableRowClass";
 
 // import styles
 import "./Manage.css";
-
-function createData(facultyName, classList) {
-  return {
-    facultyName,
-    classList,
-  };
-}
+import { AgGridReact } from "ag-grid-react";
 
 const ManageClass = (props) => {
   //#region Component State
+
+  const [gridApi, setGridApi] = useState(null);
+  const [gridColumnApi, setGridColumnApi] = useState(null);
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [rowData, setRowData] = useState([]);
 
   const [classObj, setClassObj] = useState({});
   const [facultiesObj, setFacultiesObj] = useState({});
@@ -43,7 +32,29 @@ const ManageClass = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [excelLoadedItems, setExcelLoadedItems] = useState([]);
 
-  const [originalRows, setOriginalRows] = useState([]);
+  const gridOptions = {
+    columnDefs: [
+      {
+        field: "id",
+        headerName: "STT",
+        checkboxSelection: true,
+        headerCheckboxSelection: true,
+        editable: false,
+        maxWidth: 120,
+      },
+      { field: "className", headerName: "Tên Lớp" },
+      { field: "classSize", headerName: "Sĩ Số Lớp" },
+      { field: "classType", headerName: "Hệ" },
+      { field: "faculty", headerName: "Khoa", hide: true, rowGroup: true },
+    ],
+    defaultColDef: {
+      flex: 1,
+    },
+    rowSelection: "multiple",
+    groupUseEntireRow: true,
+  };
+
+  const contextMenuItems = ["copy", "copyWithHeaders", "separator", "export"];
 
   //#endregion
 
@@ -74,44 +85,41 @@ const ManageClass = (props) => {
   //#region Hooks
 
   useEffect(() => {
-    getAllClass(props.semId, (result) => {
-      setClassObj(result);
-    });
-    getAllFaculties((result) => {
-      setFacultiesObj(result);
-      setIsLoading(false);
-    });
-  }, [isLoading, props.semId]);
+    console.log(rowData);
+  }, [rowData]);
 
   useEffect(() => {
-    let tableRows = [];
-    let facultyList = [];
+    async function fetchData() {
+      var [allClasses, allFaculties] = await Promise.all([
+        getAllClass(props.semId),
+        getAllFaculties(),
+      ]);
 
-    Object.keys(classObj).forEach((classKey) => {
-      const facultyName = classObj[classKey]["faculty"];
-      if (!facultyList.includes(facultyName)) {
-        facultyList.push(facultyName);
-      }
-    });
+      const classRow = Object.keys(allClasses).map((classKey, index) => {
+        return {
+          id: index + 1,
+          classId: classKey,
+          className: allClasses[classKey]["className"],
+          classSize: allClasses[classKey]["classSize"],
+          classType: allClasses[classKey]["classType"],
+          faculty: allClasses[classKey]["faculty"],
+        };
+      });
 
-    facultyList.forEach((facultyName) => {
-      tableRows = [
-        ...tableRows,
-        createData(
-          facultyName,
-          Object.values(classObj).filter((classValue, i) => {
-            if (classValue["faculty"] === facultyName) {
-              const classId = Object.keys(classObj)[i];
-              return { ...classValue, classId };
-            }
-            return null;
-          })
-        ),
-      ];
-    });
+      setRowData(classRow);
+      setClassObj(allClasses);
+      setFacultiesObj(allFaculties);
+    }
+    if (isLoading) {
+      fetchData().then(() => setIsLoading(false));
+    }
+    // eslint-disable-next-line
+  }, [isLoading]);
 
-    setOriginalRows(tableRows);
-  }, [classObj]);
+  function onGridReady(params) {
+    setGridApi(params.api);
+    setGridColumnApi(params.columnApi);
+  }
 
   // useEffect(() => {
   //   console.log(classObj);
@@ -120,27 +128,6 @@ const ManageClass = (props) => {
   // useEffect(() => {
   //   console.log({ ...props, classObj });
   // }, [props, classObj]);
-
-  useEffect(() => {
-    const li = document.getElementsByClassName("list_item-search");
-    for (let i = 0; i < li.length; i++) {
-      const items = li[i].querySelectorAll(".item-to_search");
-      let isInclude = [];
-      items.forEach((item) => {
-        let txtValue = item.textContent || item.innerHTML;
-        isInclude.push(
-          txtValue.toLowerCase().includes(searchString.trim().toLowerCase())
-            ? true
-            : false
-        );
-      });
-      if (isInclude.some((item) => item === true)) {
-        li[i].style.display = "";
-      } else {
-        li[i].style.display = "none";
-      }
-    }
-  }, [searchString]); // search for text in list when searchString change
 
   //#endregion
 
@@ -201,9 +188,9 @@ const ManageClass = (props) => {
     });
   }
 
-  const handleOnRemove = (facId, classId) => {
+  const handleOnRemove = () => {
     confirmAlert({
-      title: "Bạn có chắc muốn xóa khoa này?",
+      title: `Bạn có chắc muốn xóa ${selectedRows.length} lớp này?`,
       message: "Bạn sẽ không thể truy cập lại thông tin này",
       buttons: [
         {
@@ -214,7 +201,10 @@ const ManageClass = (props) => {
           className: "sign-out",
           label: "Xóa",
           onClick: () => {
-            removeClass(props.semId, classId);
+            selectedRows.forEach((row) => {
+              removeClass(props.semId, row?.classId);
+            });
+            setSelectedRows([]);
             setIsLoading(true);
           },
         },
@@ -249,105 +239,100 @@ const ManageClass = (props) => {
 
   return (
     <>
-      <div className="mng-container">
-        <div className="form-list__container">
-          <div className="form__container">
-            {
-              // render cancel button if excelLoaded has at least 1 row
-              !!excelLoadedItems.length && (
-                <Button
-                  style={{ marginBottom: 10 }}
-                  className="delete"
-                  // clear items
-                  onClick={() => setExcelLoadedItems([])}
-                >
-                  Hủy
-                </Button>
-              )
-            }
-            {
-              // render excel loaded list items if it has at least 1 row or render dropzone_container
-              !!excelLoadedItems.length ? (
-                <ul id="excel__loaded-ul">
-                  {excelLoadedItems.map((values, index) => (
-                    <LectureItemToAdd
-                      index={index}
-                      className={values["className"]}
-                      faculty={values["faculty"]}
-                      onAdd={(event) =>
-                        handleOnAdd({ values, shouldRemoveChild: true, event })
-                      }
-                    />
-                  ))}
-                </ul>
-              ) : (
-                <FileDropzone
-                  {...{
-                    excelLoadedItems,
-                    handleDropped,
-                    handleDownloadTemplateFile,
-                  }}
-                />
-              )
-            }
-            {
-              // remove form if list item has item
-              !!excelLoadedItems.length || (
-                <FormClassManage
-                  {...{
-                    facultiesObj,
-                    classObj,
-                    currentClassId,
-                    setCurrentClassId,
-                    handleOnAdd,
-                  }}
-                />
-              )
-            }
-          </div>
-
-          <div className="list__container lecture-list">
-            <div className="list__container-search">
-              <input
-                type="text"
-                className="text__search"
-                onChange={({ target }) => setSearchString(target.value)}
-                name="search-string"
-                value={searchString}
-                placeholder="Tìm kiếm..."
-              />
-            </div>
-            {!!Object.keys(classObj).length ? (
-              <TableContainer
-                component={Paper}
-                style={{ maxHeight: "100%", overflow: "auto" }}
+      <div className="form-list__container">
+        <div style={{ flex: "1" }}>
+          {
+            // render cancel button if excelLoaded has at least 1 row
+            !!excelLoadedItems.length && (
+              <Button
+                style={{ marginBottom: 10 }}
+                className="delete"
+                // clear items
+                onClick={() => setExcelLoadedItems([])}
               >
-                <Table aria-label="collapsible table">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell align="left">
-                        <b>Khoa</b>
-                      </TableCell>
-                      <TableCell align="center">
-                        <b>Số Lượng Lớp</b>
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {originalRows.map((row, index) => (
-                      <ClassRow
-                        key={index}
-                        row={row}
-                        onRemove={handleOnRemove}
-                      />
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+                Hủy
+              </Button>
+            )
+          }
+          {
+            // render excel loaded list items if it has at least 1 row or render dropzone_container
+            !!excelLoadedItems.length ? (
+              <ul id="excel__loaded-ul">
+                {excelLoadedItems.map((values, index) => (
+                  <LectureItemToAdd
+                    index={index}
+                    className={values["className"]}
+                    faculty={values["faculty"]}
+                    onAdd={(event) =>
+                      handleOnAdd({ values, shouldRemoveChild: true, event })
+                    }
+                  />
+                ))}
+              </ul>
             ) : (
-              <p>no class</p>
-            )}
-            {/* list of classes */}
+              <FileDropzone
+                {...{
+                  excelLoadedItems,
+                  handleDropped,
+                  handleDownloadTemplateFile,
+                }}
+              />
+            )
+          }
+          {
+            // remove form if list item has item
+            !!excelLoadedItems.length || (
+              <FormClassManage
+                {...{
+                  facultiesObj,
+                  classObj,
+                  currentClassId,
+                  setCurrentClassId,
+                  handleOnAdd,
+                }}
+              />
+            )
+          }
+          {!!selectedRows.length && (
+            <Button
+              style={{ marginTop: 10 }}
+              className="delete"
+              // clear items
+              onClick={handleOnRemove}
+            >
+              Xóa {selectedRows.length} Khoa
+            </Button>
+          )}
+        </div>
+        <div style={{ marginLeft: 30, flex: "3" }}>
+          <input
+            type="text"
+            className="text__search"
+            onChange={({ target }) => gridApi.setQuickFilter(target.value)}
+            placeholder="Tìm kiếm..."
+          />
+          <div className="ag-theme-alpine-dark" style={{ height: "94%" }}>
+            <AgGridReact
+              {...{ onGridReady, rowData, gridOptions }}
+              columnDefs={gridOptions["columnDefs"]}
+              defaultColDef={{ flex: 1 }}
+              enableRangeSelection={true}
+              pagination={true}
+              paginationPageSize={15}
+              rowMultiSelectWithClick={true}
+              suppressRowClickSelection={true}
+              getContextMenuItems={contextMenuItems}
+              overlayNoRowsTemplate={
+                "Bạn chưa có dữ liệu nào trong cơ sở dữ liệu"
+              }
+              onRowClicked={({ data }) => {
+                setCurrentClassId(data?.classId);
+              }}
+              onSelectionChanged={() => {
+                var selectedRows = gridApi.getSelectedRows();
+                setSelectedRows(selectedRows);
+              }}
+            />
           </div>
         </div>
       </div>

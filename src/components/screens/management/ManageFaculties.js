@@ -10,6 +10,11 @@ import {
 import { confirmAlert } from "react-confirm-alert";
 import { Loading, Button, FileDropzone } from "../../Components";
 import { readExcel, defaultFailCB, exists, getHeaderRow } from "../../../utils";
+import { AgGridReact } from "ag-grid-react";
+
+import "ag-grid-enterprise";
+import "ag-grid-community/dist/styles/ag-grid.css";
+import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
 
 // import styles
 import "./Manage.css";
@@ -28,27 +33,40 @@ export function getFacId(facName) {
 const ManageFaculties = () => {
   //#region Component State
 
+  const [gridApi, setGridApi] = useState(null);
+  const [gridColumnApi, setGridColumnApi] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchString, setSearchString] = useState("");
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [rowData, setRowData] = useState([]);
 
   const [facultiesObj, setFacultiesObj] = useState({});
   const [currentFacultyId, setCurrentFacultyId] = useState("");
   const [excelLoadedItems, setExcelLoadedItems] = useState([]);
 
+  const gridOptions = {
+    columnDefs: [
+      {
+        field: "id",
+        headerName: "STT",
+        checkboxSelection: true,
+        headerCheckboxSelection: true,
+        editable: false,
+        maxWidth: 120,
+      },
+      { field: "facultyId", headerName: "Mã Khoa" },
+      { field: "facultyName", headerName: "Tên Khoa" },
+    ],
+    defaultColDef: {
+      flex: 1,
+    },
+    rowSelection: "multiple",
+  };
+
+  const contextMenuItems = ["copy", "copyWithHeaders", "separator", "export"];
+
   //#endregion
 
   //#region Component
-
-  const FacultyListItem = ({ index, id, facultyName, onClick, onRemove }) => (
-    <li key={index} className="list__container-li_item" onClick={onClick}>
-      <p className="li__item-search">{index + 1}</p>
-      <p className="li__item-search">{id}</p>
-      <p className="li__item-search">{facultyName}</p>
-      <span className="btn__trash trash" onClick={onRemove}>
-        <i className="far fa-trash" />
-      </span>
-    </li>
-  );
 
   const FacultyItemToAdd = ({ onAdd, index, facultyName }) => {
     return (
@@ -69,31 +87,27 @@ const ManageFaculties = () => {
     async function fetchData() {
       const allFaculties = await getAllFaculties();
       Promise.all([setFacultiesObj(allFaculties), setIsLoading(false)]);
-    }
 
-    fetchData();
-  }, []); // fetching faculties list on componentUpdate
-
-  useEffect(() => {
-    const li = document.getElementsByClassName("list__container-li_item");
-    for (let i = 0; i < li.length; i++) {
-      const items = li[i].querySelectorAll(".li__item-search");
-      let isInclude = [];
-      items.forEach((item) => {
-        let txtValue = item.textContent || item.innerHTML;
-        isInclude.push(
-          txtValue.toLowerCase().includes(searchString.toLowerCase())
-            ? true
-            : false
-        );
+      const subjectRows = Object.keys(allFaculties).map((facultyKey, index) => {
+        return {
+          id: index + 1,
+          facultyId: facultyKey,
+          facultyName: allFaculties[facultyKey]["faculty-name"],
+        };
       });
-      if (isInclude.some((item) => item === true)) {
-        li[i].style.display = "";
-      } else {
-        li[i].style.display = "none";
-      }
+
+      setRowData(subjectRows);
     }
-  }, [searchString]); // search for text in list when searchString change
+
+    if (isLoading) {
+      fetchData();
+    }
+  }, [isLoading]); // fetching faculties list on componentUpdate
+
+  function onGridReady(params) {
+    setGridApi(params.api);
+    setGridColumnApi(params.columnApi);
+  }
 
   //#endregion
 
@@ -145,6 +159,7 @@ const ManageFaculties = () => {
                 label: "Thay Đổi",
                 onClick: () => {
                   setNewFaculty(values);
+                  setIsLoading(true);
                   resolve();
                   shouldRemoveChild && removeLi();
                 },
@@ -153,6 +168,7 @@ const ManageFaculties = () => {
           });
         } else {
           setNewFaculty(values);
+          setIsLoading(true);
           resolve();
           shouldRemoveChild && removeLi();
         }
@@ -201,9 +217,9 @@ const ManageFaculties = () => {
     });
   }
 
-  function handleOnRemove(id) {
+  function handleOnRemove() {
     confirmAlert({
-      title: "Bạn có chắc muốn xóa khoa này?",
+      title: `Bạn có chắc muốn xóa ${selectedRows.length} khoa?`,
       message: "Bạn sẽ không thể truy cập lại thông tin này",
       buttons: [
         {
@@ -214,8 +230,12 @@ const ManageFaculties = () => {
           className: "sign-out",
           label: "Xóa",
           onClick: () => {
-            removeFaculty(id);
+            selectedRows.forEach((row) => {
+              removeFaculty(row?.facultyId);
+            });
             setCurrentFacultyId("");
+            setIsLoading(true);
+            setSelectedRows([]);
           },
         },
       ],
@@ -304,40 +324,51 @@ const ManageFaculties = () => {
               />
             )
           }
-        </div>
-        <div className="list__container faculties-list">
-          <div className="list__container-search">
-            <input
-              type="text"
-              className="text__search"
-              onChange={({ target }) => setSearchString(target.value)}
-              name="search-string"
-              value={searchString}
-              placeholder="Tìm kiếm..."
-            />
-            <div className="list__header">
-              <h5>STT</h5>
-              <h5>Mã khoa</h5>
-              <h5>Tên khoa</h5>
-            </div>
-          </div>
-          {!!Object.keys(facultiesObj).length ? (
-            <ul>
-              {Object.keys(facultiesObj)
-                .reverse()
-                .map((id, index) => (
-                  <FacultyListItem
-                    index={index}
-                    id={id}
-                    facultyName={facultiesObj[id]["faculty-name"]}
-                    onClick={() => setCurrentFacultyId(id)}
-                    onRemove={() => handleOnRemove(id)}
-                  />
-                ))}
-            </ul>
-          ) : (
-            <p>no lecture</p>
+          {!!selectedRows.length && (
+            <Button
+              style={{ marginTop: 10 }}
+              className="delete"
+              // clear items
+              onClick={handleOnRemove}
+            >
+              Xóa {selectedRows.length} Khoa
+            </Button>
           )}
+        </div>
+        <div
+          className="list__container faculties-list ag-theme-alpine-dark"
+          style={{ height: "100%" }}
+        >
+          <input
+            type="text"
+            className="text__search"
+            onChange={({ target }) => gridApi.setQuickFilter(target.value)}
+            placeholder="Tìm kiếm..."
+          />
+          <div style={{ height: "94%" }}>
+            <AgGridReact
+              {...{ onGridReady, rowData, gridOptions }}
+              style={{ height: "90%" }}
+              columnDefs={gridOptions["columnDefs"]}
+              defaultColDef={{ flex: 1 }}
+              enableRangeSelection={true}
+              pagination={true}
+              paginationPageSize={15}
+              rowMultiSelectWithClick={true}
+              suppressRowClickSelection={true}
+              getContextMenuItems={contextMenuItems}
+              overlayNoRowsTemplate={
+                "Bạn chưa có dữ liệu nào trong cơ sở dữ liệu"
+              }
+              onRowClicked={({ data }) =>
+                setCurrentFacultyId(data["facultyId"])
+              }
+              onSelectionChanged={() => {
+                var selectedRows = gridApi.getSelectedRows();
+                setSelectedRows(selectedRows);
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -1,9 +1,7 @@
-
-
 .main-container {
   flex: 8;
   padding: 20px 15px;
-  overflow: auto;
+  overflow: hidden;
 }
 
 .main-content {

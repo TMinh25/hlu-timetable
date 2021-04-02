@@ -14,7 +14,6 @@ import { exists, titleCase } from "../../../utils";
 import { Loading } from "../../Components";
 import { AgGridReact } from "ag-grid-react";
 import NumbericEditor from "./NumbericEditor";
-import ClassSelectEditor from "./ClassSelectEditor";
 
 // import styles
 import "ag-grid-enterprise";
@@ -22,11 +21,7 @@ import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
 
 import "./Manage.css";
-import { AgGridColumn } from "ag-grid-react/lib/agGridColumn";
-
-function extractValues(mappings) {
-  return Object.values(mappings);
-}
+import { useMemo } from "react";
 
 const ManageAssignments = (props) => {
   //#region Component State
@@ -34,9 +29,8 @@ const ManageAssignments = (props) => {
   const [gridColumnApi, setGridColumnApi] = useState(null);
 
   const [lecturesObj, setLecturesObj] = useState({});
-  const [classArr, setClassArr] = useState([]);
   const [classObj, setClassObj] = useState({});
-  const [rowData, setRowData] = useState([]);
+  const [subjectObj, setSubjectObj] = useState({});
   const [facultyObj, setFacultiesObj] = useState({});
   const [currentLectureId, setCurrentLectureId] = useState();
   const [searchString, setSearchString] = useState("");
@@ -51,6 +45,7 @@ const ManageAssignments = (props) => {
       checkboxSelection: true,
       headerCheckboxSelection: true,
       editable: false,
+      maxWidth: 120,
     },
     {
       field: "subjectName",
@@ -73,20 +68,24 @@ const ManageAssignments = (props) => {
     {
       field: "classTeaching",
       headerName: "Lớp Giảng Dạy",
-      editable: true,
+      editable: !!Object.keys(classObj).length,
       cellEditor: "agRichSelectCellEditor",
       cellEditorParams: {
         values: Object.keys(classObj),
       },
       valueFormatter: (params) => {
         // lấy tên lớp cho vào select
+        if (Object.keys(classObj).length > 0) {
+          const classID = params?.value;
 
-        const classID = params.value;
+          console.log(classObj);
 
-        const label =
-          classID === "Chọn Lớp" ? "Chọn Lớp" : classObj[classID]["className"];
-
-        return label;
+          return classID === "Chọn Lớp" || classID === ""
+            ? "Chọn Lớp"
+            : classObj[classID]["className"];
+        } else {
+          return "Chưa có lớp học";
+        }
       },
     },
     {
@@ -99,10 +98,12 @@ const ManageAssignments = (props) => {
     },
   ];
 
-  const contextMenuItems = (params) => {
-    var result = ["copy", "copyWithHeaders", "separator", "export"];
-    return result;
-  };
+  const contextMenuItems = (params) => [
+    "copy",
+    "copyWithHeaders",
+    "separator",
+    "export",
+  ];
 
   //#endregion
 
@@ -121,7 +122,7 @@ const ManageAssignments = (props) => {
         getAllFaculties(),
         getAllSubjects(),
         getAllClass(props.semId),
-      ]).then(setIsLoading(false));
+      ]);
 
       if (exists(allFaculties)) {
         setFacultiesObj(allFaculties);
@@ -129,21 +130,7 @@ const ManageAssignments = (props) => {
       }
 
       if (exists(allSubjects)) {
-        const subjectRows = Object.keys(allSubjects).map(
-          (subjectKey, index) => {
-            return {
-              id: index + 1,
-              subjectId: subjectKey,
-              subjectName: titleCase(allSubjects[subjectKey]["subject-name"]),
-              credit: allSubjects[subjectKey]["credit"],
-              periods: allSubjects[subjectKey]["periods"],
-              classTeaching: "Chọn Lớp",
-              numberOfTests: 0,
-            };
-          }
-        );
-
-        setRowData(subjectRows);
+        setSubjectObj(allSubjects);
         // console.log(subjectRows);
       }
 
@@ -159,32 +146,25 @@ const ManageAssignments = (props) => {
 
     if (isLoading === true) {
       fetchData();
+      setIsLoading(false);
     }
 
     // eslint-disable-next-line
   }, [isLoading]); // similar to fetching lectures list on componentUpdate()
 
-  // tìm kiếm giảng viên nếu searchString thay đổi
-  useEffect(() => {
-    const li = document.getElementsByClassName("list__container-li_item");
-    for (let i = 0; i < li.length; i++) {
-      const items = li[i].querySelectorAll(".li__item-search");
-      let isInclude = [];
-      items.forEach((item) => {
-        let txtValue = item.textContent || item.innerHTML;
-        isInclude.push(
-          txtValue.trim().toLowerCase().includes(searchString.toLowerCase())
-            ? true
-            : false
-        );
-      });
-      if (isInclude.some((item) => item === true)) {
-        li[i].style.display = "";
-      } else {
-        li[i].style.display = "none";
-      }
-    }
-  }, [searchString]); // search for text in list when searchString change
+  const rowData = useMemo(() => {
+    return Object.keys(subjectObj).map((subjectKey, index) => {
+      return {
+        id: index + 1,
+        subjectId: subjectKey,
+        subjectName: titleCase(subjectObj[subjectKey]["subject-name"]),
+        credit: subjectObj[subjectKey]["credit"],
+        periods: subjectObj[subjectKey]["periods"],
+        classTeaching: "Chọn Lớp",
+        numberOfTests: 0,
+      };
+    });
+  }, [subjectObj]);
 
   useEffect(() => {
     // console.log(currentLectureId);
@@ -291,7 +271,6 @@ const ManageAssignments = (props) => {
             })}
           </ul>
         </div>
-
         <div style={{ marginLeft: 30, flex: "3" }}>
           <input
             style={{ marginBottom: "10 !important" }}
@@ -314,8 +293,6 @@ const ManageAssignments = (props) => {
                     minWidth: 130,
                     editable: true,
                     resizable: true,
-                    lockPosition: true,
-                    menuTabs: [],
                   }}
                   components={{
                     numbericCellEditor: NumbericEditor,

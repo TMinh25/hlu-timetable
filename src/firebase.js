@@ -58,19 +58,21 @@ export function signOut(callback) {
 
 // write new semester or modify in database
 
-export function getAllClass(semID, callback) {
-  auth.onAuthStateChanged((user) => {
-    if (!!user) {
-      userRef(user.uid)
-        .child(`semesters/${semID}/classes`)
-        .on("value", (snapshot) => {
-          if (snapshot.val() != null) {
-            callback(snapshot.val());
-          } else {
-            callback({});
-          }
-        });
-    }
+export function getAllClass(semID) {
+  return new Promise((resolve) => {
+    auth.onAuthStateChanged((user) => {
+      if (!!user) {
+        userRef(user.uid)
+          .child(`semesters/${semID}/classes`)
+          .on("value", (snapshot) => {
+            if (snapshot.val() != null) {
+              resolve(snapshot.val());
+            } else {
+              resolve({});
+            }
+          });
+      }
+    });
   });
 }
 
@@ -353,19 +355,21 @@ export function removeLecture(
 //#region Subjects: Quản lý môn học
 
 // get all subjects in database
-export function getAllSubjects(callback) {
-  auth.onAuthStateChanged((user) => {
-    if (user) {
-      userRef(user.uid)
-        .child("subjects")
-        .once("value", (snapshot) => {
-          if (snapshot.val() !== null) {
-            callback(snapshot.val());
-          } else {
-            callback({});
-          }
-        });
-    }
+export function getAllSubjects() {
+  return new Promise((resolve) => {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        userRef(user.uid)
+          .child("subjects")
+          .once("value", (snapshot) => {
+            if (snapshot.val() !== null) {
+              resolve(snapshot.val());
+            } else {
+              resolve({});
+            }
+          });
+      }
+    });
   });
 }
 
@@ -443,6 +447,39 @@ export function removeSubject(
   } else {
     console.warn("Không có môn học nào được chọn!");
   }
+}
+
+//#endregion
+
+//#region Assignments: Quản lý phân công giảng dạy
+
+export function getAssignmentsOfLecture(semID, currentLectureID) {
+  return new Promise((resolve) => {
+    auth.onAuthStateChanged((user) => {
+      userRef(user.uid)
+        .child(`semesters/${semID}/assignments/${currentLectureID}/`)
+        .once("value", (snapshot) => {
+          if (snapshot.val() !== null) {
+            resolve(snapshot.val());
+          } else {
+            resolve({});
+          }
+        });
+    });
+  });
+}
+
+export function setNewAssignment(semID, currentLectureID, values) {
+  auth.onAuthStateChanged((user) => {
+    userRef(user.uid)
+      .child(`semesters/${semID}/assignments/${currentLectureID}/`)
+      .set(values, (err) => {
+        // failed to write data
+        err
+          ? console.warn("failed to write data to firebase: " + err.message)
+          : console.log("setNewAssignment success!");
+      });
+  });
 }
 
 //#endregion

@@ -13,93 +13,7 @@
           "className": "TÊN LỚP",
           "classType": "HỆ LỚP",
           "classSize": "number",
-          "faculty": "TÊN KHOA",
-          "timetable": {
-            "t2": [
-              "tiết 1",
-              "tiết 2",
-              "tiết 3",
-              "tiết 4",
-              "tiết 5",
-              "tiết 6",
-              "tiết 7",
-              "tiết 8",
-              "tiết 9",
-              "tiết 10"
-            ],
-            "t3": [
-              "tiết 1",
-              "tiết 2",
-              "tiết 3",
-              "tiết 4",
-              "tiết 5",
-              "tiết 6",
-              "tiết 7",
-              "tiết 8",
-              "tiết 9",
-              "tiết 10"
-            ],
-            "t4": [
-              "tiết 1",
-              "tiết 2",
-              "tiết 3",
-              "tiết 4",
-              "tiết 5",
-              "tiết 6",
-              "tiết 7",
-              "tiết 8",
-              "tiết 9",
-              "tiết 10"
-            ],
-            "t5": [
-              "tiết 1",
-              "tiết 2",
-              "tiết 3",
-              "tiết 4",
-              "tiết 5",
-              "tiết 6",
-              "tiết 7",
-              "tiết 8",
-              "tiết 9",
-              "tiết 10"
-            ],
-            "t6": [
-              "tiết 1",
-              "tiết 2",
-              "tiết 3",
-              "tiết 4",
-              "tiết 5",
-              "tiết 6",
-              "tiết 7",
-              "tiết 8",
-              "tiết 9",
-              "tiết 10"
-            ],
-            "t7": [
-              "tiết 1",
-              "tiết 2",
-              "tiết 3",
-              "tiết 4",
-              "tiết 5",
-              "tiết 6",
-              "tiết 7",
-              "tiết 8",
-              "tiết 9",
-              "tiết 10"
-            ],
-            "CN": [
-              "tiết 1",
-              "tiết 2",
-              "tiết 3",
-              "tiết 4",
-              "tiết 5",
-              "tiết 6",
-              "tiết 7",
-              "tiết 8",
-              "tiết 9",
-              "tiết 10"
-            ]
-          }
+          "faculty": "TÊN KHOA"
         }
       },
       "assignments": {
@@ -115,6 +29,152 @@
             "classTeaching": "LỚP DẠY"
           }
         }
+      },
+      "timetable": {
+        "MÃ LỚP": [
+          { "monday": null },
+          {
+            "morning": [
+              {
+                "timeslot": "07:00 - 07:50",
+                "assignment": {
+                  "code": "BSBC-601",
+                  "color": "blue"
+                }
+              },
+              {
+                "timeslot": "07:55 - 08:45",
+                "assignment": {
+                  "code": "BSBC-601",
+                  "color": "blue"
+                }
+              },
+              {
+                "timeslot": "08:55 - 09:45",
+                "assignment": {
+                  "code": "BSBC-601",
+                  "color": "blue"
+                }
+              },
+              {
+                "timeslot": "09:50 - 10:40",
+                "assignment": {
+                  "code": "BSBC-601",
+                  "color": "blue"
+                }
+              },
+              {
+                "timeslot": "10:45 - 11:35",
+                "assignment": null
+              }
+            ],
+            "afternoon": [
+              {
+                "timeslot": "07:00 - 07:50",
+                "assignment": {
+                  "code": "BSBC-601",
+                  "color": "blue"
+                }
+              },
+              {
+                "timeslot": "07:55 - 08:45",
+                "assignment": {
+                  "code": "BSBC-601",
+                  "color": "blue"
+                }
+              },
+              {
+                "timeslot": "08:55 - 09:45",
+                "assignment": {
+                  "code": "BSBC-601",
+                  "color": "blue"
+                }
+              },
+              {
+                "timeslot": "09:50 - 10:40",
+                "assignment": {
+                  "code": "BSBC-601",
+                  "color": "blue"
+                }
+              },
+              {
+                "timeslot": "10:45 - 11:35",
+                "assignment": null
+              }
+            ]
+          },
+          { "tuesday": null },
+          {
+            "morning": [
+              {
+                "timeslot": "07:00 - 07:50",
+                "assignment": {
+                  "code": "BSBC-601",
+                  "color": "blue"
+                }
+              },
+              {
+                "timeslot": "07:55 - 08:45",
+                "assignment": {
+                  "code": "BSBC-601",
+                  "color": "blue"
+                }
+              },
+              {
+                "timeslot": "08:55 - 09:45",
+                "assignment": {
+                  "code": "BSBC-601",
+                  "color": "blue"
+                }
+              },
+              {
+                "timeslot": "09:50 - 10:40",
+                "assignment": {
+                  "code": "BSBC-601",
+                  "color": "blue"
+                }
+              },
+              {
+                "timeslot": "10:45 - 11:35",
+                "assignment": null
+              }
+            ],
+            "afternoon": [
+              {
+                "timeslot": "07:00 - 07:50",
+                "assignment": {
+                  "code": "BSBC-601",
+                  "color": "blue"
+                }
+              },
+              {
+                "timeslot": "07:55 - 08:45",
+                "assignment": {
+                  "code": "BSBC-601",
+                  "color": "blue"
+                }
+              },
+              {
+                "timeslot": "08:55 - 09:45",
+                "assignment": {
+                  "code": "BSBC-601",
+                  "color": "blue"
+                }
+              },
+              {
+                "timeslot": "09:50 - 10:40",
+                "assignment": {
+                  "code": "BSBC-601",
+                  "color": "blue"
+                }
+              },
+              {
+                "timeslot": "10:45 - 11:35",
+                "assignment": null
+              }
+            ]
+          }
+        ]
       }
     }
   },

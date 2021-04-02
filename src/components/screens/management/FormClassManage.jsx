@@ -34,13 +34,6 @@ const FormClassManage = ({
     // eslint-disable-next-line
   }, [currentClassId, classObj]);
 
-  useEffect(() => {
-    if (currentClassId) {
-      document.getElementById("lecture__select-faculty").value =
-        classObj[currentClassId]["faculty"];
-    }
-  }, [currentClassId, classObj, facultiesObj]);
-
   const handleInputChange = (e) => {
     var { name, value } = e.target;
     setValues({ ...values, [name]: value });

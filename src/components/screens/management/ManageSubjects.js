@@ -11,12 +11,21 @@ import { defaultFailCB, readExcel, exists, validNumber } from "../../../utils";
 import FormSubjects from "./FormSubjects";
 import { Loading, Button, FileDropzone } from "../../Components";
 import { confirmAlert } from "react-confirm-alert";
+import { AgGridReact } from "ag-grid-react";
 
 //import styles
 import "./Manage.css";
+import "ag-grid-enterprise";
+import "ag-grid-community/dist/styles/ag-grid.css";
+import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
 
 const ManageSubjects = () => {
   //#region State
+
+  const [gridApi, setGridApi] = useState(null);
+  const [gridColumnApi, setGridColumnApi] = useState(null);
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [rowData, setRowData] = useState([]);
 
   const [subjectsObj, setSubjectsObj] = useState({});
   const [currentSubjectId, setCurrentSubjectId] = useState("");
@@ -24,34 +33,32 @@ const ManageSubjects = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [excelLoadedItems, setExcelLoadedItems] = useState([]);
 
+  const gridOptions = {
+    columnDefs: [
+      {
+        field: "id",
+        headerName: "STT",
+        checkboxSelection: true,
+        headerCheckboxSelection: true,
+        maxWidth: 120,
+        editable: false,
+      },
+      { field: "subjectName", headerName: "Tên Học Phần" },
+      { field: "credit", headerName: "Số Tín Chỉ" },
+      { field: "periods", headerName: "Số Tiết" },
+    ],
+    defaultColDef: {
+      flex: 1,
+      resizable: true,
+    },
+    rowSelection: "multiple",
+  };
+
+  const contextMenuItems = ["copy", "copyWithHeaders", "separator", "export"];
+
   //#endregion
 
   //#region Components
-
-  const SubjectListItem = ({
-    index,
-    onClick,
-    onRemove,
-    subjectName,
-    credit,
-    periods,
-  }) => {
-    return (
-      <li
-        onClick={onClick}
-        className="list__container-li_item"
-        key={index.toString()}
-      >
-        <p className="li__item-search">{index + 1}</p>
-        <p className="li__item-search">{subjectName}</p>
-        <p>{credit}</p>
-        <p>{periods}</p>
-        <span className="btn__trash trash" onClick={onRemove}>
-          <i className="far fa-trash" />
-        </span>
-      </li>
-    );
-  };
 
   const SubjectItemToAdd = ({ onAdd, index, subjectName, credit, periods }) => {
     return (
@@ -107,26 +114,34 @@ const ManageSubjects = () => {
   //#region Hooks
 
   useEffect(() => {
-    getAllSubjects((result) => {
-      setSubjectsObj(result);
+    async function fetchData() {
+      const allSubject = await getAllSubjects();
+
+      setSubjectsObj(allSubject);
       setIsLoading(false);
-    });
+
+      const subjectRows = Object.keys(allSubject).map((subjectKey, index) => {
+        return {
+          id: index + 1,
+          subjectId: subjectKey,
+          subjectName: allSubject[subjectKey]["subject-name"],
+          credit: allSubject[subjectKey]["credit"],
+          periods: allSubject[subjectKey]["periods"],
+        };
+      });
+
+      setRowData(subjectRows);
+    }
+
+    if (isLoading) {
+      fetchData();
+    }
   }, [isLoading]);
 
-  useEffect(() => {
-    const li = document.getElementsByClassName("list__container-li_item");
-    for (let i = 0; i < Object.keys(subjectsObj).length; i++) {
-      const item = li[i].getElementsByClassName("li__item-search")[0];
-      // let txtValue = item.textContent || item.innerHTML;
-      let txtValue = item.textContent || item.innerHTML;
-      if (txtValue.toLowerCase().includes(searchString.toLowerCase())) {
-        li[i].style.display = "";
-      } else {
-        li[i].style.display = "none";
-      }
-    }
-    // eslint-disable-next-line
-  }, [searchString]); // search for text in list when searchString change
+  function onGridReady(params) {
+    setGridApi(params.api);
+    setGridColumnApi(params.columnApi);
+  }
 
   //#endregion
 
@@ -288,44 +303,39 @@ const ManageSubjects = () => {
               )
             }
           </div>
-          <div className="list__container subject-list">
-            <div className="list__container-search">
-              <input
-                type="text"
-                className="text__search"
-                onChange={({ target }) => setSearchString(target.value)}
-                name="search-string"
-                value={searchString}
-                placeholder="Tìm kiếm..."
+          <div className="list__container ag-theme-alpine-dark">
+            <input
+              type="text"
+              className="text__search"
+              onChange={({ target }) => setSearchString(target.value)}
+              name="search-string"
+              value={searchString}
+              placeholder="Tìm kiếm..."
+            />
+            <div style={{ height: "94%" }}>
+              <AgGridReact
+                {...{ onGridReady, rowData, gridOptions }}
+                style={{ height: "90%" }}
+                columnDefs={gridOptions["columnDefs"]}
+                defaultColDef={{ flex: 1 }}
+                enableRangeSelection={true}
+                pagination={true}
+                paginationPageSize={15}
+                rowMultiSelectWithClick={true}
+                suppressRowClickSelection={true}
+                getContextMenuItems={contextMenuItems}
+                overlayNoRowsTemplate={
+                  "Bạn chưa có dữ liệu nào trong cơ sở dữ liệu"
+                }
+                onRowClicked={({ data }) =>
+                  setCurrentSubjectId(data["subjectId"])
+                }
+                onSelectionChanged={() => {
+                  var selectedRows = gridApi.getSelectedRows();
+                  setSelectedRows(selectedRows);
+                }}
               />
-              <div className="list__header">
-                <h5>STT</h5>
-                <h5>Tên học phần</h5>
-                <h5>Số tín chỉ</h5>
-                <h5>Số tiết</h5>
-              </div>
             </div>
-            {!!Object.keys(subjectsObj).length ? (
-              <ul>
-                {Object.keys(subjectsObj)
-                  .reverse()
-                  .map((id, index) => {
-                    return (
-                      <SubjectListItem
-                        id={id}
-                        index={index}
-                        onClick={() => setCurrentSubjectId(id)}
-                        onRemove={() => handleOnRemove(id)}
-                        subjectName={subjectsObj[id]["subject-name"]}
-                        credit={subjectsObj[id]["credit"]}
-                        periods={subjectsObj[id]["periods"]}
-                      />
-                    );
-                  })}
-              </ul>
-            ) : (
-              <p>no subject</p>
-            )}
           </div>
         </div>
       </div>

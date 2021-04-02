@@ -14,13 +14,41 @@ import { defaultFailCB, readExcel, exists } from "../../../utils";
 import { confirmAlert } from "react-confirm-alert";
 import { Loading, Button, FileDropzone } from "../../Components";
 import { getFacId } from "./ManageFaculties";
+import { AgGridReact } from "ag-grid-react";
 
 // import styles
 import "./Manage.css";
+import "ag-grid-enterprise";
+import "ag-grid-community/dist/styles/ag-grid.css";
+import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
 
 const ManageLectures = () => {
   //#region Component State
+  const gridOptions = {
+    columnDefs: [
+      {
+        field: "id",
+        headerName: "STT",
+        checkboxSelection: true,
+        headerCheckboxSelection: true,
+        editable: false,
+        maxWidth: 120,
+      },
+      { field: "lectureName", headerName: "Tên Giảng Viên" },
+      { field: "faculty", headerName: "Khoa" },
+    ],
+    defaultColDef: {
+      flex: 1,
+    },
+    rowSelection: "multiple",
+  };
 
+  const contextMenuItems = ["copy", "copyWithHeaders", "separator", "export"];
+
+  const [gridApi, setGridApi] = useState(null);
+  const [gridColumnApi, setGridColumnApi] = useState(null);
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [rowData, setRowData] = useState([]);
   const [lecturesObj, setLecturesObj] = useState({});
   const [facultiesObj, setFacultiesObj] = useState({});
   const [currentLectureId, setCurrentLectureId] = useState();
@@ -78,32 +106,28 @@ const ManageLectures = () => {
         setFacultiesObj(allFaculties),
         setIsLoading(false),
       ]);
+
+      const lectureRows = Object.keys(allLectures).map((lectureKey, index) => {
+        return {
+          id: index + 1,
+          lectureId: lectureKey,
+          lectureName: allLectures[lectureKey]["lecture-name"],
+          faculty: allLectures[lectureKey]["faculty"],
+        };
+      });
+
+      console.log(lectureRows);
+
+      setRowData(lectureRows);
     }
 
     fetchData();
   }, [isLoading]); // similar to fetching lectures list on componentUpdate()
 
-  useEffect(() => {
-    const li = document.getElementsByClassName("list__container-li_item");
-    for (let i = 0; i < li.length; i++) {
-      const items = li[i].querySelectorAll(".li__item-search");
-      let isInclude = [];
-      items.forEach((item) => {
-        let txtValue = item.textContent || item.innerHTML;
-        isInclude.push(
-          txtValue.toLowerCase().includes(searchString.toLowerCase())
-            ? true
-            : false
-        );
-      });
-      if (isInclude.some((item) => item === true)) {
-        li[i].style.display = "";
-      } else {
-        li[i].style.display = "none";
-      }
-    }
-  }, [searchString]); // search for text in list when searchString change
-
+  function onGridReady(params) {
+    setGridApi(params.api);
+    setGridColumnApi(params.columnApi);
+  }
   //#endregion
 
   //#region Component Method
@@ -212,7 +236,7 @@ const ManageLectures = () => {
 
   const handleOnRemove = (id) => {
     confirmAlert({
-      title: "Bạn có chắc muốn xóa khoa này?",
+      title: `Bạn có chắc muốn xóa ${selectedRows.length} giảng viên này?`,
       message: "Bạn sẽ không thể truy cập lại thông tin này",
       buttons: [
         {
@@ -223,9 +247,12 @@ const ManageLectures = () => {
           className: "sign-out",
           label: "Xóa",
           onClick: () => {
-            removeLecture(id);
+            selectedRows.forEach((row) => {
+              removeLecture(row?.lectureId);
+            });
             setCurrentLectureId("");
             setIsLoading(true);
+            setSelectedRows([]);
           },
         },
       ],
@@ -314,43 +341,49 @@ const ManageLectures = () => {
                 />
               )
             }
+            {!!selectedRows.length && (
+              <Button
+                style={{ marginTop: 10 }}
+                className="delete"
+                // clear items
+                onClick={handleOnRemove}
+              >
+                Xóa {selectedRows.length} Khoa
+              </Button>
+            )}
           </div>
 
           <div className="list__container lecture-list">
-            <div className="list__container-search">
-              <input
-                type="text"
-                className="text__search"
-                onChange={({ target }) => setSearchString(target.value)}
-                name="search-string"
-                value={searchString}
-                placeholder="Tìm kiếm..."
+            <input
+              type="text"
+              className="text__search"
+              onChange={({ target }) => gridApi.setQuickFilter(target.value)}
+              placeholder="Tìm kiếm..."
+            />
+            <div style={{ height: "94%" }} className="ag-theme-alpine-dark">
+              <AgGridReact
+                {...{ onGridReady, rowData, gridOptions }}
+                style={{ height: "90%" }}
+                columnDefs={gridOptions["columnDefs"]}
+                defaultColDef={{ flex: 1 }}
+                enableRangeSelection={true}
+                pagination={true}
+                paginationPageSize={15}
+                rowMultiSelectWithClick={true}
+                suppressRowClickSelection={true}
+                getContextMenuItems={contextMenuItems}
+                overlayNoRowsTemplate={
+                  "Bạn chưa có dữ liệu nào trong cơ sở dữ liệu"
+                }
+                onRowClicked={({ data }) =>
+                  setCurrentLectureId(data["lectureId"])
+                }
+                onSelectionChanged={() => {
+                  var selectedRows = gridApi.getSelectedRows();
+                  setSelectedRows(selectedRows);
+                }}
               />
-              <div className="list__header">
-                <h5>STT</h5>
-                <h5>Tên giảng viên</h5>
-                <h5>Khoa</h5>
-              </div>
             </div>
-            {!!Object.keys(lecturesObj).length ? (
-              <ul>
-                {Object.keys(lecturesObj)
-                  .reverse()
-                  .map((id, index) => {
-                    return (
-                      <LectureListItem
-                        index={index}
-                        name={lecturesObj[id]["lecture-name"]}
-                        faculty={lecturesObj[id]["faculty"]}
-                        onRemove={() => handleOnRemove(id)}
-                        onClick={() => setCurrentLectureId(id)}
-                      />
-                    );
-                  })}
-              </ul>
-            ) : (
-              <p>no lecture</p>
-            )}
           </div>
         </div>
       </div>
