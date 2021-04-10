@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 // import components
 import {
   getAllLectures,
-  getAllFaculties,
   getAllSubjects,
-  getAllClass,
+  getAllClasses,
   setNewAssignment,
   getAssignmentsOfLecture,
 } from "../../../firebase";
@@ -14,6 +13,7 @@ import { exists, titleCase } from "../../../utils";
 import { Loading } from "../../Components";
 import { AgGridReact } from "ag-grid-react";
 import NumbericEditor from "./NumbericEditor";
+import Select from "react-select";
 
 // import styles
 import "ag-grid-enterprise";
@@ -22,18 +22,22 @@ import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
 
 import "./Manage.css";
 import { useMemo } from "react";
+import { SemContext } from "../timetable/provider/SemProvider";
 
 const ManageAssignments = (props) => {
   //#region Component State
   const [gridApi, setGridApi] = useState(null);
-  const [gridColumnApi, setGridColumnApi] = useState(null);
+  // const [gridColumnApi, setGridColumnApi] = useState(null);
+
+  const context = useContext(SemContext);
+  const { semesterInfo } = context;
 
   const [lecturesObj, setLecturesObj] = useState({});
   const [classObj, setClassObj] = useState({});
   const [subjectObj, setSubjectObj] = useState({});
-  const [facultyObj, setFacultiesObj] = useState({});
-  const [currentLectureId, setCurrentLectureId] = useState();
-  const [searchString, setSearchString] = useState("");
+  // const [facultyObj, setFacultiesObj] = useState({});
+  const [currentLectureID, setCurrentLectureID] = useState();
+  const [lectureListFilter, setLectureListFilter] = useState("");
   const [subjectGridFilter, setSubjectGridFilter] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
@@ -66,10 +70,12 @@ const ManageAssignments = (props) => {
       editable: false,
     },
     {
-      field: "classTeaching",
+      field: "classID",
       headerName: "Lớp Giảng Dạy",
       editable: !!Object.keys(classObj).length,
       cellEditor: "agRichSelectCellEditor",
+      // cellRenderer: "classesSelectComponent",
+      // cellEditor: "classesSelectComponent",
       cellEditorParams: {
         values: Object.keys(classObj),
       },
@@ -78,11 +84,11 @@ const ManageAssignments = (props) => {
         if (Object.keys(classObj).length > 0) {
           const classID = params?.value;
 
-          console.log(classObj);
+          // console.log(classID, classObj, classObj[classID]);
 
           return classID === "Chọn Lớp" || classID === ""
             ? "Chọn Lớp"
-            : classObj[classID]["className"];
+            : classObj[classID]?.className;
         } else {
           return "Chưa có lớp học";
         }
@@ -109,25 +115,24 @@ const ManageAssignments = (props) => {
 
   //#region Hooks
 
+  useEffect(() => {
+    console.log("classObj", "=>", classObj);
+  }, [classObj]);
+
   // Lấy dữ liệu từ firebase (async)
   useEffect(() => {
     async function fetchData() {
       var [
         allLectures,
-        allFaculties,
+        // allFaculties,
         allSubjects,
         allClasses,
       ] = await Promise.all([
         getAllLectures(),
-        getAllFaculties(),
+        // getAllFaculties(),
         getAllSubjects(),
-        getAllClass(props.semId),
+        getAllClasses(props.semId),
       ]);
-
-      if (exists(allFaculties)) {
-        setFacultiesObj(allFaculties);
-        // console.log(allFaculties);
-      }
 
       if (exists(allSubjects)) {
         setSubjectObj(allSubjects);
@@ -145,8 +150,7 @@ const ManageAssignments = (props) => {
     }
 
     if (isLoading === true) {
-      fetchData();
-      setIsLoading(false);
+      fetchData().then(() => setIsLoading(false));
     }
 
     // eslint-disable-next-line
@@ -160,68 +164,82 @@ const ManageAssignments = (props) => {
         subjectName: titleCase(subjectObj[subjectKey]["subject-name"]),
         credit: subjectObj[subjectKey]["credit"],
         periods: subjectObj[subjectKey]["periods"],
-        classTeaching: "Chọn Lớp",
+        classID: "",
         numberOfTests: 0,
       };
     });
   }, [subjectObj]);
 
   useEffect(() => {
-    // console.log(currentLectureId);
+    const li = document.getElementsByClassName("list__container-li_item");
+    for (let i = 0; i < li.length; i++) {
+      const items = li[i].querySelectorAll(".li__item-search");
+      let isInclude = [];
+      items.forEach((item) => {
+        let txtValue = item.textContent || item.innerHTML;
+        isInclude.push(
+          txtValue.toLowerCase().includes(lectureListFilter.toLowerCase())
+            ? true
+            : false
+        );
+      });
+      if (isInclude.some((item) => item === true)) {
+        li[i].style.display = "";
+      } else {
+        li[i].style.display = "none";
+      }
+    }
+  }, [lectureListFilter]); // search for text in list when searchString change
 
-    if (currentLectureId && gridApi) {
-      getAssignmentsOfLecture(props.semId, currentLectureId).then(
-        (fetchedRes) => {
-          const result = fetchedRes;
-          if (result.length > 0) {
-            let allAssignmentsOfLecture = {};
-            console.log(result);
+  useEffect(() => {
+    if (currentLectureID && gridApi) {
+      getAssignmentsOfLecture(props.semId, currentLectureID).then((result) => {
+        if (result.length > 0) {
+          let allAssignmentsOfLecture = {};
+          console.log(result);
 
-            result.forEach((value) => {
-              allAssignmentsOfLecture = {
-                ...allAssignmentsOfLecture,
-                [value["subjectId"]]: value,
-              };
-            });
+          result.forEach((value) => {
+            allAssignmentsOfLecture = {
+              ...allAssignmentsOfLecture,
+              [value["subjectId"]]: value,
+            };
+          });
 
-            console.log(allAssignmentsOfLecture);
+          console.log(allAssignmentsOfLecture);
 
-            gridApi.forEachNode((rowNode) => {
-              if (rowNode?.data?.subjectId in allAssignmentsOfLecture) {
-                rowNode.setData(
-                  allAssignmentsOfLecture[rowNode.data.subjectId]
-                );
-                rowNode.setSelected(true, false);
-              } else {
-                rowNode.setData({
-                  ...rowNode.data,
-                  classTeaching: "Chọn Lớp",
-                  numberOfTests: "0",
-                });
-                rowNode.setSelected(false, false);
-              }
-            });
-          } else {
-            gridApi.forEachNode((rowNode) => {
+          gridApi.forEachNode((rowNode) => {
+            if (rowNode?.data?.subjectId in allAssignmentsOfLecture) {
+              rowNode.setData(allAssignmentsOfLecture[rowNode.data.subjectId]);
+              rowNode.setSelected(true, false);
+            } else {
               rowNode.setData({
                 ...rowNode.data,
-                classTeaching: "Chọn Lớp",
+                classID: "Chọn Lớp",
                 numberOfTests: "0",
               });
+              rowNode.setSelected(false, false);
+            }
+          });
+        } else {
+          gridApi.forEachNode((rowNode) => {
+            rowNode.setData({
+              ...rowNode.data,
+              classID: "Chọn Lớp",
+              numberOfTests: "0",
             });
-            gridApi.deselectAll();
-          }
+          });
+          gridApi.deselectAll();
         }
-      );
+      });
     }
 
     // eslint-disable-next-line
-  }, [currentLectureId, gridApi]);
+  }, [currentLectureID, gridApi]);
 
   // hàm callback khi bảng sẵn sàng nhận dữ liệu
   function onGridReady(params) {
     setGridApi(params.api);
-    setGridColumnApi(params.columnApi);
+    // setGridColumnApi(params.columnApi);
   }
 
   //#endregion
@@ -238,9 +256,21 @@ const ManageAssignments = (props) => {
     return true;
   }
 
+  function handleAddToDB() {
+    var selectedRows = gridApi.getSelectedRows();
+    setNewAssignment(
+      props.semId,
+      currentLectureID,
+      selectedRows,
+      semesterInfo?.numberOfWeeks
+    );
+  }
+
   //#endregion
 
-  return (
+  return isLoading ? (
+    <Loading />
+  ) : (
     <>
       <div className="form-list__container">
         <div style={{ flex: "1" }}>
@@ -249,8 +279,8 @@ const ManageAssignments = (props) => {
               style={{ marginBottom: 10 }}
               className="search-input-assignments"
               placeholder="Lọc Giảng Viên..."
-              value={searchString}
-              onChange={(e) => setSearchString(e.target.value)}
+              value={lectureListFilter}
+              onChange={(e) => setLectureListFilter(e.target.value)}
             />
           </div>
           <ul>
@@ -259,7 +289,7 @@ const ManageAssignments = (props) => {
                 <>
                   <li
                     className="list__container-li_item items-body-content"
-                    onClick={() => setCurrentLectureId(key)}
+                    onClick={() => setCurrentLectureID(key)}
                   >
                     <span className="li__item-search">
                       {lecturesObj[key]["lecture-name"]}
@@ -283,55 +313,40 @@ const ManageAssignments = (props) => {
             }}
           />
 
-          <div className="ag-theme-alpine-dark" style={{ height: 750 }}>
-            {rowData.length && currentLectureId && classObj ? (
-              <>
-                <AgGridReact
-                  {...{ onGridReady, rowData, columnDefs }}
-                  defaultColDef={{
-                    flex: 1,
-                    minWidth: 130,
-                    editable: true,
-                    resizable: true,
-                  }}
-                  components={{
-                    numbericCellEditor: NumbericEditor,
-                  }}
-                  enableRangeSelection={true}
-                  pagination={true}
-                  paginationPageSize={15}
-                  rowSelection="multiple"
-                  suppressRowClickSelection={true}
-                  suppressDragLeaveHidesColumns={true}
-                  getContextMenuItems={contextMenuItems}
-                  overlayNoRowsTemplate={
-                    "Bạn chưa có dữ liệu nào trong cơ sở dữ liệu"
-                  }
-                  onSelectionChanged={() => {
-                    var selectedRows = gridApi.getSelectedRows();
-                    setNewAssignment(
-                      props.semId,
-                      currentLectureId,
-                      selectedRows
-                    );
-                  }}
-                  onCellEditingStopped={() => {
-                    var selectedRows = gridApi.getSelectedRows();
-                    setNewAssignment(
-                      props.semId,
-                      currentLectureId,
-                      selectedRows
-                    );
-                  }}
-                ></AgGridReact>
-              </>
-            ) : (
-              <h1>no data</h1>
+          <div
+            className="ag-theme-alpine-dark"
+            style={{ height: "calc(100% - 47px)" }}
+          >
+            {(!rowData.length && !exists(classObj)) || (
+              <AgGridReact
+                {...{ onGridReady, rowData, columnDefs }}
+                defaultColDef={{
+                  flex: 1,
+                  minWidth: 130,
+                  editable: true,
+                  resizable: true,
+                }}
+                frameworkComponents={{
+                  classesSelectComponent: Select
+                }}
+                components={{
+                  numbericCellEditor: NumbericEditor,
+                }}
+                enableRangeSelection={true}
+                rowSelection="multiple"
+                suppressRowClickSelection={true}
+                suppressDragLeaveHidesColumns={true}
+                getContextMenuItems={contextMenuItems}
+                overlayNoRowsTemplate={
+                  "Bạn chưa có dữ liệu nào trong cơ sở dữ liệu"
+                }
+                onSelectionChanged={handleAddToDB}
+                onCellEditingStopped={handleAddToDB}
+              ></AgGridReact>
             )}
           </div>
         </div>
       </div>
-      {isLoading && <Loading />}
     </>
   );
 };

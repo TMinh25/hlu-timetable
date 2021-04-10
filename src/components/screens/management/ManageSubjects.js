@@ -54,7 +54,12 @@ const ManageSubjects = () => {
     rowSelection: "multiple",
   };
 
-  const contextMenuItems = ["copy", "copyWithHeaders", "separator", "export"];
+  const contextMenuItems = (params) => [
+    "copy",
+    "copyWithHeaders",
+    "separator",
+    "export",
+  ];
 
   //#endregion
 
@@ -189,9 +194,9 @@ const ManageSubjects = () => {
     }
   };
 
-  const handleOnRemove = (id) => {
+  function handleOnRemove() {
     confirmAlert({
-      title: "Bạn có chắc muốn xóa khoa này?",
+      title: `Bạn có chắc muốn xóa ${selectedRows.length} môn học?`,
       message: "Bạn sẽ không thể truy cập lại thông tin này",
       buttons: [
         {
@@ -202,14 +207,17 @@ const ManageSubjects = () => {
           className: "sign-out",
           label: "Xóa",
           onClick: () => {
-            removeSubject(id);
+            selectedRows.forEach((row) => {
+              removeSubject(row?.subjectId);
+            });
             setCurrentSubjectId("");
             setIsLoading(true);
+            setSelectedRows([]);
           },
         },
       ],
     });
-  };
+  }
 
   async function handleDropped(files) {
     const objHeaders = ["subject-name", "credit", "periods"];
@@ -302,6 +310,16 @@ const ManageSubjects = () => {
                 />
               )
             }
+            {!!selectedRows.length && (
+              <Button
+                style={{ marginTop: 10 }}
+                className="delete"
+                // clear items
+                onClick={handleOnRemove}
+              >
+                Xóa {selectedRows.length} môn học
+              </Button>
+            )}
           </div>
           <div className="list__container ag-theme-alpine-dark">
             <input

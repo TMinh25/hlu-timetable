@@ -10,10 +10,9 @@ import {
   getAllFaculties,
   setNewFaculty,
 } from "../../../firebase";
-import { defaultFailCB, readExcel, exists } from "../../../utils";
+import { defaultFailCB, readExcel, exists, getFacID } from "../../../utils";
 import { confirmAlert } from "react-confirm-alert";
 import { Loading, Button, FileDropzone } from "../../Components";
-import { getFacId } from "./ManageFaculties";
 import { AgGridReact } from "ag-grid-react";
 
 // import styles
@@ -43,7 +42,12 @@ const ManageLectures = () => {
     rowSelection: "multiple",
   };
 
-  const contextMenuItems = ["copy", "copyWithHeaders", "separator", "export"];
+  const contextMenuItems = (params) => [
+    "copy",
+    "copyWithHeaders",
+    "separator",
+    "export",
+  ];
 
   const [gridApi, setGridApi] = useState(null);
   const [gridColumnApi, setGridColumnApi] = useState(null);
@@ -136,7 +140,7 @@ const ManageLectures = () => {
     // Trả về Promise để Form đợi tới khi người dùng chọn tùy chọn
     return new Promise((resolve, reject) => {
       if (exists(values["faculty-name"])) {
-        let facID = getFacId(values["faculty-name"]);
+        let facID = getFacID(values["faculty-name"]);
         values["faculty-id"] = facID;
         if (values["faculty-id"] in facultiesObj) {
           confirmAlert({
@@ -187,7 +191,7 @@ const ManageLectures = () => {
       if (!!values["lecture-name"]) {
         if (
           exists(values["faculty"]) &&
-          !(getFacId(values["faculty"]) in facultiesObj)
+          !(getFacID(values["faculty"]) in facultiesObj)
         ) {
           confirmAlert({
             title: "Khoa này hiện tại chưa có trong cơ sở dữ liệu",

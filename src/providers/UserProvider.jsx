@@ -1,4 +1,5 @@
 import React, { Component, createContext } from "react";
+import moment from "moment";
 
 // import components
 import { auth, userRef } from "../firebase";
@@ -33,7 +34,7 @@ class UserProvider extends Component {
         this.setUser(user);
         userRef(user.uid)
           .child("setting/")
-          .set({ "loged-history": new Date().toString() }, (err) => {
+          .set({ "loged-history": moment().toString() }, (err) => {
             if (err) {
               console.warn("failed to write data to firebase: " + err.message);
             }

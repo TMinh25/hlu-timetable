@@ -11,6 +11,7 @@ const FormClassManage = ({
   setCurrentClassId,
   handleOnAdd,
   handleOnModify,
+  setIsLoading,
 }) => {
   const initialState = {
     className: "",
@@ -45,10 +46,11 @@ const FormClassManage = ({
     setValues(initialState);
   };
 
-  const handleButtonModify = async (e) => {
+  const handleButtonModify = (e) => {
     e.preventDefault();
-    const resolve = await handleOnModify(currentClassId, values);
-    resolve && setValues(initialState);
+    handleOnModify(currentClassId, values);
+    setIsLoading(true);
+    setValues(initialState);
   };
 
   const cancelModify = () => {

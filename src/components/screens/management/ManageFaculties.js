@@ -9,7 +9,13 @@ import {
 } from "../../../firebase";
 import { confirmAlert } from "react-confirm-alert";
 import { Loading, Button, FileDropzone } from "../../Components";
-import { readExcel, defaultFailCB, exists, getHeaderRow } from "../../../utils";
+import {
+  readExcel,
+  defaultFailCB,
+  exists,
+  getHeaderRow,
+  getFacID,
+} from "../../../utils";
 import { AgGridReact } from "ag-grid-react";
 
 import "ag-grid-enterprise";
@@ -18,17 +24,6 @@ import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
 
 // import styles
 import "./Manage.css";
-
-export function getFacId(facName) {
-  if (exists(facName)) {
-    return facName
-      .toString()
-      .trim()
-      .split(" ")
-      .map((word) => word[0].toUpperCase())
-      .join("");
-  }
-}
 
 const ManageFaculties = () => {
   //#region Component State
@@ -62,7 +57,12 @@ const ManageFaculties = () => {
     rowSelection: "multiple",
   };
 
-  const contextMenuItems = ["copy", "copyWithHeaders", "separator", "export"];
+  const contextMenuItems = (params) => [
+    "copy",
+    "copyWithHeaders",
+    "separator",
+    "export",
+  ];
 
   //#endregion
 
@@ -142,7 +142,7 @@ const ManageFaculties = () => {
     // Trả về Promise để Form đợi tới khi người dùng chọn tùy chọn
     return new Promise((resolve, reject) => {
       if (values["faculty-name"] !== "") {
-        let facID = getFacId(values["faculty-name"]);
+        let facID = getFacID(values["faculty-name"]);
         values["faculty-id"] = facID;
         if (values["faculty-id"] in facultiesObj) {
           confirmAlert({
@@ -178,7 +178,7 @@ const ManageFaculties = () => {
 
   function handleOnModify(values) {
     return new Promise((resolve) => {
-      let id = getFacId(values["faculty-name"]);
+      let id = getFacID(values["faculty-name"]);
       values["faculty-id"] = id;
 
       if (id !== currentFacultyId) {

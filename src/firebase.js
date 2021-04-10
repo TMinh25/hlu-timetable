@@ -1,7 +1,13 @@
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
-import { titleCase, defaultSuccessCB, defaultFailCB } from "./utils";
+import {
+  titleCase,
+  defaultSuccessCB,
+  defaultFailCB,
+  exists,
+  isRoundNumber,
+} from "./utils";
 
 var firebaseConfig = {
   apiKey: "AIzaSyAvou0hUxm9CUqZUN7pRmq6ooHDqHy52x0",
@@ -17,9 +23,13 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 export const auth = firebase.auth();
-export var database = firebase.database();
+export const database = firebase.database();
 
 export const userRef = (userID) => database.ref(userID);
+export const semRef = (semID) =>
+  database.ref(`${auth.currentUser.uid}/semesters/${semID}`);
+export const classRef = (semID, classID) =>
+  database.ref(`${auth.currentUser.uid}/semesters/${semID}/classes/${classID}`);
 
 export function currentUserQuery() {
   auth.onAuthStateChanged((user) => {
@@ -56,9 +66,25 @@ export function signOut(callback) {
 
 //#region Semester: Quản lý lớp
 
-// write new semester or modify in database
+export function getClass(semID, classID) {
+  return new Promise((resolve) => {
+    auth.onAuthStateChanged((user) => {
+      if (!!user) {
+        userRef(user.uid)
+          .child(`semesters/${semID}/classes/${classID}`)
+          .on("value", (snapshot) => {
+            if (snapshot.val() != null) {
+              resolve(snapshot.val());
+            } else {
+              resolve({});
+            }
+          });
+      }
+    });
+  });
+}
 
-export function getAllClass(semID) {
+export function getAllClasses(semID) {
   return new Promise((resolve) => {
     auth.onAuthStateChanged((user) => {
       if (!!user) {
@@ -76,12 +102,10 @@ export function getAllClass(semID) {
   });
 }
 
-export function setNewClass(semID, values) {
+export function newClass(semID, values) {
   Object.keys(values).forEach(
     (key) => (values[key] = values[key].toString().toString().trim())
   );
-
-  // console.warn(copiedObj, values);
 
   auth.onAuthStateChanged((user) => {
     userRef(user.uid)
@@ -92,6 +116,22 @@ export function setNewClass(semID, values) {
           ? console.warn("failed to write data to firebase: " + err.message)
           : console.log("setNewClass success!");
       });
+  });
+}
+
+export function modifyClass(semID, classID, values) {
+  Object.keys(values).forEach(
+    (key) => (values[key] = values[key].toString().toString().trim())
+  );
+
+  return new Promise((resolve, reject) => {
+    auth.onAuthStateChanged((user) => {
+      userRef(user.uid)
+        .child(`semesters/${semID}/classes/${classID}`)
+        .set(values, (err) => {
+          err ? reject("lỗi ghi vào cơ sở dữ liệu: " + err.message) : resolve();
+        });
+    });
   });
 }
 
@@ -260,6 +300,25 @@ export function removeFaculty(
 //#endregion
 
 //#region Lectures: Quản lý nhân sự, giảng viên
+
+// get a lecture in database
+export function getLecture(lectureID) {
+  return new Promise((resolve, reject) => {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        userRef(user.uid)
+          .child(`lectures/${lectureID}`)
+          .once("value", (snapshot) => {
+            if (snapshot.val() !== null) {
+              resolve(snapshot.val());
+            } else {
+              resolve({});
+            }
+          });
+      }
+    });
+  });
+}
 
 // get all lectures in database
 export function getAllLectures() {
@@ -462,24 +521,117 @@ export function getAssignmentsOfLecture(semID, currentLectureID) {
           if (snapshot.val() !== null) {
             resolve(snapshot.val());
           } else {
-            resolve({});
+            resolve([]);
           }
         });
     });
   });
 }
 
-export function setNewAssignment(semID, currentLectureID, values) {
-  auth.onAuthStateChanged((user) => {
-    userRef(user.uid)
-      .child(`semesters/${semID}/assignments/${currentLectureID}/`)
-      .set(values, (err) => {
-        // failed to write data
-        err
-          ? console.warn("failed to write data to firebase: " + err.message)
-          : console.log("setNewAssignment success!");
+export async function getAssignmentsOfClass(semID, classID) {
+  return new Promise((resolve) => {
+    semRef(semID)
+      .child("assignments")
+      .once("value", (snapshot) => {
+        if (exists(snapshot.val())) {
+          const assignments = snapshot.val();
+          const assignmentsArray = [];
+          Object.values(assignments).forEach((assignment) => {
+            assignment.forEach((value) => {
+              if (value?.classID === classID) {
+                assignmentsArray.push(value);
+              }
+            });
+          });
+          // console.log(assignmentsArray);
+          resolve(assignmentsArray);
+        }
       });
   });
 }
 
+export async function setNewAssignment(
+  semID,
+  currentLectureID,
+  values,
+  numberOfWeeks
+) {
+  var assignments = [...values];
+  console.log(values);
+  if (exists(assignments)) {
+    const allClasses = await getAllClasses(semID);
+
+    const assignmentsArray = [];
+    Object.values(assignments).forEach((assignment) => {
+      let assignmentValue = assignment;
+
+      // số tiết học trong một tuần
+      var numberOfClassPerWeek = Math.ceil(
+        assignmentValue?.periods / numberOfWeeks
+      );
+
+      // số tuần học/sô tuần lặp lại trong bảng
+      var weekCount = assignmentValue?.periods / numberOfClassPerWeek;
+
+      // nếu số tuần học của môn học không là số nguyên thì thêm số lượng tiết trong tuần để cân bằng
+      while (!isRoundNumber(weekCount)) {
+        numberOfClassPerWeek += 1;
+        weekCount = assignmentValue?.periods / numberOfClassPerWeek;
+        console.log(Math.ceil(assignmentValue?.periods / weekCount));
+      }
+
+      // chỉnh object lớp học
+      const { classID } = assignmentValue;
+
+      if (!(classID === "Chọn Lớp" || classID === "")) {
+        assignmentValue.classTeaching = allClasses[classID];
+      }
+
+      // thêm ID giảng viên để không cần truy vấn ngược trong firebase
+      const lectureTeaching = currentLectureID;
+
+      assignmentValue = {
+        ...assignmentValue,
+        numberOfClassPerWeek,
+        weekCount,
+        lectureTeaching,
+      };
+      assignmentsArray.push(assignmentValue);
+    });
+    console.log("newAssignment", assignmentsArray);
+    auth.onAuthStateChanged((user) => {
+      userRef(user.uid)
+        .child(`semesters/${semID}/assignments/${currentLectureID}/`)
+        .set(assignmentsArray, (err) => {
+          // failed to write data
+          err
+            ? console.warn("failed to write data to firebase: " + err.message)
+            : console.log("setNewAssignment success!");
+        });
+    });
+  }
+}
+
 //#endregion
+
+export function setSchedulerArray(semID, classID, values) {
+  classRef(semID, classID)
+    .child("schedule")
+    .set(values, (err) =>
+      err ? console.log("failed") : console.log("setSchedulerArray success")
+    );
+}
+
+export function getClassSchedulerArray(semID, classID) {
+  return new Promise((resolve) => {
+    classRef(semID, classID)
+      .child("schedule")
+      .once("value", (snapshot) => {
+        if (snapshot.val() !== null) {
+          resolve(snapshot.val());
+        } else {
+          resolve([]);
+        }
+      });
+  });
+}

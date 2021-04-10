@@ -6,19 +6,22 @@ import { UserContext } from "../../providers/UserProvider";
 import Calendar from "react-calendar";
 import { Button } from "../Components";
 import { useNavigate } from "@reach/router";
+import moment from "moment";
+import "moment/locale/vi";
 
 // import styles
 import "./TimeTableNew.css";
 
-function weekCount(time2, time1) {
-  var diff = (time2.getTime() - time1.getTime()) / 1000;
-  diff /= 60 * 60 * 24 * 7;
-  return Math.abs(Math.round(diff));
+function weekCount(time1, time2) {
+  const diff = time1.diff(time2, "week");
+  return diff;
 }
 
 const TimeTableNew = () => {
   const currentUser = useContext(UserContext);
   const navigate = useNavigate();
+  moment.locale("vi");
+  moment.defaultFormat = "dddd LL";
 
   const [values, setValues] = useState({});
 
@@ -26,14 +29,11 @@ const TimeTableNew = () => {
     e.preventDefault();
     setValues({
       userNamed:
-        semName ||
-        calendarStartValue.getFullYear().toString() +
-          "-" +
-          calendarEndValue.getFullYear().toString(),
-      semesterStart: calendarStartValue.toDateString(),
-      semesterEnd: calendarEndValue.toDateString(),
+        semName || calendarStartValue.year() + "-" + calendarEndValue.year(),
+      semesterStart: calendarStartValue,
+      semesterEnd: calendarEndValue,
       numberOfWeeks: weekCount(calendarEndValue, calendarStartValue),
-      timeCreated: new Date().toLocaleString(),
+      timeCreated: moment(),
     });
     navigate("/timetable");
   };
@@ -45,8 +45,8 @@ const TimeTableNew = () => {
   }, [values]);
 
   // start and end of semester
-  const [calendarStartValue, onStartValueChange] = useState(new Date());
-  const [calendarEndValue, onEndValueChange] = useState(new Date());
+  const [calendarStartValue, onStartValueChange] = useState(moment());
+  const [calendarEndValue, onEndValueChange] = useState(moment());
 
   // semester name for UX
   const [semName, setSemName] = useState("");
@@ -73,11 +73,11 @@ const TimeTableNew = () => {
               <div className="new__date-picker">
                 <div className="picker_span">
                   <span className="label__new">Ngày Bắt đầu</span>
-                  <span>{calendarStartValue.toLocaleDateString("vi-VN")}</span>
+                  <span>{calendarStartValue.format()}</span>
                 </div>
                 <Calendar
-                  onChange={onStartValueChange}
-                  value={calendarStartValue}
+                  onChange={(value) => onStartValueChange(moment(value))}
+                  value={new Date(calendarStartValue)}
                   className={["calendar calendar__main"]}
                   locale="vi-VN"
                   nextLabel={<i className="fas fa-angle-right" />}
@@ -90,11 +90,11 @@ const TimeTableNew = () => {
               <div className="new__date-picker">
                 <div className="picker_span">
                   <span className="label__new">Ngày Kết thúc</span>
-                  <span>{calendarEndValue.toLocaleDateString("vi-VN")}</span>
+                  <span>{calendarEndValue.format()}</span>
                 </div>
                 <Calendar
-                  onChange={onEndValueChange}
-                  value={calendarEndValue}
+                  onChange={(value) => onEndValueChange(moment(value))}
+                  value={new Date(calendarEndValue)}
                   className={["calendar calendar__main"]}
                   locale="vi-VN"
                   nextLabel={<i className="fas fa-angle-right" />}

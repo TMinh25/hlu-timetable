@@ -1,24 +1,33 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 // import components
 import FormClassManage from "./FormClassManage";
 import {
   getAllFaculties,
-  getAllClass,
-  setNewClass,
+  getAllClasses,
+  newClass,
   removeClass,
+  modifyClass,
 } from "../../../firebase";
-import { defaultFailCB, readExcel, exists } from "../../../utils";
+import {
+  defaultFailCB,
+  readExcel,
+  exists,
+  getFacID,
+  defaultSuccessCB,
+} from "../../../utils";
 import { confirmAlert } from "react-confirm-alert";
 import { Loading, Button, FileDropzone } from "../../Components";
-import { getFacId } from "./ManageFaculties";
 
 // import styles
 import "./Manage.css";
 import { AgGridReact } from "ag-grid-react";
+import { SemContext } from "../timetable/provider/SemProvider";
 
 const ManageClass = (props) => {
   //#region Component State
+  const context = useContext(SemContext);
+  const { updateGroupedOptions } = context;
 
   const [gridApi, setGridApi] = useState(null);
   const [gridColumnApi, setGridColumnApi] = useState(null);
@@ -28,7 +37,6 @@ const ManageClass = (props) => {
   const [classObj, setClassObj] = useState({});
   const [facultiesObj, setFacultiesObj] = useState({});
   const [currentClassId, setCurrentClassId] = useState();
-  const [searchString, setSearchString] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [excelLoadedItems, setExcelLoadedItems] = useState([]);
 
@@ -42,10 +50,10 @@ const ManageClass = (props) => {
         editable: false,
         maxWidth: 120,
       },
+      { field: "faculty", headerName: "Khoa", rowGroup: true },
       { field: "className", headerName: "Tên Lớp" },
-      { field: "classSize", headerName: "Sĩ Số Lớp" },
       { field: "classType", headerName: "Hệ" },
-      { field: "faculty", headerName: "Khoa", hide: true, rowGroup: true },
+      { field: "classSize", headerName: "Sĩ Số Lớp" },
     ],
     defaultColDef: {
       flex: 1,
@@ -54,7 +62,12 @@ const ManageClass = (props) => {
     groupUseEntireRow: true,
   };
 
-  const contextMenuItems = ["copy", "copyWithHeaders", "separator", "export"];
+  const contextMenuItems = (params) => [
+    "copy",
+    "copyWithHeaders",
+    "separator",
+    "export",
+  ];
 
   //#endregion
 
@@ -71,7 +84,7 @@ const ManageClass = (props) => {
           <p>{className}</p>
         </div>
         <div>
-          <p>{getFacId(faculty)}</p>
+          <p>{getFacID(faculty)}</p>
         </div>
         <span className="btn__trash add" onClick={onAdd}>
           <i className="far fa-plus-square" />
@@ -84,14 +97,14 @@ const ManageClass = (props) => {
 
   //#region Hooks
 
-  useEffect(() => {
-    console.log(rowData);
-  }, [rowData]);
+  // useEffect(() => {
+  //   console.log(rowData);
+  // }, [rowData]);
 
   useEffect(() => {
     async function fetchData() {
       var [allClasses, allFaculties] = await Promise.all([
-        getAllClass(props.semId),
+        getAllClasses(props.semId),
         getAllFaculties(),
       ]);
 
@@ -170,7 +183,7 @@ const ManageClass = (props) => {
                 className: "new",
                 label: "Thêm",
                 onClick: () => {
-                  setNewClass(props.semId, values);
+                  newClass(props.semId, values);
                   setIsLoading(true);
                   shouldRemoveChild && removeLi();
                   resolve();
@@ -179,13 +192,20 @@ const ManageClass = (props) => {
             ],
           });
         } else {
-          setNewClass(props.semId, values);
+          newClass(props.semId, values);
           setIsLoading(true);
           shouldRemoveChild && removeLi();
           resolve();
         }
+        updateGroupedOptions();
       }
     });
+  }
+
+  function handleOnModify(classID, values) {
+    modifyClass(props.semId, classID, values)
+      .then(() => defaultSuccessCB())
+      .catch((rej) => defaultFailCB(rej));
   }
 
   const handleOnRemove = () => {
@@ -289,6 +309,8 @@ const ManageClass = (props) => {
                   currentClassId,
                   setCurrentClassId,
                   handleOnAdd,
+                  handleOnModify,
+                  setIsLoading,
                 }}
               />
             )

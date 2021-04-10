@@ -5,6 +5,7 @@ import UserProvider from "./providers/UserProvider";
 import Application from "./components/Application";
 import { ToastContainer } from "react-toastify";
 
+// import "semantic-ui-css/semantic.min.css";
 import "react-toastify/dist/ReactToastify.css";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core";
 
