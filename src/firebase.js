@@ -64,7 +64,7 @@ export function signOut(callback) {
     });
 }
 
-//#region Semester: Quản lý lớp
+//#region Class: Quản lý lớp
 
 export function getClass(semID, classID) {
   return new Promise((resolve) => {
@@ -88,8 +88,8 @@ export function getAllClasses(semID) {
   return new Promise((resolve) => {
     auth.onAuthStateChanged((user) => {
       if (!!user) {
-        userRef(user.uid)
-          .child(`semesters/${semID}/classes`)
+        semRef(semID)
+          .child("classes")
           .on("value", (snapshot) => {
             if (snapshot.val() != null) {
               resolve(snapshot.val());
@@ -584,7 +584,9 @@ export async function setNewAssignment(
       const { classID } = assignmentValue;
 
       if (!(classID === "Chọn Lớp" || classID === "")) {
-        assignmentValue.classTeaching = allClasses[classID];
+        const classTeaching = allClasses[classID];
+        delete classTeaching["schedule"];
+        assignmentValue.classTeaching = classTeaching;
       }
 
       // thêm ID giảng viên để không cần truy vấn ngược trong firebase
@@ -596,6 +598,21 @@ export async function setNewAssignment(
         weekCount,
         lectureTeaching,
       };
+
+      if (numberOfClassPerWeek >= 6) {
+        var numberOfClassPWeek1, numberOfClassPWeek2;
+        if (numberOfClassPerWeek / 2 !== 0) {
+          numberOfClassPWeek1 = Math.ceil(numberOfClassPerWeek / 2);
+          numberOfClassPWeek2 = Math.floor(numberOfClassPerWeek / 2);
+        }
+
+        assignmentValue.numberOfClassPerWeek = numberOfClassPWeek1;
+        const assignmentValue2 = {
+          ...assignmentValue,
+          numberOfClassPerWeek: numberOfClassPWeek2,
+        };
+        assignmentsArray.push(assignmentValue2);
+      }
       assignmentsArray.push(assignmentValue);
     });
     console.log("newAssignment", assignmentsArray);
@@ -614,15 +631,15 @@ export async function setNewAssignment(
 
 //#endregion
 
-export function setSchedulerArray(semID, classID, values) {
-  classRef(semID, classID)
-    .child("schedule")
-    .set(values, (err) =>
-      err ? console.log("failed") : console.log("setSchedulerArray success")
-    );
+export function setScheduleArray(semID, classID, values) {
+  return new Promise((resolve, reject) => {
+    classRef(semID, classID)
+      .child("schedule")
+      .set(values, (err) => (err ? reject("failed") : resolve(values)));
+  });
 }
 
-export function getClassSchedulerArray(semID, classID) {
+export function getClassScheduleArray(semID, classID) {
   return new Promise((resolve) => {
     classRef(semID, classID)
       .child("schedule")
@@ -633,5 +650,27 @@ export function getClassSchedulerArray(semID, classID) {
           resolve([]);
         }
       });
+  });
+}
+
+export function getLectureScheduleArray(semID, lectureID) {
+  return new Promise(async (resolve) => {
+    const allClasses = await getAllClasses(semID);
+    var scheduleArray = [];
+
+    Object.values(allClasses).forEach((classVal) => {
+      const classSchedule = classVal?.schedule;
+      var lectureScheduleInClass = [];
+      if (classSchedule?.length) {
+        classSchedule.forEach((schedule) => {
+          if (schedule?.data?.lectureTeaching === lectureID) {
+            lectureScheduleInClass.push(schedule);
+          }
+        });
+        scheduleArray = scheduleArray.concat(lectureScheduleInClass);
+      }
+    });
+
+    resolve(scheduleArray);
   });
 }

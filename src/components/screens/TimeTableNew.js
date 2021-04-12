@@ -23,33 +23,30 @@ const TimeTableNew = () => {
   moment.locale("vi");
   moment.defaultFormat = "dddd LL";
 
-  const [values, setValues] = useState({});
+  // start and end of semester
+  const [calendarStartValue, onStartValueChange] = useState(moment().hour("0"));
+  const [calendarEndValue, onEndValueChange] = useState(moment().hour("0"));
+
+  // semester name for UX
+  const [semName, setSemName] = useState("");
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
-    setValues({
+    const values = {
       userNamed:
         semName || calendarStartValue.year() + "-" + calendarEndValue.year(),
-      semesterStart: calendarStartValue,
-      semesterEnd: calendarEndValue,
+      semesterStart: moment(calendarStartValue),
+      semesterEnd: moment(calendarEndValue),
       numberOfWeeks: weekCount(calendarEndValue, calendarStartValue),
       timeCreated: moment(),
-    });
+    };
+    setNewSemester(values);
     navigate("/timetable");
   };
 
   useEffect(() => {
-    if (Object.keys(values).length) {
-      setNewSemester(values);
-    }
-  }, [values]);
-
-  // start and end of semester
-  const [calendarStartValue, onStartValueChange] = useState(moment());
-  const [calendarEndValue, onEndValueChange] = useState(moment());
-
-  // semester name for UX
-  const [semName, setSemName] = useState("");
+    console.log(calendarStartValue);
+  }, [calendarStartValue]);
 
   return (
     <>
@@ -73,7 +70,7 @@ const TimeTableNew = () => {
               <div className="new__date-picker">
                 <div className="picker_span">
                   <span className="label__new">Ngày Bắt đầu</span>
-                  <span>{calendarStartValue.format()}</span>
+                  <span>{moment(calendarStartValue).format("LL")}</span>
                 </div>
                 <Calendar
                   onChange={(value) => onStartValueChange(moment(value))}
@@ -90,7 +87,7 @@ const TimeTableNew = () => {
               <div className="new__date-picker">
                 <div className="picker_span">
                   <span className="label__new">Ngày Kết thúc</span>
-                  <span>{calendarEndValue.format()}</span>
+                  <span>{moment(calendarEndValue).format("LL")}</span>
                 </div>
                 <Calendar
                   onChange={(value) => onEndValueChange(moment(value))}
