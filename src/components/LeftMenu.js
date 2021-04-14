@@ -47,25 +47,25 @@ const LeftMenu = ({
           item3Link="mng-subjects"
         />
 
-        {/* <Calendar
-					onChange={calendarOnChange}
-					value={calendarValue}
-					className={["calendar calendar__left-menu"]}
-					locale="vi-VN"
-					showNeighboringMonth={false}
-					nextLabel={<i className="fas fa-angle-right" />}
-					next2Label={<i className="fas fa-angle-double-right" />}
-					prevLabel={<i className="fas fa-angle-left" />}
-					prev2Label={<i className="fas fa-angle-double-left" />}
-				/> */}
+        <Calendar
+          onChange={calendarOnChange}
+          value={calendarValue}
+          className={["calendar calendar__left-menu"]}
+          locale="vi-VN"
+          showNeighboringMonth={false}
+          nextLabel={<i className="fas fa-angle-right" />}
+          next2Label={<i className="fas fa-angle-double-right" />}
+          prevLabel={<i className="fas fa-angle-left" />}
+          prev2Label={<i className="fas fa-angle-double-left" />}
+        />
 
-        <LinkButton to="/teacher-time-table">
+        {/* <LinkButton to="/teacher-time-table">
           <div>Thời khóa biểu của giảng viên</div>
         </LinkButton>
 
         <LinkButton to="/schedule-timetable">
           <div>Chỉnh sửa thời khóa biểu</div>
-        </LinkButton>
+        </LinkButton> */}
 
         {showScheduler && (
           <>

@@ -28,12 +28,7 @@ const Home = () => {
 
   return (
     <>
-      {count}
-      <br />
-      {count ** 9}
-      <br />
-      {expensiveCount}
-      <button onClick={() => setCount(count + 10)}>them</button>
+      <h1>Trang Chủ</h1>
     </>
   );
 };
