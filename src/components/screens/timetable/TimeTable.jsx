@@ -53,7 +53,22 @@ import {
 } from "@devexpress/dx-react-scheduler-material-ui";
 import { confirmAlert } from "react-confirm-alert";
 import { TaskLimiter } from "./AppointmentLimiter";
-import { Backdrop } from "@material-ui/core";
+import { Backdrop, Grid } from "@material-ui/core";
+import { withStyles } from "@material-ui/core/styles";
+import classNames from "clsx";
+
+const style = ({ palette }) => ({
+  grid: {
+    paddingBottom: 12,
+  },
+  textCenter: {
+    textAlign: "center",
+  },
+  header: {
+    height: "260px",
+    backgroundSize: "cover",
+  },
+});
 
 const TimeTableScheduler = (props) => {
   moment.locale("vi");
@@ -183,6 +198,7 @@ const TimeTableScheduler = (props) => {
         const result = data.map((appointment) => {
           // đổi startDate với endDate về dạng string để lưu vào firebase
           if (exists(changed[appointment.id])) {
+            console.log(changed);
             if (
               "startDate" in changed[appointment.id] ||
               "endDate" in changed[appointment.id]
@@ -244,149 +260,159 @@ const TimeTableScheduler = (props) => {
     [setData, data, currentTimeTable?.value]
   );
 
-  const onAddedAppointmentChange = useCallback((appointment) => {
-    setAddedAppointment(appointment);
-  }, []);
-
-  const CommandButton = useCallback(({ id, ...restProps }) => {
-    // if (id === "deleteButton") {
-    //   return <AppointmentForm.CommandButton id={id} {...restProps} />;
-    // }
-    return (
-      <AppointmentForm.CommandButton id={id} {...restProps} disable={false} />
-    );
-  }, []);
-
   useEffect(() => {
     console.log("data", data);
   }, [data]);
 
+  async function populateAssignment({
+    index,
+    assignment,
+    lectureSchedule,
+    classSchedule,
+  }) {
+    const { numberOfClassPerWeek, subjectName, weekCount } = assignment;
+
+    return new Promise((resolve) => {
+      dayLoop: for (let day = 0; day < 6; day++) {
+        // eslint-disable-next-line no-loop-func
+        const isValidScheduleForClass = (startDate, endDate) => {
+          return classSchedule.every((item) =>
+            isValidTimeSlot(startDate, endDate, item?.startDate, item?.endDate)
+          );
+        };
+        // eslint-disable-next-line no-loop-func
+        const isValidScheduleForLecture = (startDate, endDate) => {
+          return lectureSchedule.every((item) =>
+            isValidTimeSlot(startDate, endDate, item?.startDate, item?.endDate)
+          );
+        };
+
+        timeSlotLoop: for (var startSlot = 1; startSlot < 10; startSlot++) {
+          let endSlot = startSlot + numberOfClassPerWeek - 1;
+
+          let startDate = new Date(
+            getStartTime(semesterInfo?.semesterStart, startSlot).set(
+              "weekday",
+              day
+            )
+          );
+          let endDate = new Date(
+            getEndTime(semesterInfo?.semesterStart, endSlot).set("weekday", day)
+          );
+
+          if (
+            isValidScheduleForClass(startDate, endDate) &&
+            isValidScheduleForLecture(startDate, endDate)
+          ) {
+            resolve({
+              title: subjectName,
+              data: assignment,
+              id: index,
+              startDate: startDate.toString(),
+              endDate: endDate.toString(),
+              rRule: "FREQ=WEEKLY;COUNT=" + weekCount,
+            });
+          }
+        }
+      }
+    });
+  }
+
   async function handlePopulatedTimeTable() {
-    console.log("asdasd");
     const timeTableID = currentTimeTable?.value;
-    const classScheduleArray = await getClassScheduleArray(
-      props.semId,
-      timeTableID
-    );
-    // eslint-disable-next-line no-negated-in-lhs
-    if (!(timeTableID in lectureObj) && assignmentsArr?.length) {
-      console.log("asdasd");
-      console.log("classScheduleArray", classScheduleArray);
-      let scheduleArrayInput = [];
+    if (timeTableID in classObj && assignmentsArr?.length) {
+      let classSchedule = [];
 
       for (const [index, assignment] of assignmentsArr.entries()) {
-        const {
-          numberOfClassPerWeek,
-          subjectName,
-          weekCount,
-          lectureTeaching,
-        } = assignment;
-        var classTimeStart = 1,
-          classTimeEnd = classTimeStart + numberOfClassPerWeek - 1;
-        let resultSchedule = {};
-        console.log("lectureTeaching", lectureTeaching);
+        // console.log(index, assignment);
+        const { lectureTeaching } = assignment;
+
+        // phân công giảng dạy của giảng viên hiện tại để tránh trùng giờ
         const lectureSchedule = await getLectureScheduleArray(
           props.semId,
           lectureTeaching
         );
-        console.log("lectureSchedule", lectureSchedule);
 
-        dayLoop: for (let day = 0; day < 6; day++) {
-          var startDate = new Date(
-            getStartTime(semesterInfo?.semesterStart, classTimeStart).set(
-              "weekday",
-              day
-            )
-          );
-          var endDate = new Date(
-            getEndTime(semesterInfo?.semesterStart, classTimeEnd).set(
-              "weekday",
-              day
-            )
-          );
-          while (
-            // eslint-disable-next-line no-loop-func
-            scheduleArrayInput.every((item) => {
-              return isValidTimeSlot(
-                startDate,
-                endDate,
-                item?.startDate,
-                item?.endDate
-              );
-            }) === false &&
-            // eslint-disable-next-line no-loop-func
-            lectureSchedule.every((item) => {
-              return isValidTimeSlot(
-                startDate,
-                endDate,
-                item?.startDate,
-                item?.endDate
-              );
-            }) === false
-          ) {
-            var date = moment(startDate);
-            classTimeStart++;
-            classTimeEnd = classTimeStart + numberOfClassPerWeek - 1;
-            console.log(classTimeStart, classTimeEnd);
-            if (classTimeStart >= 6 && classTimeEnd > 10) {
-              classTimeStart = 1;
-              classTimeEnd = classTimeStart + numberOfClassPerWeek - 1;
-            }
-
-            if (classTimeEnd > 10) {
-              break;
-            }
-
-            startDate = new Date(getStartTime(date, classTimeStart));
-            endDate = new Date(getEndTime(date, classTimeEnd));
-          }
-
-          if (
-            // eslint-disable-next-line no-loop-func
-            scheduleArrayInput.every((item) => {
-              return isValidTimeSlot(
-                startDate,
-                endDate,
-                item?.startDate,
-                item?.endDate
-              );
-            }) &&
-            // eslint-disable-next-line no-loop-func
-            lectureSchedule.every((item) => {
-              return isValidTimeSlot(
-                startDate,
-                endDate,
-                item?.startDate,
-                item?.endDate
-              );
-            })
-          ) {
-            break dayLoop;
-          }
-        }
-        // console.log(classTimeStart, classTimeEnd, startDate, endDate);
-
-        resultSchedule = {
-          title: subjectName,
-          data: assignment,
-          id: index,
-          startDate: startDate.toString(),
-          endDate: endDate.toString(),
-          rRule: "FREQ=WEEKLY;COUNT=" + weekCount,
-        };
+        const resultSchedule = await populateAssignment({
+          index,
+          assignment,
+          lectureSchedule,
+          classSchedule,
+        });
         console.log(resultSchedule);
-        scheduleArrayInput.push(resultSchedule);
+        classSchedule.push(resultSchedule);
       }
 
-      console.log(scheduleArrayInput);
-      setScheduleArray(
-        props.semId,
-        timeTableID,
-        scheduleArrayInput
-      ).then((res) => setData(res));
+      console.log(classSchedule);
+      setScheduleArray(props.semId, timeTableID, classSchedule).then((res) =>
+        setData(res)
+      );
     }
-    // setIsLoading(false);
   }
+
+  const allowDrag = (params) => currentTimeTable?.value in classObj;
+
+  const allowResize = (params) => false;
+
+  const appointmentComponent = (props) => {
+    if (allowDrag(props.data)) {
+      return <Appointments.Appointment {...props} />;
+    }
+    return (
+      <Appointments.Appointment
+        {...props}
+        style={{ ...props.style, cursor: "not-allowed" }}
+      />
+    );
+  };
+
+  const Content = withStyles(style, { name: "Content" })(
+    ({ children, appointmentData, classes, ...restProps }) => {
+      const lectureName =
+          lectureObj[appointmentData.data?.lectureTeaching]["lecture-name"],
+        className = appointmentData?.data?.classTeaching?.className;
+
+      return (
+        <AppointmentTooltip.Content
+          {...restProps}
+          appointmentData={appointmentData}
+        >
+          <Grid className={classes.grid} container alignItems="center">
+            <Grid item xs={2} className={classes.textCenter}>
+              <i class="fad fa-users-class"></i>
+            </Grid>
+            <Grid item xs={10}>
+              <span>{className}</span>
+            </Grid>
+          </Grid>
+          <Grid className={classes.grid} container alignItems="center">
+            <Grid item xs={2} className={classes.textCenter}>
+              <i class="fad fa-user-tie"></i>
+            </Grid>
+            <Grid item xs={10}>
+              <span>{lectureName}</span>
+            </Grid>
+          </Grid>
+        </AppointmentTooltip.Content>
+      );
+    }
+  );
+
+  const CommandButton = withStyles(style, {
+    name: "CommandButton",
+  })(({ classes, ...restProps }) => (
+    <AppointmentTooltip.CommandButton {...restProps} />
+  ));
+
+  const recurrenceEditMenu = {
+    current: "Tuần hiện tại",
+    currentAndFollowing: "Tuần hiện tại và các tuần sau này",
+    all: "Tất cả các tuần học",
+    cancelButton: "Hủy",
+    commitButton: "Xác nhận",
+    menuEditingTitle: "Chỉnh sửa tiết học",
+    menuDeletingTitle: "Xóa tiết học",
+  };
 
   return isLoading ? (
     <Loading />
@@ -518,24 +544,28 @@ const TimeTableScheduler = (props) => {
                   // addedAppointment={addedAppointment}
                   // onAddedAppointmentChange={onAddedAppointmentChange}
                 />
-                <EditRecurrenceMenu />
+                <EditRecurrenceMenu messages={recurrenceEditMenu} />
                 <WeekView
                   startDayHour={7}
                   endDayHour={11.35}
                   cellDuration={55}
                 />
-                <Appointments />
+                <Appointments appointmentComponent={appointmentComponent} />
                 <Toolbar />
                 <DateNavigator />
                 <TodayButton messages={{ today: "Hôm nay" }} />
-                {/* <IntegratedEditing /> */}
+                <IntegratedEditing />
                 <AppointmentTooltip
                   showOpenButton
                   showDeleteButton
                   showCloseButton
+                  contentComponent={Content}
                 />
                 <AppointmentForm commandButtonComponent={CommandButton} />
-                <DragDropProvider />
+                <DragDropProvider
+                  scrollSpeed={55}
+                  {...{ allowDrag, allowResize }}
+                />
                 <TaskLimiter />
               </Scheduler>
               <Scheduler data={data} firstDayOfWeek={1} locale="vi-VN">
@@ -544,6 +574,7 @@ const TimeTableScheduler = (props) => {
                   currentDate={
                     currentDateViewState ?? semesterInfo?.semesterStart
                   }
+                  onCurrentDateChange={setCurrentDateViewState}
                 />
                 <WeekView
                   startDayHour={13}
@@ -558,23 +589,22 @@ const TimeTableScheduler = (props) => {
                       Giờ Nghỉ Trưa
                     </div>
                   )}
-                  // timeTableCellComponent={TimeTableCell}
                 />
-                <EditingState
-                  onCommitChanges={onCommitChanges}
-                  addedAppointment={addedAppointment}
-                  onAddedAppointmentChange={onAddedAppointmentChange}
-                />
-                <EditRecurrenceMenu />
+                <EditingState onCommitChanges={onCommitChanges} />
+                <EditRecurrenceMenu messages={recurrenceEditMenu} />
+                <Appointments appointmentComponent={appointmentComponent} />
                 <IntegratedEditing />
-                <Appointments />
                 <AppointmentTooltip
                   showOpenButton
                   showDeleteButton
                   showCloseButton
+                  contentComponent={Content}
                 />
                 <AppointmentForm commandButtonComponent={CommandButton} />
-                <DragDropProvider scrollSpeed={55} />
+                <DragDropProvider
+                  scrollSpeed={55}
+                  {...{ allowDrag, allowResize }}
+                />
                 <TaskLimiter />
               </Scheduler>
             </Paper>

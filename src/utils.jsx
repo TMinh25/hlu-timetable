@@ -139,14 +139,6 @@ export function getHeaderRow(file) {
   });
 }
 
-export function isHoliday(date) {
-  const localeDate = date.toLocaleDateString();
-  return (
-    holidays.filter((holiday) => {
-      return holiday.toLocaleDateString() === localeDate;
-    }).length > 0
-  );
-}
 export function isBreak(date) {
   const hours = date.getHours();
   return hours >= breakTime.from && hours < breakTime.to;
@@ -159,36 +151,32 @@ export function hasCoffeeCupIcon(date) {
   return hours === breakTime.from && minutes === 0;
 }
 
-export function isValidAppointment(component, appointmentData) {
-  const startDate = new Date(appointmentData.startDate);
-  const endDate = new Date(appointmentData.endDate);
-  const cellDuration = component.option("cellDuration");
-  return isValidAppointmentInterval(startDate, endDate, cellDuration);
-}
+// export function isValidAppointment(component, appointmentData) {
+//   const startDate = new Date(appointmentData.startDate);
+//   const endDate = new Date(appointmentData.endDate);
+//   const cellDuration = component.option("cellDuration");
+//   return isValidAppointmentInterval(startDate, endDate, cellDuration);
+// }
 
-export function isValidAppointmentInterval(startDate, endDate, cellDuration) {
-  const edgeEndDate = new Date(endDate.getTime() - 1);
+// export function isValidAppointmentInterval(startDate, endDate, cellDuration) {
+//   const edgeEndDate = new Date(endDate.getTime() - 1);
 
-  if (!isValidAppointmentDate(edgeEndDate)) {
-    return false;
-  }
+//   if (!isValidAppointmentDate(edgeEndDate)) {
+//     return false;
+//   }
 
-  const durationInMs = cellDuration * 60 * 1000;
-  const date = startDate;
-  while (date <= endDate) {
-    if (!isValidAppointmentDate(date)) {
-      return false;
-    }
-    const newDateTime = date.getTime() + durationInMs - 1;
-    date.setTime(newDateTime);
-  }
+//   const durationInMs = cellDuration * 60 * 1000;
+//   const date = startDate;
+//   while (date <= endDate) {
+//     if (!isValidAppointmentDate(date)) {
+//       return false;
+//     }
+//     const newDateTime = date.getTime() + durationInMs - 1;
+//     date.setTime(newDateTime);
+//   }
 
-  return true;
-}
-
-export function isValidAppointmentDate(date) {
-  return !isHoliday(date);
-}
+//   return true;
+// }
 
 export function isRoundNumber(numb) {
   return numb % 1 === 0;
@@ -382,14 +370,6 @@ export function isValidTimeSlot(
   // thời gian không nằm giữa hoặc
   // thời gian nằm sau hẳn hoặc
   // thời gian nằm trước hẳn
-  // !(
-  //   startFormat.isSameOrAfter(moment(startTime, timeFormat)) &&
-  //   startFormat.isSameOrBefore(moment(endTime, timeFormat))
-  // ) ||
-  // !(
-  //   endFormat.isSameOrAfter(moment(startTime, timeFormat)) &&
-  //   endFormat.isSameOrBefore(moment(endTime, timeFormat))
-  // ) ||
   const isValidTime =
     // thời gian không nằm giữa thời gian cần kiểm tra
     (!startFormat.isBetween(startTime, endTime, undefined, "[]") &&
@@ -423,5 +403,16 @@ export function isValidTimeSlot(
 }
 
 export function isValidDay(startDate, startDate2) {
-  return moment(startDate).day() !== moment(startDate2).day();
+  return (
+    // not the same day
+    !moment(startDate).isSame(moment(startDate2), "day") &&
+    // and not holiday
+    !isHoliday(startDate)
+    // and not sunday
+    // !moment(startDate).day() === 0
+  );
+}
+
+export function isHoliday(date) {
+  return holidays.some((holiday) => holiday.date.isSame(moment(date), "day"));
 }

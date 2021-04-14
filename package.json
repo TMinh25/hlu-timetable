@@ -26,6 +26,7 @@
     "ag-grid-community": "^25.1.0",
     "ag-grid-enterprise": "^25.1.0",
     "ag-grid-react": "^25.1.0",
+    "clsx": "^1.1.1",
     "devextreme": "^20.2.6",
     "devextreme-react": "^20.2.6",
     "firebase": "^8.2.1",
