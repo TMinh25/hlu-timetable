@@ -560,6 +560,7 @@ export async function setNewAssignment(
   console.log(values);
   if (exists(assignments)) {
     const allClasses = await getAllClasses(semID);
+    const allLectures = await getAllLectures();
 
     const assignmentsArray = [];
     Object.values(assignments).forEach((assignment) => {
@@ -590,12 +591,14 @@ export async function setNewAssignment(
       }
 
       // thêm ID giảng viên để không cần truy vấn ngược trong firebase
-      const lectureTeaching = currentLectureID;
+      const lectureID = currentLectureID;
+      const lectureTeaching = allLectures[currentLectureID];
 
       assignmentValue = {
         ...assignmentValue,
         numberOfClassPerWeek,
         weekCount,
+        lectureID,
         lectureTeaching,
       };
 
@@ -663,7 +666,7 @@ export function getLectureScheduleArray(semID, lectureID) {
       var lectureScheduleInClass = [];
       if (classSchedule?.length) {
         classSchedule.forEach((schedule) => {
-          if (schedule?.data?.lectureTeaching === lectureID) {
+          if (schedule?.data?.lectureID === lectureID) {
             lectureScheduleInClass.push(schedule);
           }
         });

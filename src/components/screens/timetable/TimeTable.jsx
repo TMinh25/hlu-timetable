@@ -1,24 +1,28 @@
-import React, { useState, useContext, useEffect, useCallback } from "react";
+import React, { useState, useContext, useEffect, useCallback } from 'react';
 // import components
-import NotFound from "../NotFound";
-import { Router, Link } from "@reach/router";
-import Select from "react-select";
-import { SemProvider, SemContext } from "./provider/SemProvider";
+import NotFound from '../NotFound';
+import { Router, Link } from '@reach/router';
+import Select from 'react-select';
+import { SemProvider, SemContext } from './provider/SemProvider';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 // import styles
-import "./styles.css";
+import './styles.css';
 import {
   defaultSuccessCB,
   exists,
+  addScheduleSheet,
   getEndTime,
   getEndTimeSlot,
   getStartTime,
   getStartTimeSlot,
   isValidTimeSlot,
-} from "../../../utils";
-import { Button, LinkButton, Loading } from "../../Components";
-import ManageClass from "../management/ManageClass";
-import ManageAssignments from "../management/ManageAssigments";
+  exDateHolidaysString,
+} from '../../../utils';
+import { Button, LinkButton, Loading } from '../../Components';
+import ManageClass from '../management/ManageClass';
+import ManageAssignments from '../management/ManageAssigments';
 import {
   getAllClasses,
   getAllLectures,
@@ -29,16 +33,16 @@ import {
   getLecture,
   getLectureScheduleArray,
   setScheduleArray,
-} from "../../../firebase";
-import { Popup } from "semantic-ui-react";
-import moment from "moment";
-import "moment/locale/vi";
-import Paper from "@material-ui/core/Paper";
+} from '../../../firebase';
+import { Popup } from 'semantic-ui-react';
+import moment from 'moment';
+import 'moment/locale/vi';
+import Paper from '@material-ui/core/Paper';
 import {
   ViewState,
   EditingState,
   IntegratedEditing,
-} from "@devexpress/dx-react-scheduler";
+} from '@devexpress/dx-react-scheduler';
 import {
   Scheduler,
   WeekView,
@@ -50,28 +54,27 @@ import {
   DateNavigator,
   TodayButton,
   EditRecurrenceMenu,
-} from "@devexpress/dx-react-scheduler-material-ui";
-import { confirmAlert } from "react-confirm-alert";
-import { TaskLimiter } from "./AppointmentLimiter";
-import { Backdrop, Grid } from "@material-ui/core";
-import { withStyles } from "@material-ui/core/styles";
-import classNames from "clsx";
+} from '@devexpress/dx-react-scheduler-material-ui';
+import { confirmAlert } from 'react-confirm-alert';
+import { TaskLimiter } from './AppointmentLimiter';
+import { Backdrop, Fade, Grid, Menu, MenuItem } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
 
 const style = ({ palette }) => ({
   grid: {
     paddingBottom: 12,
   },
   textCenter: {
-    textAlign: "center",
+    textAlign: 'center',
   },
   header: {
-    height: "260px",
-    backgroundSize: "cover",
+    height: '260px',
+    backgroundSize: 'cover',
   },
 });
 
-const TimeTableScheduler = (props) => {
-  moment.locale("vi");
+const TimeTableScheduler = props => {
+  moment.locale('vi');
   const context = useContext(SemContext);
   const { groupedOptions, semesterInfo } = context;
 
@@ -79,10 +82,10 @@ const TimeTableScheduler = (props) => {
   const [currentTimeTable, setCurrentTimeTable] = useState({});
   const [currentTimetableInfo, setCurrentTimetableInfo] = useState(null);
   const [assignmentsArr, setAssignmentsArr] = useState([]);
-  const [addedAppointment, setAddedAppointment] = useState({});
   const [currentDateViewState, setCurrentDateViewState] = useState(null);
   const [classObj, setClassObj] = useState({});
   const [lectureObj, setLectureObj] = useState({});
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const [data, setData] = useState([]);
 
@@ -118,39 +121,41 @@ const TimeTableScheduler = (props) => {
     //eslint-disable-next-line
   }, []);
 
-  const getSchedule = useCallback(async function (timetableID) {
-    const [allClasses, allLectures] = await Promise.all([
-      getAllClasses(props.semId),
-      getAllLectures(),
-    ]);
+  const getSchedule = useCallback(
+    async function (timetableID) {
+      const [allClasses, allLectures] = await Promise.all([
+        getAllClasses(props.semId),
+        getAllLectures(),
+      ]);
 
-    if (Object.keys(allClasses).includes(timetableID)) {
-      // get assignments of class
-      return await getClassScheduleArray(props.semId, timetableID);
-    } else if (Object.keys(allLectures).includes(timetableID)) {
-      // get assignments of lecture
-      // return await getAssignmentsOfLecture(props.semId, timetableID);
-      return await getLectureScheduleArray(props.semId, timetableID);
-    } else return [];
-
+      if (Object.keys(allClasses).includes(timetableID)) {
+        // get assignments of class
+        return await getClassScheduleArray(props.semId, timetableID);
+      } else if (Object.keys(allLectures).includes(timetableID)) {
+        // get assignments of lecture
+        // return await getAssignmentsOfLecture(props.semId, timetableID);
+        return await getLectureScheduleArray(props.semId, timetableID);
+      } else return [];
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    [currentTimeTable?.value],
+  );
 
   useEffect(() => {
     const timetableID = currentTimeTable?.value;
 
     if (exists(currentTimeTable?.value) || isLoading === true) {
-      getAssignments(timetableID).then((res) => {
+      getAssignments(timetableID).then(res => {
         setAssignmentsArr(res);
       });
-      getTimetableInfo(timetableID).then((res) => {
+      getTimetableInfo(timetableID).then(res => {
         setCurrentTimetableInfo(res);
       });
-      getSchedule(timetableID).then((res) => {
+      getSchedule(timetableID).then(res => {
         setData(res);
       });
-      getAllClasses(props.semId).then((res) => setClassObj(res));
-      getAllLectures().then((res) => setLectureObj(res));
+      getAllClasses(props.semId).then(res => setClassObj(res));
+      getAllLectures().then(res => setLectureObj(res));
     } else {
       setAssignmentsArr([]);
       setCurrentTimetableInfo({});
@@ -164,21 +169,22 @@ const TimeTableScheduler = (props) => {
   useEffect(() => {
     console.log(currentTimeTable);
 
-    // getClassSchedulerArray(props.semId, currentTimeTable?.value).then((res) => {
-    //   setData(res);
-    //   console.log("classSchedule", res);
-    // });
-
     // eslint-disable-next-line
   }, [currentTimeTable?.value]);
 
   useEffect(() => {
-    console.log("semInfo", "=>", semesterInfo);
+    console.log('semInfo', '=>', semesterInfo);
   }, [semesterInfo]);
 
   useEffect(() => {
-    console.log("assignment", " => ", assignmentsArr);
+    console.log('assignment', ' => ', assignmentsArr);
   }, [assignmentsArr]);
+
+  useEffect(() => {
+    console.log('data', data);
+
+    console.log(exDateHolidaysString());
+  }, [data]);
 
   const onCommitChanges = useCallback(
     ({ added, changed, deleted }) => {
@@ -195,28 +201,28 @@ const TimeTableScheduler = (props) => {
         setScheduleArray(props.semId, currentTimeTable?.value, result);
       }
       if (changed) {
-        const result = data.map((appointment) => {
+        const result = data.map(appointment => {
           // đổi startDate với endDate về dạng string để lưu vào firebase
           if (exists(changed[appointment.id])) {
             console.log(changed);
             if (
-              "startDate" in changed[appointment.id] ||
-              "endDate" in changed[appointment.id]
+              'startDate' in changed[appointment.id] ||
+              'endDate' in changed[appointment.id]
             ) {
-              changed[appointment.id]["startDate"] = changed[appointment.id][
-                "startDate"
+              changed[appointment.id]['startDate'] = changed[appointment.id][
+                'startDate'
               ].toString();
-              changed[appointment.id]["endDate"] = changed[appointment.id][
-                "endDate"
+              changed[appointment.id]['endDate'] = changed[appointment.id][
+                'endDate'
               ].toString();
               const assignmentData = data[appointment.id]?.data;
               const numberOfClassPerWeek =
-                getEndTimeSlot(changed[appointment.id]["endDate"]) -
-                getStartTimeSlot(changed[appointment.id]["startDate"]) +
+                getEndTimeSlot(changed[appointment.id]['endDate']) -
+                getStartTimeSlot(changed[appointment.id]['startDate']) +
                 1;
               const weekCount =
                 semesterInfo?.numberOfWeeks / numberOfClassPerWeek;
-              changed[appointment.id]["data"] = {
+              changed[appointment.id]['data'] = {
                 ...assignmentData,
                 numberOfClassPerWeek,
                 weekCount,
@@ -234,17 +240,17 @@ const TimeTableScheduler = (props) => {
       }
       if (deleted !== undefined) {
         confirmAlert({
-          title: "Bạn có muốn xóa học phần này?",
+          title: 'Bạn có muốn xóa học phần này?',
           buttons: [
             {
-              label: "Không",
+              label: 'Không',
             },
             {
-              label: "Xóa",
-              className: "sign-out",
+              label: 'Xóa',
+              className: 'sign-out',
               onClick: () => {
                 const result = data.filter(
-                  (appointment) => appointment.id !== deleted
+                  appointment => appointment.id !== deleted,
                 );
                 setData(result);
                 setScheduleArray(props.semId, currentTimeTable?.value, result);
@@ -257,12 +263,8 @@ const TimeTableScheduler = (props) => {
     },
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [setData, data, currentTimeTable?.value]
+    [setData, data, currentTimeTable?.value],
   );
-
-  useEffect(() => {
-    console.log("data", data);
-  }, [data]);
 
   async function populateAssignment({
     index,
@@ -272,32 +274,42 @@ const TimeTableScheduler = (props) => {
   }) {
     const { numberOfClassPerWeek, subjectName, weekCount } = assignment;
 
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
+      // eslint-disable-next-line no-unused-labels
       dayLoop: for (let day = 0; day < 6; day++) {
         // eslint-disable-next-line no-loop-func
         const isValidScheduleForClass = (startDate, endDate) => {
-          return classSchedule.every((item) =>
-            isValidTimeSlot(startDate, endDate, item?.startDate, item?.endDate)
+          return classSchedule.every(item =>
+            isValidTimeSlot(startDate, endDate, item?.startDate, item?.endDate),
           );
         };
         // eslint-disable-next-line no-loop-func
         const isValidScheduleForLecture = (startDate, endDate) => {
-          return lectureSchedule.every((item) =>
-            isValidTimeSlot(startDate, endDate, item?.startDate, item?.endDate)
+          return lectureSchedule.every(item =>
+            isValidTimeSlot(startDate, endDate, item?.startDate, item?.endDate),
           );
         };
 
+        // eslint-disable-next-line no-unused-labels
         timeSlotLoop: for (var startSlot = 1; startSlot < 10; startSlot++) {
           let endSlot = startSlot + numberOfClassPerWeek - 1;
+          if ((startSlot <= 5 && endSlot > 5) || endSlot > 10) {
+            continue;
+          }
+
+          console.log(startSlot, endSlot);
 
           let startDate = new Date(
             getStartTime(semesterInfo?.semesterStart, startSlot).set(
-              "weekday",
-              day
-            )
+              'weekday',
+              day,
+            ),
           );
           let endDate = new Date(
-            getEndTime(semesterInfo?.semesterStart, endSlot).set("weekday", day)
+            getEndTime(semesterInfo?.semesterStart, endSlot).set(
+              'weekday',
+              day,
+            ),
           );
 
           if (
@@ -310,7 +322,10 @@ const TimeTableScheduler = (props) => {
               id: index,
               startDate: startDate.toString(),
               endDate: endDate.toString(),
-              rRule: "FREQ=WEEKLY;COUNT=" + weekCount,
+              startSlot,
+              endSlot,
+              rRule: 'FREQ=WEEKLY;COUNT=' + weekCount,
+              exDate: exDateHolidaysString(),
             });
           }
         }
@@ -324,52 +339,58 @@ const TimeTableScheduler = (props) => {
       let classSchedule = [];
 
       for (const [index, assignment] of assignmentsArr.entries()) {
-        // console.log(index, assignment);
-        const { lectureTeaching } = assignment;
+        const { lectureID } = assignment;
 
         // phân công giảng dạy của giảng viên hiện tại để tránh trùng giờ
         const lectureSchedule = await getLectureScheduleArray(
           props.semId,
-          lectureTeaching
+          lectureID,
         );
 
+        console.log(lectureSchedule);
         const resultSchedule = await populateAssignment({
           index,
           assignment,
           lectureSchedule,
           classSchedule,
         });
-        console.log(resultSchedule);
-        classSchedule.push(resultSchedule);
+        // console.log('resultSchedule', resultSchedule);
+        classSchedule = [...classSchedule, resultSchedule];
+        console.log('classSchedule', classSchedule);
       }
 
-      console.log(classSchedule);
-      setScheduleArray(props.semId, timeTableID, classSchedule).then((res) =>
-        setData(res)
+      console.log('classSchedule', classSchedule);
+      setScheduleArray(props.semId, timeTableID, classSchedule).then(res =>
+        setData(res),
       );
     }
   }
 
-  const allowDrag = (params) => currentTimeTable?.value in classObj;
+  const allowDrag = params => {
+    console.log(params);
+    return currentTimeTable?.value in classObj;
+  };
 
-  const allowResize = (params) => false;
+  const allowResize = params => false;
 
-  const appointmentComponent = (props) => {
+  const appointmentComponent = props => {
     if (allowDrag(props.data)) {
       return <Appointments.Appointment {...props} />;
     }
     return (
       <Appointments.Appointment
         {...props}
-        style={{ ...props.style, cursor: "not-allowed" }}
+        style={{ ...props.style, cursor: 'not-allowed' }}
       />
     );
   };
 
-  const Content = withStyles(style, { name: "Content" })(
+  const Content = withStyles(style, { name: 'Content' })(
     ({ children, appointmentData, classes, ...restProps }) => {
+      console.log(appointmentData);
+
       const lectureName =
-          lectureObj[appointmentData.data?.lectureTeaching]["lecture-name"],
+          appointmentData?.data?.lectureTeaching['lecture-name'],
         className = appointmentData?.data?.classTeaching?.className;
 
       return (
@@ -395,23 +416,117 @@ const TimeTableScheduler = (props) => {
           </Grid>
         </AppointmentTooltip.Content>
       );
-    }
+    },
   );
 
-  const CommandButton = withStyles(style, {
-    name: "CommandButton",
-  })(({ classes, ...restProps }) => (
-    <AppointmentTooltip.CommandButton {...restProps} />
-  ));
+  function makeTitleForSheet({ workSheet, title }) {
+    // merge for title cell
+    workSheet.mergeCells('A1', 'I1');
+    workSheet.mergeCells('A2', 'I2');
+    // value for title cell
+    workSheet.getCell('A1').value = title;
+  }
+
+  async function handleExportCurrent() {
+    if (currentTimeTable?.value) {
+      const workBook = new ExcelJS.Workbook();
+      workBook.creator = 'Nguyễn Trường Minh';
+      workBook.created = new Date();
+      workBook.modified = new Date();
+      const name = currentTimeTable?.label,
+        ID = currentTimeTable?.value;
+
+      const workSheet = workBook.addWorksheet(name);
+      var title;
+      if (ID in classObj) {
+        const { classType, faculty } = classObj[ID];
+        title = `lớp: ${classType} ${faculty} ${name}`.toUpperCase();
+      } else if (ID in lectureObj) {
+        title = `giảng viên: ${name}`.toUpperCase();
+      } else {
+        title = '';
+      }
+      makeTitleForSheet({ workSheet, title });
+      addScheduleSheet({
+        workSheet,
+        data: data,
+        isLecture: currentTimeTable?.value in lectureObj,
+      });
+
+      const fileName = `${semesterInfo?.userNamed} - ${name}`;
+      workBook.xlsx.writeBuffer().then(buffer => {
+        const blob = new Blob([buffer], { type: 'applicationi/xlsx' });
+        saveAs(blob, fileName + '.xlsx');
+      });
+    }
+  }
+
+  async function handleExportAllClasses() {
+    const workBook = new ExcelJS.Workbook();
+    workBook.creator = 'Nguyễn Trường Minh';
+    workBook.created = new Date();
+    workBook.modified = new Date();
+    const allClasses = await getAllClasses(props.semId);
+    for (const classKey of Object.keys(allClasses)) {
+      const { className, classType, faculty } = allClasses[classKey];
+      const name = className;
+      const schedule = await getClassScheduleArray(props.semId, classKey);
+
+      const workSheet = workBook.addWorksheet(name);
+      const title = `lớp: ${classType} ${faculty} ${className}`.toUpperCase();
+      makeTitleForSheet({ workSheet, title });
+
+      addScheduleSheet({
+        workSheet,
+        data: schedule,
+        isLecture: false,
+      });
+    }
+
+    const fileName = semesterInfo?.userNamed + ' - Lớp';
+    workBook.xlsx.writeBuffer().then(buffer => {
+      const blob = new Blob([buffer], { type: 'applicationi/xlsx' });
+      saveAs(blob, fileName + '.xlsx');
+    });
+  }
+
+  async function handleExportAllLectures() {
+    const workBook = new ExcelJS.Workbook();
+    workBook.creator = 'Nguyễn Trường Minh';
+    workBook.created = new Date();
+    workBook.modified = new Date();
+    const allLectures = await getAllLectures();
+
+    for (const lectureKey of Object.keys(allLectures)) {
+      const name = allLectures[lectureKey]['lecture-name'];
+      const schedule = await getLectureScheduleArray(props.semId, lectureKey);
+
+      const workSheet = workBook.addWorksheet(name);
+      const title = `giảng viên: ${name}`.toUpperCase();
+      makeTitleForSheet({ workSheet, title });
+
+      addScheduleSheet({
+        workSheet,
+        data: schedule,
+        isLecture: true,
+      });
+    }
+
+    const fileName = semesterInfo?.userNamed + ' - Giảng Viên';
+    workBook.xlsx.writeBuffer().then(buffer => {
+      const blob = new Blob([buffer], { type: 'applicationi/xlsx' });
+      saveAs(blob, fileName + '.xlsx');
+    });
+  }
 
   const recurrenceEditMenu = {
-    current: "Tuần hiện tại",
-    currentAndFollowing: "Tuần hiện tại và các tuần sau này",
-    all: "Tất cả các tuần học",
-    cancelButton: "Hủy",
-    commitButton: "Xác nhận",
-    menuEditingTitle: "Chỉnh sửa tiết học",
-    menuDeletingTitle: "Xóa tiết học",
+    current: 'Tuần hiện tại',
+    currentAndFollowing: 'Tuần hiện tại và các tuần sau này',
+    all: 'Tất cả các tuần học',
+    cancelButton: 'Hủy',
+    commitButton: 'Xác nhận',
+    menuEditingTitle: 'Chỉnh sửa tiết học',
+    menuDeletingTitle: 'Xóa tiết học',
   };
 
   return isLoading ? (
@@ -419,8 +534,8 @@ const TimeTableScheduler = (props) => {
   ) : (
     <>
       {exists(context) && (
-        <div style={{ height: "100%" }}>
-          <header style={{ display: "flex", marginBottom: 10 }}>
+        <div style={{ height: '100%' }}>
+          <header style={{ display: 'flex', marginBottom: 10 }}>
             {exists(groupedOptions) && (
               <Select
                 className="basic-single"
@@ -432,20 +547,20 @@ const TimeTableScheduler = (props) => {
                 options={groupedOptions}
                 placeholder="Thời Khóa Biểu"
                 styles={{
-                  container: (provided) => ({
+                  container: provided => ({
                     ...provided,
                     zIndex: 100,
                   }),
                   option: (provided, state) => ({
                     ...provided,
-                    color: state.isSelected ? "darkgray" : "black",
+                    color: state.isSelected ? 'darkgray' : 'black',
                   }),
-                  control: (provided) => ({
+                  control: provided => ({
                     ...provided,
                     width: 500,
                     maxHeight: 400,
                     marginRight: 10,
-                    overFlow: "hidden",
+                    overFlow: 'hidden',
                   }),
                 }}
               />
@@ -453,13 +568,13 @@ const TimeTableScheduler = (props) => {
             <h1 style={{ marginRight: 10 }}>
               <Popup
                 trigger={
-                  <span style={{ cursor: "pointer", fontSize: 16 }}>
+                  <span style={{ cursor: 'pointer', fontSize: 16 }}>
                     <i className="fal fa-info-circle"></i>
                   </span>
                 }
                 style={{
-                  border: "1px solid whitesmoke",
-                  background: "#263238",
+                  border: '1px solid whitesmoke',
+                  background: '#263238',
                   padding: 10,
                   borderRadius: 5,
                   zIndex: 20,
@@ -469,10 +584,10 @@ const TimeTableScheduler = (props) => {
                 <Popup.Header>
                   <h5>
                     {!currentTimeTable?.value
-                      ? "Thông tin lớp hoặc giảng viên"
+                      ? 'Thông tin lớp hoặc giảng viên'
                       : currentTimetableInfo?.classType
-                      ? "Thông tin lớp"
-                      : "Thông tin giảng viên"}
+                      ? 'Thông tin lớp'
+                      : 'Thông tin giảng viên'}
                   </h5>
                 </Popup.Header>
                 <Popup.Content style={{ paddingTop: 5 }}>
@@ -498,33 +613,78 @@ const TimeTableScheduler = (props) => {
                         <b>
                           Số Học Phần
                           {exists(currentTimetableInfo?.classSize) ||
-                            " Giảng Dạy"}
-                          :{" "}
+                            ' Giảng Dạy'}
+                          :{' '}
                         </b>
                         {assignmentsArr?.length}
                       </li>
                     </ul>
                   ) : (
-                    "Chọn một lớp hoặc giảng viên để hiển thị thông tin"
+                    'Chọn một lớp hoặc giảng viên để hiển thị thông tin'
                   )}
                 </Popup.Content>
               </Popup>
             </h1>
+            {currentTimeTable?.value in classObj && (
+              <Button
+                style={{ marginRight: 5 }}
+                disabled={Object.keys(lectureObj)?.includes(
+                  currentTimeTable?.value,
+                )}
+                onClick={handlePopulatedTimeTable}
+              >
+                Xếp thời khóa biểu
+              </Button>
+            )}
             <Button
-              disabled={Object.keys(lectureObj)?.includes(
-                currentTimeTable?.value
-              )}
-              onClick={handlePopulatedTimeTable}
+              aria-controls="fade-menu"
+              aria-haspopup="true"
+              onClick={e => setAnchorEl(e.currentTarget)}
             >
-              xếp thời khóa biểu
+              Xuất tệp Excel
             </Button>
+            <Menu
+              id="fade-menu"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={() => setAnchorEl(null)}
+              TransitionComponent={Fade}
+            >
+              {exists(currentTimeTable?.value) && (
+                <MenuItem
+                  onClick={() => {
+                    handleExportCurrent();
+                    setAnchorEl(null);
+                  }}
+                >
+                  {currentTimeTable?.label}
+                </MenuItem>
+              )}
+              <MenuItem
+                onClick={async () => {
+                  await handleExportAllLectures();
+                  setAnchorEl(null);
+                }}
+              >
+                Tất cả giảng viên
+              </MenuItem>
+              <MenuItem
+                onClick={async () => {
+                  await handleExportAllClasses();
+                  setAnchorEl(null);
+                }}
+              >
+                Tất cả lớp
+              </MenuItem>
+            </Menu>
           </header>
           <div>
             <Paper style={{ zIndex: 10 }} elevation={3}>
               {!!currentTimeTable || (
                 <Backdrop
                   open={true}
-                  style={{ zIndex: 20, position: "relative", height: "100%" }}
+                  style={{ zIndex: 20, position: 'relative', height: '100%' }}
                 >
                   <h2>
                     Chọn một giảng viên hoặc lớp học để hiện thời khóa biểu
@@ -539,11 +699,7 @@ const TimeTableScheduler = (props) => {
                   }
                   onCurrentDateChange={setCurrentDateViewState}
                 />
-                <EditingState
-                  onCommitChanges={onCommitChanges}
-                  // addedAppointment={addedAppointment}
-                  // onAddedAppointmentChange={onAddedAppointmentChange}
-                />
+                <EditingState onCommitChanges={onCommitChanges} />
                 <EditRecurrenceMenu messages={recurrenceEditMenu} />
                 <WeekView
                   startDayHour={7}
@@ -553,15 +709,12 @@ const TimeTableScheduler = (props) => {
                 <Appointments appointmentComponent={appointmentComponent} />
                 <Toolbar />
                 <DateNavigator />
-                <TodayButton messages={{ today: "Hôm nay" }} />
-                <IntegratedEditing />
+                <TodayButton messages={{ today: 'Hôm nay' }} />
                 <AppointmentTooltip
-                  showOpenButton
                   showDeleteButton
                   showCloseButton
                   contentComponent={Content}
                 />
-                <AppointmentForm commandButtonComponent={CommandButton} />
                 <DragDropProvider
                   scrollSpeed={55}
                   {...{ allowDrag, allowResize }}
@@ -593,14 +746,11 @@ const TimeTableScheduler = (props) => {
                 <EditingState onCommitChanges={onCommitChanges} />
                 <EditRecurrenceMenu messages={recurrenceEditMenu} />
                 <Appointments appointmentComponent={appointmentComponent} />
-                <IntegratedEditing />
                 <AppointmentTooltip
-                  showOpenButton
                   showDeleteButton
                   showCloseButton
                   contentComponent={Content}
                 />
-                <AppointmentForm commandButtonComponent={CommandButton} />
                 <DragDropProvider
                   scrollSpeed={55}
                   {...{ allowDrag, allowResize }}
@@ -615,7 +765,7 @@ const TimeTableScheduler = (props) => {
   );
 };
 
-const TimeTableNav = (props) => {
+const TimeTableNav = props => {
   const context = useContext(SemContext);
 
   const { semesterInfo } = context;
@@ -624,7 +774,7 @@ const TimeTableNav = (props) => {
     <>
       <div className="timetable-nav">
         <h3 style={{ marginRight: 10 }}>
-          {exists(semesterInfo) && semesterInfo["userNamed"]}
+          {exists(semesterInfo) && semesterInfo['userNamed']}
         </h3>
         <LinkButton to="mng-classes" style={{ marginRight: 10 }}>
           Lớp
@@ -638,23 +788,19 @@ const TimeTableNav = (props) => {
   );
 };
 
-const Home = (props) => {
-  return (
-    <>
-      <Link to="scheduler">forward</Link>
-    </>
-  );
+const Home = props => {
+  return <></>;
 };
 
-const TimeTable = (props) => {
+const TimeTable = props => {
   const { semId } = props;
 
   return (
     <>
       <SemProvider {...{ semId }}>
         <TimeTableNav />
-        <div className="mng-container" style={{ height: "calc(100% - 47px)" }}>
-          <Router style={{ height: "100%" }}>
+        <div className="mng-container" style={{ height: 'calc(100% - 47px)' }}>
+          <Router style={{ height: '100%' }}>
             <Home path="/" />
             <TimeTableScheduler path="scheduler" />
             <ManageClass path="mng-classes" />

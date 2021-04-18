@@ -1,9 +1,9 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
 
-import * as XLSX from "xlsx";
-import { toast } from "react-toastify";
-import { breakTime, holidays } from "./timetable-config";
-import moment from "moment";
+import * as XLSX from 'xlsx';
+import { toast } from 'react-toastify';
+import { breakTime, holidays } from './timetable-config';
+import moment from 'moment';
 
 // read excel as json
 export function readExcel(file, headers) {
@@ -11,9 +11,9 @@ export function readExcel(file, headers) {
     const fileReader = new FileReader();
     fileReader.readAsArrayBuffer(file);
 
-    fileReader.onload = (e) => {
+    fileReader.onload = e => {
       const bufferArray = e.target.result;
-      const wb = XLSX.read(bufferArray, { type: "buffer" });
+      const wb = XLSX.read(bufferArray, { type: 'buffer' });
       const wsname = wb.SheetNames[0];
       const ws = wb.Sheets[wsname];
       const data = XLSX.utils.sheet_to_json(ws, {
@@ -24,21 +24,202 @@ export function readExcel(file, headers) {
       });
 
       if (data.slice(1).length === 0) {
-        reject("Không có dữ liệu");
+        reject('Không có dữ liệu');
       } else {
         resolve(data.slice(1));
       }
     };
 
-    fileReader.onerror = (error) => {
+    fileReader.onerror = error => {
       reject(error);
     };
   });
 }
 
+export function addScheduleSheet({ workSheet, data, isLecture }) {
+  // console.log(workBook.xlsx);
+
+  const style = {
+    alignment: {
+      wrapText: true,
+      vertical: 'top',
+      horizontal: 'center',
+    },
+  };
+  workSheet.getRow(3).values = [
+    'TIẾT',
+    'THỜI GIAN',
+    'THỨ HAI',
+    'THỨ BA',
+    'THỨ TƯ',
+    'THỨ NĂM',
+    'THỨ SÁU',
+    'THỨ BẢY',
+    'CHỦ NHẬT',
+  ];
+
+  workSheet.columns = [
+    {
+      key: 'slot',
+      width: 10,
+      protection: true,
+    },
+    {
+      key: 'slottime',
+      width: 15,
+      style,
+    },
+    { key: 'mon', width: 20, style },
+    { key: 'tue', width: 20, style },
+    { key: 'wed', width: 20, style },
+    { key: 'thu', width: 20, style },
+    { key: 'fri', width: 20, style },
+    { key: 'sat', width: 20, style },
+    { key: 'sun', width: 20, style },
+  ];
+
+  const arrRowBeforeAdding = [
+    {
+      slot: 'Sáng',
+      slottime: 'BĐ - KT',
+      mon: 'Học Phần',
+      tue: 'Học Phần',
+      wed: 'Học Phần',
+      thu: 'Học Phần',
+      fri: 'Học Phần',
+      sat: 'Học Phần',
+      sun: 'Học Phần',
+    },
+    { slot: '1', slottime: '07:00 - 07:50' },
+    { slot: '2', slottime: '07:55 - 08:45' },
+    { slot: '3', slottime: '08:50 - 09:40' },
+    { slot: '4', slottime: '09:45 - 10:35' },
+    { slot: '5', slottime: '10:40 - 11:30' },
+    { slot: 'Chiều' },
+    { slot: '6', slottime: '13:00 - 13:50' },
+    { slot: '7', slottime: '13:55 - 14:45' },
+    { slot: '8', slottime: '14:50 - 15:40' },
+    { slot: '9', slottime: '15:45 - 16:35' },
+    { slot: '10', slottime: '16:40 - 17:30' },
+  ];
+
+  arrRowBeforeAdding.forEach(function (item, index) {
+    workSheet.addRow({
+      slot: item.slot,
+      slottime: item.slottime,
+      mon: item.mon,
+      tue: item.tue,
+      wed: item.wed,
+      thu: item.thu,
+      fri: item.fri,
+      sat: item.sat,
+      sun: item.sun,
+    });
+  });
+
+  // merge unneeded cells
+  workSheet.mergeCells('A10', 'I10');
+
+  // make borders for cells
+  workSheet.getRows(3, 13).forEach(row => {
+    for (let i = 1; i <= 9; i++) {
+      row.getCell(i).style = {
+        border: {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' },
+        },
+      };
+    }
+  });
+
+  const slots = workSheet.getColumn('A').values;
+
+  data.forEach(item => {
+    const { title, startDate, startSlot, endSlot, data } = item;
+    const { classTeaching, lectureTeaching, weekCount } = data;
+
+    const dayOfWeek = moment(startDate).get('day'); // sunday == 0
+
+    var column;
+    const addScheduleCell = column => {
+      const mergeCell = [];
+
+      slots.forEach((slot, index) => {
+        if (slot >= startSlot && slot <= endSlot) {
+          mergeCell.push(column + index);
+          workSheet.getCell(column + index).value =
+            title +
+            '\r\n' +
+            (isLecture
+              ? classTeaching['className']
+              : lectureTeaching['lecture-name']) +
+            ' (học ' +
+            weekCount +
+            ' tuần)';
+        }
+      });
+
+      const startMergeCell = mergeCell[0],
+        endMergeCell = mergeCell[mergeCell.length - 1];
+
+      // merge cell with same schedule
+      workSheet.mergeCells(startMergeCell, endMergeCell);
+
+      // align text in center
+      workSheet.getCell(startMergeCell).alignment = {
+        wrapText: true,
+        vertical: 'middle',
+        horizontal: 'center',
+      };
+    };
+
+    switch (dayOfWeek) {
+      // mon
+      case 1:
+        column = 'C';
+        addScheduleCell(column);
+        break;
+      // tue
+      case 2:
+        column = 'D';
+        addScheduleCell(column);
+        break;
+      // wed
+      case 3:
+        column = 'E';
+        addScheduleCell(column);
+        break;
+      // thu
+      case 4:
+        column = 'F';
+        addScheduleCell(column);
+        break;
+      // fri
+      case 5:
+        column = 'G';
+        addScheduleCell(column);
+        break;
+      // sat
+      case 6:
+        column = 'H';
+        addScheduleCell(column);
+        break;
+      // sun
+      case 0:
+        column = 'I';
+        addScheduleCell(column);
+        break;
+      default:
+        break;
+    }
+  });
+}
+
 // normal string to title case (exp: Title Case String)
 export function titleCase(str) {
-  var splitStr = str.toLowerCase().split(" ");
+  var splitStr = str.toLowerCase().split(' ');
   for (var i = 0; i < splitStr.length; i++) {
     // You do not need to check if i is larger than splitStr length, as your for does that for you
     // Assign it back to the array
@@ -46,22 +227,22 @@ export function titleCase(str) {
       splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
   }
   // Directly return the joined string
-  return splitStr.join(" ");
+  return splitStr.join(' ');
 }
 
 //#region notification
 
 // success notification
-export const defaultSuccessCB = (msg) =>
-  toast.success(msg ? `✌ Thành Công: ${msg}!` : "✌ Thành Công!");
+export const defaultSuccessCB = msg =>
+  toast.success(msg ? `✌ Thành Công: ${msg}!` : '✌ Thành Công!');
 
 // fail notification
-export const defaultFailCB = (err) =>
-  toast.error(err ? `🚫 Lỗi: ${err}!` : "🚫 Lỗi!");
+export const defaultFailCB = err =>
+  toast.error(err ? `🚫 Lỗi: ${err}!` : '🚫 Lỗi!');
 
 // warn notification
-export const defaultWarnCB = (msg) =>
-  toast.warn(msg ? `❗ ${msg}` : "❗ Cảnh báo.");
+export const defaultWarnCB = msg =>
+  toast.warn(msg ? `❗ ${msg}` : '❗ Cảnh báo.');
 
 //#endregion
 
@@ -70,51 +251,37 @@ export function getFacID(facName) {
     return facName
       .toString()
       .trim()
-      .split(" ")
-      .map((word) =>
-        word.toLowerCase() === "và" ? "&" : word[0].toUpperCase()
-      )
-      .join("");
+      .split(' ')
+      .map(word => (word.toLowerCase() === 'và' ? '&' : word[0].toUpperCase()))
+      .join('');
   }
 }
 
-export const exists = (x) => x !== null && x !== undefined && x !== "";
+export const exists = x => x !== null && x !== undefined && x !== '';
 
-export const ifExists = (value) => {
+export const ifExists = value => {
   return new Promise((resolve, reject) => {
     exists(value) ? resolve(value) : reject();
   });
 };
 
-export const validNumber = (num) => exists(num) && Number.isInteger(num);
+export const validNumber = num => exists(num) && Number.isInteger(num);
 
-export const selectAllOnFocus = (event) => event.target.select();
-
-export const ImportScript = (resourceUrl) => {
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = resourceUrl;
-    script.async = true;
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, [resourceUrl]);
-};
+export const selectAllOnFocus = event => event.target.select();
 
 export function getHeaderRow(file) {
   return new Promise((resolve, reject) => {
     const fileReader = new FileReader();
     fileReader.readAsArrayBuffer(file);
 
-    fileReader.onload = (e) => {
+    fileReader.onload = e => {
       const bufferArray = e.target.result;
-      const wb = XLSX.read(bufferArray, { type: "buffer" });
+      const wb = XLSX.read(bufferArray, { type: 'buffer' });
       const wsname = wb.SheetNames[0];
       const ws = wb.Sheets[wsname];
 
       var headers = [];
-      var range = XLSX.utils.decode_range(ws["!ref"]);
+      var range = XLSX.utils.decode_range(ws['!ref']);
       var C,
         R = range.s.r; /* start in the first row */
       /* walk every column in the range */
@@ -124,7 +291,7 @@ export function getHeaderRow(file) {
             XLSX.utils.encode_cell({ c: C, r: R })
           ]; /* find the cell in the first row */
 
-        var hdr = "UNKNOWN " + C; // <-- replace with your desired default
+        var hdr = 'UNKNOWN ' + C; // <-- replace with your desired default
         if (cell && cell.t) hdr = XLSX.utils.format_cell(cell);
 
         headers.push(hdr);
@@ -133,7 +300,7 @@ export function getHeaderRow(file) {
       resolve(headers);
     };
 
-    fileReader.onerror = (error) => {
+    fileReader.onerror = error => {
       reject(error);
     };
   });
@@ -222,27 +389,27 @@ export function getStartTime(momentInput, classTime) {
 }
 
 export function getStartTimeSlot(momentInput) {
-  var time = moment(momentInput).format("HH:mm");
+  var time = moment(momentInput).format('HH:mm');
   switch (time) {
-    case "07:00":
+    case '07:00':
       return 1;
-    case "07:55":
+    case '07:55':
       return 2;
-    case "08:50":
+    case '08:50':
       return 3;
-    case "09:45":
+    case '09:45':
       return 4;
-    case "10:40":
+    case '10:40':
       return 5;
-    case "13:00":
+    case '13:00':
       return 6;
-    case "13:55":
+    case '13:55':
       return 7;
-    case "14:50":
+    case '14:50':
       return 8;
-    case "15:45":
+    case '15:45':
       return 9;
-    case "16:40":
+    case '16:40':
       return 10;
     default:
       break;
@@ -289,27 +456,27 @@ export function getEndTime(momentInput, classTime) {
 }
 
 export function getEndTimeSlot(momentInput) {
-  var time = moment(momentInput).format("HH:mm");
+  var time = moment(momentInput).format('HH:mm');
   switch (time) {
-    case "07:55":
+    case '07:55':
       return 1;
-    case "08:50":
+    case '08:50':
       return 2;
-    case "09:45":
+    case '09:45':
       return 3;
-    case "10:40":
+    case '10:40':
       return 4;
-    case "11:35":
+    case '11:35':
       return 5;
-    case "13:55":
+    case '13:55':
       return 6;
-    case "14:50":
+    case '14:50':
       return 7;
-    case "15:45":
+    case '15:45':
       return 8;
-    case "16:40":
+    case '16:40':
       return 9;
-    case "17:35":
+    case '17:35':
       return 10;
     default:
       break;
@@ -317,29 +484,29 @@ export function getEndTimeSlot(momentInput) {
 }
 
 export function getTimeSlot(momentInputStart, momentInputEnd) {
-  var timeStart = moment(momentInputStart).format("HH:mm");
-  var timeEnd = moment(momentInputEnd).format("HH:mm");
+  var timeStart = moment(momentInputStart).format('HH:mm');
+  var timeEnd = moment(momentInputEnd).format('HH:mm');
 
-  switch (timeStart + "-" + timeEnd) {
-    case "07:00-07:55":
+  switch (timeStart + '-' + timeEnd) {
+    case '07:00-07:55':
       return 1;
-    case "07:55-08:50":
+    case '07:55-08:50':
       return 2;
-    case "08:50-09:45":
+    case '08:50-09:45':
       return 3;
-    case "09:45-10:40":
+    case '09:45-10:40':
       return 4;
-    case "10:40-11:35":
+    case '10:40-11:35':
       return 5;
-    case "13:00-13:55":
+    case '13:00-13:55':
       return 6;
-    case "13:55-14:50":
+    case '13:55-14:50':
       return 7;
-    case "14:50-15:45":
+    case '14:50-15:45':
       return 8;
-    case "15:45-16:40":
+    case '15:45-16:40':
       return 9;
-    case "16:40-17:35":
+    case '16:40-17:35':
       return 10;
     default:
       break;
@@ -347,16 +514,16 @@ export function getTimeSlot(momentInputStart, momentInputEnd) {
 }
 
 export function getTime(momentInput) {
-  return moment(moment(momentInput).format("HH:mm"), "HH:mm");
+  return moment(moment(momentInput).format('HH:mm'), 'HH:mm');
 }
 
 export function isValidTimeSlot(
   startDate,
   endDate,
   momentInputStart,
-  momentInputEnd
+  momentInputEnd,
 ) {
-  const timeFormat = "HH:mm";
+  const timeFormat = 'HH:mm';
 
   const startFormat = moment(moment(startDate).format(timeFormat), timeFormat),
     endFormat = moment(moment(endDate).format(timeFormat), timeFormat);
@@ -372,8 +539,8 @@ export function isValidTimeSlot(
   // thời gian nằm trước hẳn
   const isValidTime =
     // thời gian không nằm giữa thời gian cần kiểm tra
-    (!startFormat.isBetween(startTime, endTime, undefined, "[]") &&
-      !endFormat.isBetween(startTime, endTime, undefined, "[]")) ||
+    (!startFormat.isBetween(startTime, endTime, undefined, '[]') &&
+      !endFormat.isBetween(startTime, endTime, undefined, '[]')) ||
     // sau hẳn
     (startFormat.isSameOrAfter(endTime) && endFormat.isAfter(endTime)) ||
     // trước hẳn
@@ -384,14 +551,14 @@ export function isValidTimeSlot(
 
   // kiểm tra giờ trong đúng khoảng thời gian
   const isValidHour =
-    (startFormat.isSameOrAfter(moment("07:00", timeFormat)) &&
-      startFormat.isSameOrBefore(moment("10:40", timeFormat))) ||
-    (startFormat.isSameOrAfter(moment("13:00", timeFormat)) &&
-      startFormat.isSameOrBefore(moment("16:40", timeFormat))) ||
-    (endFormat.isSameOrAfter(moment("07:55", timeFormat)) &&
-      endFormat.isSameOrBefore(moment("11:35", timeFormat))) ||
-    (endFormat.isSameOrAfter(moment("13:55", timeFormat)) &&
-      endFormat.isSameOrBefore(moment("17:35", timeFormat)));
+    (startFormat.isSameOrAfter(moment('07:00', timeFormat)) &&
+      startFormat.isSameOrBefore(moment('10:40', timeFormat))) ||
+    (startFormat.isSameOrAfter(moment('13:00', timeFormat)) &&
+      startFormat.isSameOrBefore(moment('16:40', timeFormat))) ||
+    (endFormat.isSameOrAfter(moment('07:55', timeFormat)) &&
+      endFormat.isSameOrBefore(moment('11:35', timeFormat))) ||
+    (endFormat.isSameOrAfter(moment('13:55', timeFormat)) &&
+      endFormat.isSameOrBefore(moment('17:35', timeFormat)));
 
   const isValidSession =
     (getStartTimeSlot(startFormat) <= 5 && getEndTimeSlot(endFormat)) <= 5 ||
@@ -405,14 +572,23 @@ export function isValidTimeSlot(
 export function isValidDay(startDate, startDate2) {
   return (
     // not the same day
-    !moment(startDate).isSame(moment(startDate2), "day") &&
-    // and not holiday
-    !isHoliday(startDate)
+    !moment(startDate).isSame(moment(startDate2), 'day')
     // and not sunday
     // !moment(startDate).day() === 0
   );
 }
 
 export function isHoliday(date) {
-  return holidays.some((holiday) => holiday.date.isSame(moment(date), "day"));
+  return holidays.some(holiday => holiday.date.isSame(moment(date), 'day'));
+}
+
+export function exDateHolidaysString() {
+  var exDate = '';
+  holidays.forEach(holiday => {
+    if (exists(holiday.date)) {
+      exDate += moment(holiday.date).format('YYYYMMDD') + ',';
+      // YYYYMMDDTHHmmssZ
+    }
+  });
+  return exDate;
 }

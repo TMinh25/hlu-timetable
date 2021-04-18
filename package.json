@@ -29,6 +29,8 @@
     "clsx": "^1.1.1",
     "devextreme": "^20.2.6",
     "devextreme-react": "^20.2.6",
+    "exceljs": "^4.2.1",
+    "file-saver": "^2.0.5",
     "firebase": "^8.2.1",
     "material-ui": "^0.20.2",
     "material-ui-search-bar": "^1.0.0",

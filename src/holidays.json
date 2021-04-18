@@ -1,9 +1,5 @@
 [
   {
-    "_link": "https://www.abstractapi.com/holidays-api",
-    "_calledAPI": "https://holidays.abstractapi.com/v1/?api_key=1ea4dbccd64c49d58e4e07e1f5dda5e9&country=VN&year=2021"
-  },
-  {
     "name": "International New Year's Day",
     "name_local": "Tết dương lịch",
     "country": "VN",
