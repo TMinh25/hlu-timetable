@@ -1,18 +1,18 @@
-import React, { useCallback, useState, useEffect } from "react";
-import { Link } from "@reach/router";
-import { defaultFailCB } from "../utils";
-import { useDropzone } from "react-dropzone";
+import React, { useCallback, useState, useEffect } from 'react';
+import { Link } from '@reach/router';
+import { defaultFailCB } from '../utils';
+import { useDropzone } from 'react-dropzone';
 
 // import components
-import logo from "../logo.svg";
-import PropTypes from "prop-types";
+import logo from '../logo.svg';
+import PropTypes from 'prop-types';
 
 // import styles
-import "./Components.css";
+import './Components.css';
 
 //#region Logo & Loading
 
-export const Logo = (props) => (
+export const Logo = props => (
   <Link to="/" onClick={props.onClick}>
     <div className="app-logo-container">
       <img src={logo} className="app-logo" alt="logo" />
@@ -37,9 +37,9 @@ export const Loading = () => (
 
 //#region Button
 
-export const LinkButton = (props) => {
+export const LinkButton = props => {
   const { children, className } = props;
-  const fixedClassName = className ? className : "";
+  const fixedClassName = className ? className : '';
   return (
     <>
       <Link {...props} className={`button ${fixedClassName}`}>
@@ -138,14 +138,14 @@ export const FileDropzone = ({
 }) => {
   // accepted files for react-dropzone in MIME Type
   const accept = [
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    "application/vnd.ms-excel",
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/vnd.ms-excel',
   ];
 
   // handle on file drop with dropzone
   const onDrop = useCallback((acceptedFiles, fileRejections) => {
     if (!!fileRejections.length) {
-      defaultFailCB("Tệp tin không phù hợp");
+      defaultFailCB('Tệp tin không phù hợp');
     } else {
       handleDropped(acceptedFiles);
     } // eslint-disable-next-line
@@ -165,15 +165,15 @@ export const FileDropzone = ({
 
   function getBorderColor(props) {
     if (props.isDragAccept) {
-      return "#00e676";
+      return '#00e676';
     }
     if (props.isDragReject) {
-      return "#ff1744";
+      return '#ff1744';
     }
     if (props.isDragActive) {
-      return "#2196f3";
+      return '#2196f3';
     }
-    return "#eeeeee";
+    return '#eeeeee';
   }
 
   return (
@@ -182,7 +182,7 @@ export const FileDropzone = ({
         className="dropzone__container"
         style={{
           // expand to full height of parent
-          height: (isDragActive || !!excelLoadedItems.length) && "100%",
+          height: (isDragActive || !!excelLoadedItems.length) && '100%',
           // change border color on Drag event
           borderColor: getBorderColor({
             ...getRootProps({
@@ -242,10 +242,10 @@ export class Tab extends React.Component {
       props: { activeTab, label },
     } = this;
 
-    let className = "tab-list-item";
+    let className = 'tab-list-item';
 
     if (activeTab === label) {
-      className += " tab-list-active";
+      className += ' tab-list-active';
     }
 
     return (
@@ -269,7 +269,7 @@ export class Tabs extends React.Component {
     };
   }
 
-  onClickTabItem = (tab) => {
+  onClickTabItem = tab => {
     this.setState({ activeTab: tab });
   };
   render() {
@@ -282,7 +282,7 @@ export class Tabs extends React.Component {
     return (
       <div className="tabs">
         <ol className="tab-list">
-          {children.map((child) => {
+          {children.map(child => {
             const { label } = child.props;
 
             return (
@@ -296,7 +296,7 @@ export class Tabs extends React.Component {
           })}
         </ol>
         <div className="tab-content">
-          {children.map((child) => {
+          {children.map(child => {
             if (child.props.label !== activeTab) return undefined;
             return child.props.children;
           })}
