@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { Link } from '@reach/router';
 import { defaultFailCB } from '../utils';
 import { useDropzone } from 'react-dropzone';

@@ -1,200 +1,70 @@
 {
-  "semesters": {
-    "MÃ HỌC KÌ": {
-      "semesterInfo": {
-        "user-named": "TÊN NGƯỜI DÙNG ĐẶT",
-        "semester-start": "NGÀY BẮT ĐẦU HỌC KÌ",
-        "semester-end": "NGÀY KẾT THÚC HỌC KÌ",
-        "time-created": "THỜI GIAN TẠO THỜI KHÓA BIỂU",
-        "number-of-weeks": "SỐ TUẦN HỌC HỌC KÌ"
-      },
-      "classes": {
-        "MÃ LỚP": {
-          "className": "TÊN LỚP",
-          "classType": "HỆ LỚP",
-          "classSize": "number",
-          "faculty": "TÊN KHOA"
-        }
-      },
-      "assignments": {
-        "MÃ GIẢNG VIÊN": {
-          "MÃ PHÂN CÔNG": {
-            "subjectID": "MÃ MÔN HỌC",
-            "numberOfTest": "number",
-            "classTeaching": "LỚP DẠY"
-          },
-          "MÃ PHÂN CÔNG 2": {
-            "subjectID": "MÃ MÔN HỌC",
-            "numberOfTest": "number",
-            "classTeaching": "LỚP DẠY"
-          }
-        }
-      },
-      "timetable": {
-        "MÃ LỚP": [
-          { "monday": null },
-          {
-            "morning": [
-              {
-                "timeslot": "07:00 - 07:50",
-                "assignment": {
-                  "code": "BSBC-601",
-                  "color": "blue"
-                }
-              },
-              {
-                "timeslot": "07:55 - 08:45",
-                "assignment": {
-                  "code": "BSBC-601",
-                  "color": "blue"
-                }
-              },
-              {
-                "timeslot": "08:55 - 09:45",
-                "assignment": {
-                  "code": "BSBC-601",
-                  "color": "blue"
-                }
-              },
-              {
-                "timeslot": "09:50 - 10:40",
-                "assignment": {
-                  "code": "BSBC-601",
-                  "color": "blue"
-                }
-              },
-              {
-                "timeslot": "10:45 - 11:35",
-                "assignment": null
-              }
-            ],
-            "afternoon": [
-              {
-                "timeslot": "07:00 - 07:50",
-                "assignment": {
-                  "code": "BSBC-601",
-                  "color": "blue"
-                }
-              },
-              {
-                "timeslot": "07:55 - 08:45",
-                "assignment": {
-                  "code": "BSBC-601",
-                  "color": "blue"
-                }
-              },
-              {
-                "timeslot": "08:55 - 09:45",
-                "assignment": {
-                  "code": "BSBC-601",
-                  "color": "blue"
-                }
-              },
-              {
-                "timeslot": "09:50 - 10:40",
-                "assignment": {
-                  "code": "BSBC-601",
-                  "color": "blue"
-                }
-              },
-              {
-                "timeslot": "10:45 - 11:35",
-                "assignment": null
-              }
-            ]
-          },
-          { "tuesday": null },
-          {
-            "morning": [
-              {
-                "timeslot": "07:00 - 07:50",
-                "assignment": {
-                  "code": "BSBC-601",
-                  "color": "blue"
-                }
-              },
-              {
-                "timeslot": "07:55 - 08:45",
-                "assignment": {
-                  "code": "BSBC-601",
-                  "color": "blue"
-                }
-              },
-              {
-                "timeslot": "08:55 - 09:45",
-                "assignment": {
-                  "code": "BSBC-601",
-                  "color": "blue"
-                }
-              },
-              {
-                "timeslot": "09:50 - 10:40",
-                "assignment": {
-                  "code": "BSBC-601",
-                  "color": "blue"
-                }
-              },
-              {
-                "timeslot": "10:45 - 11:35",
-                "assignment": null
-              }
-            ],
-            "afternoon": [
-              {
-                "timeslot": "07:00 - 07:50",
-                "assignment": {
-                  "code": "BSBC-601",
-                  "color": "blue"
-                }
-              },
-              {
-                "timeslot": "07:55 - 08:45",
-                "assignment": {
-                  "code": "BSBC-601",
-                  "color": "blue"
-                }
-              },
-              {
-                "timeslot": "08:55 - 09:45",
-                "assignment": {
-                  "code": "BSBC-601",
-                  "color": "blue"
-                }
-              },
-              {
-                "timeslot": "09:50 - 10:40",
-                "assignment": {
-                  "code": "BSBC-601",
-                  "color": "blue"
-                }
-              },
-              {
-                "timeslot": "10:45 - 11:35",
-                "assignment": null
-              }
-            ]
-          }
-        ]
-      }
-    }
-  },
   "faculties": {
     "MÃ KHOA": {
-      "faculty-name": "TÊN KHOA"
-    }
-  },
-  "subjects": {
-    "MÃ MÔN HỌC": {
-      "subject-name": "TÊN MÔN HỌC",
-      "credit": 2,
-      "periods": 30
+      "faculty-name": "TÊN KHOA",
+      "faculty-note": "GHI CHÚ"
     }
   },
   "lectures": {
     "MÃ GIẢNG VIÊN": {
-      "lecture-name": "TÊN GIẢNG VIÊN",
-      "lecture-email": "EMAIL GIẢNG VIÊN",
-      "faculty": "GIẢNG VIÊN THUỘC KHOA NÀO, null LÀ KHÔNG THUỘC VỀ KHOA NÀO"
+      "lecture-name": "HỌ TÊN GIẢNG VIÊN",
+      "lecture-email": "EMAIL",
+      "faculty": "KHOA"
+    }
+  },
+  "subjects": {
+    "MÃ HỌC PHẦN": {
+      "credit": "SỐ TÍN CHỈ",
+      "periods": "SỐ TIẾT",
+      "subject-name": "TÊN HỌC PHẦN"
+    }
+  },
+  "semesters": {
+    "MÃ HỌC KÌ": {
+      "assignments": {
+        "MÃ GIẢNG VIÊN": [
+          {
+            "classID": "MÃ LỚP",
+            "credit": "SỐ TÍN CHỈ",
+            "id": "MÃ PHÂN CÔNG",
+            "lectureID": "MÃ GIẢNG VIÊN ĐƯỢC PHÂN CÔNG",
+            "numberOfClassPerWeek": "SỐ TIẾT HỌC MỘT TUẦN",
+            "numberOfTests": "SỐ BÀI KIỂM TRA",
+            "periods": "SỐ TIẾT",
+            "subjectId": "MÃ HỌC PHẦN",
+            "subjectName": "TÊN HỌC PHẦN",
+            "weekCount": "SỐ TUẦN HỌC HỌC PHẦN"
+          }
+        ]
+      },
+      "classes": {
+        "MÃ LỚP": {
+          "className": "TÊN LỚP",
+          "classSize": "SĨ SỐ",
+          "classType": "HỆ",
+          "faculty": "KHOA",
+          "schedule": [
+            {
+              "data": {},
+              "startDate": "NGÀY BẮT ĐẦU HỌC",
+              "startSlot": "TIẾT BẮT ĐẦU",
+              "endDate": "NGÀY KẾT THÚC HỌC",
+              "endSlot": "TIẾT KẾT THÚC",
+              "exDate": "CÁC NGÀY NGHỈ TRONG NĂM",
+              "id": "ID THỜI KHÓA BIỂU",
+              "rRule": "LUẬT LẶP LẠI (FREQ=WEEKLY;COUNT=15)",
+              "title": "TÊN HỌC PHẦN"
+            }
+          ]
+        }
+      },
+      "semesterInfo": {
+        "semesterStart": "NGÀY BẮT ĐẦU HỌC KÌ",
+        "semesterEnd": "NGÀY KẾT THÚC HỌC KÌ",
+        "numberOfWeeks": "SỐ TUẦN HỌC CỦA HỌC KÌ",
+        "timeCreated": "THỜI GIAN TẠO",
+        "userNamed": "TÊN NGƯỜI DÙNG ĐẶT"
+      }
     }
   }
 }

@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-
 import * as XLSX from 'xlsx';
 import { toast } from 'react-toastify';
 import { breakTime, holidays } from './timetable-config';
