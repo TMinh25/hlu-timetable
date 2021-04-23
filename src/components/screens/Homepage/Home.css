@@ -1,14 +1,38 @@
 .probootstrap-footer-social li a {
-	font-size: 30px;
-	display: flex !important;
-	justify-content: center !important;
-	align-items: center !important;
+  font-size: 30px;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
 }
 
 .social-github a:hover {
-	color: whitesmoke !important;
+  color: whitesmoke !important;
 }
 
 .social-facebook a:hover {
-	color: #0084ff !important;
+  color: #0084ff !important;
+}
+
+.date {
+  color: #bbc3c8;
+  background-color: #06090f;
+  display: inline-block;
+  padding: 10px;
+  font-family: 'Georgia', serif;
+  font-style: italic;
+  font-size: 18px;
+  line-height: 22px;
+  margin-bottom: 20px;
+  margin-top: -22px;
+}
+
+#title {
+  color: #c9d0d4;
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 46px;
+  font-weight: 100;
+  line-height: 50px;
+  letter-spacing: 1px;
+  padding: 0 0 40px;
+  border-bottom: double #555;
 }
