@@ -584,7 +584,8 @@ export function exDateHolidaysString() {
   var exDate = '';
   holidays.forEach(holiday => {
     if (exists(holiday.date)) {
-      exDate += moment(holiday.date).format('YYYYMMDD') + ',';
+      exDate += 'VALUE=DATE:' + moment(holiday.date).format('YYYYMMDD') + ',';
+      // exDate += moment(holiday.date).format('YYYYMMDD') + ',';
       // YYYYMMDDTHHmmssZ
     }
   });

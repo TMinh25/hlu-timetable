@@ -290,11 +290,13 @@ const TimeTableScheduler = props => {
           );
         };
 
+        console.log('call');
         // eslint-disable-next-line no-unused-labels
         timeSlotLoop: for (var startSlot = 1; startSlot < 10; startSlot++) {
+          console.log('call');
           let endSlot = startSlot + numberOfClassPerWeek - 1;
-          if ((startSlot <= 5 && endSlot > 5) || endSlot > 10) {
-            continue;
+          if ((startSlot < 5 && endSlot > 5) || endSlot > 10) {
+            continue timeSlotLoop;
           }
 
           console.log(startSlot, endSlot);
@@ -316,7 +318,7 @@ const TimeTableScheduler = props => {
             isValidScheduleForClass(startDate, endDate) &&
             isValidScheduleForLecture(startDate, endDate)
           ) {
-            resolve({
+            const result = {
               title: subjectName,
               data: assignment,
               id: index,
@@ -326,7 +328,9 @@ const TimeTableScheduler = props => {
               endSlot,
               rRule: 'FREQ=WEEKLY;COUNT=' + weekCount,
               exDate: exDateHolidaysString(),
-            });
+            };
+            console.log(result);
+            resolve(result);
           }
         }
       }
@@ -339,6 +343,7 @@ const TimeTableScheduler = props => {
       let classSchedule = [];
 
       for (const [index, assignment] of assignmentsArr.entries()) {
+        console.log(index, assignment);
         const { lectureID } = assignment;
 
         // phân công giảng dạy của giảng viên hiện tại để tránh trùng giờ
@@ -348,15 +353,15 @@ const TimeTableScheduler = props => {
         );
 
         console.log(lectureSchedule);
-        const resultSchedule = await populateAssignment({
+        const assignmentSchedule = await populateAssignment({
           index,
           assignment,
           lectureSchedule,
           classSchedule,
         });
         // console.log('resultSchedule', resultSchedule);
-        classSchedule = [...classSchedule, resultSchedule];
-        console.log('classSchedule', classSchedule);
+        classSchedule = [...classSchedule, assignmentSchedule];
+        console.log('resultSchedule', assignmentSchedule);
       }
 
       console.log('classSchedule', classSchedule);

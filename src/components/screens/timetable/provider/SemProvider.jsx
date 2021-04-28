@@ -1,18 +1,18 @@
-import React, { useState, useEffect, createContext, useMemo } from "react";
-import PropTypes from "prop-types";
+import React, { useState, useEffect, createContext, useMemo } from 'react';
+import PropTypes from 'prop-types';
 import {
   auth,
   userRef,
   getAllLectures,
   getAllClasses,
-} from "../../../../firebase";
+} from '../../../../firebase';
 
 // create context for using context between screen
 export const SemContext = createContext({
   semValues: null,
 });
 
-export const SemProvider = (props) => {
+export const SemProvider = props => {
   const [values, setValues] = useState({});
   const { semId, children } = props;
 
@@ -28,7 +28,7 @@ export const SemProvider = (props) => {
         const element = lecturesObj[key];
         // add new data to options
         lecturesOpt.push({
-          label: element["lecture-name"],
+          label: element['lecture-name'],
           value: key,
         });
       }
@@ -38,7 +38,7 @@ export const SemProvider = (props) => {
         const currClass = classesObj[key];
         // add new data to options
         classesOpt.push({
-          label: currClass["className"],
+          label: currClass['className'],
           value: key,
         });
       }
@@ -46,11 +46,11 @@ export const SemProvider = (props) => {
 
     return [
       {
-        label: "Giảng Viên",
+        label: 'Giảng Viên',
         options: lecturesOpt,
       },
       {
-        label: "Lớp Học",
+        label: 'Lớp Học',
         options: classesOpt,
       },
     ];
@@ -84,10 +84,10 @@ export const SemProvider = (props) => {
   }, [isLoading]);
 
   useEffect(() => {
-    auth.onAuthStateChanged((user) => {
+    auth.onAuthStateChanged(user => {
       userRef(user.uid)
         .child(`semesters/${semId}`)
-        .on("value", (snapshot) => {
+        .on('value', snapshot => {
           if (snapshot.val() != null) {
             setValues({ ...values, ...snapshot.val() });
           } else {

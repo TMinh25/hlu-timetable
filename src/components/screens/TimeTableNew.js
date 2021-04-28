@@ -1,52 +1,52 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from 'react';
 
 // import components
-import { setNewSemester } from "../../firebase";
-import { UserContext } from "../../providers/UserProvider";
-import Calendar from "react-calendar";
-import { Button } from "../Components";
-import { useNavigate } from "@reach/router";
-import moment from "moment";
-import "moment/locale/vi";
+import { setNewSemester } from '../../firebase';
+import { UserContext } from '../../providers/UserProvider';
+import Calendar from 'react-calendar';
+import { Button } from '../Components';
+import { useNavigate } from '@reach/router';
+import moment from 'moment';
+import 'moment/locale/vi';
 
 // import styles
-import "./TimeTableNew.css";
+import './TimeTableNew.css';
 
 function weekCount(time1, time2) {
-  const diff = time1.diff(time2, "week");
+  const diff = time1.diff(time2, 'week');
   return diff;
 }
 
 const TimeTableNew = () => {
   const currentUser = useContext(UserContext);
   const navigate = useNavigate();
-  moment.locale("vi");
-  moment.defaultFormat = "dddd LL";
+  moment.locale('vi');
+  moment.defaultFormat = 'dddd LL';
 
   // start and end of semester
-  const [calendarStartValue, onStartValueChange] = useState(moment().hour("0"));
-  const [calendarEndValue, onEndValueChange] = useState(moment().hour("0"));
+  const [calendarStartValue, onStartValueChange] = useState(moment().hour('0'));
+  const [calendarEndValue, onEndValueChange] = useState(moment().hour('0'));
 
   // semester name for UX
-  const [semName, setSemName] = useState("");
+  const [semName, setSemName] = useState('');
 
-  const handleOnSubmit = (e) => {
+  const handleOnSubmit = e => {
     e.preventDefault();
     const values = {
       userNamed:
-        semName || calendarStartValue.year() + "-" + calendarEndValue.year(),
+        semName || calendarStartValue.year() + '-' + calendarEndValue.year(),
       semesterStart: moment(calendarStartValue),
       semesterEnd: moment(calendarEndValue),
       numberOfWeeks: weekCount(calendarEndValue, calendarStartValue),
       timeCreated: moment(),
     };
     setNewSemester(values);
-    navigate("/timetable");
+    navigate('/timetable');
   };
 
   useEffect(() => {
-    console.log(calendarStartValue);
-  }, [calendarStartValue]);
+    console.log(weekCount(calendarEndValue, calendarStartValue));
+  }, [calendarStartValue, calendarEndValue]);
 
   return (
     <>
@@ -70,12 +70,12 @@ const TimeTableNew = () => {
               <div className="new__date-picker">
                 <div className="picker_span">
                   <span className="label__new">Ngày Bắt đầu</span>
-                  <span>{moment(calendarStartValue).format("LL")}</span>
+                  <span>{moment(calendarStartValue).format('LL')}</span>
                 </div>
                 <Calendar
-                  onChange={(value) => onStartValueChange(moment(value))}
+                  onChange={value => onStartValueChange(moment(value))}
                   value={new Date(calendarStartValue)}
-                  className={["calendar calendar__main"]}
+                  className={['calendar calendar__main']}
                   locale="vi-VN"
                   nextLabel={<i className="fas fa-angle-right" />}
                   next2Label={<i className="fas fa-angle-double-right" />}
@@ -87,12 +87,12 @@ const TimeTableNew = () => {
               <div className="new__date-picker">
                 <div className="picker_span">
                   <span className="label__new">Ngày Kết thúc</span>
-                  <span>{moment(calendarEndValue).format("LL")}</span>
+                  <span>{moment(calendarEndValue).format('LL')}</span>
                 </div>
                 <Calendar
-                  onChange={(value) => onEndValueChange(moment(value))}
+                  onChange={value => onEndValueChange(moment(value))}
                   value={new Date(calendarEndValue)}
-                  className={["calendar calendar__main"]}
+                  className={['calendar calendar__main']}
                   locale="vi-VN"
                   nextLabel={<i className="fas fa-angle-right" />}
                   next2Label={<i className="fas fa-angle-double-right" />}
@@ -102,12 +102,12 @@ const TimeTableNew = () => {
               </div>
             </section>
             <Button
-              style={{ marginLeft: "auto", width: "25%" }}
+              style={{ marginLeft: 'auto', width: '25%' }}
               className="new"
               type="submit"
               onClick={handleOnSubmit}
             >
-              Tạo mới{" "}
+              Tạo mới{' '}
               <i style={{ marginLeft: 10 }} className="fas fa-arrow-right" />
             </Button>
           </form>

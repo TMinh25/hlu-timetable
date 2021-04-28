@@ -1,6 +1,7 @@
 {
   "name": "hlu-timetable",
   "title": "HLU Timetable",
+  "_homepage": "https://tminh25.github.io/hlu-timetable.github.io",
   "description": "Chỉnh sửa và theo dõi thời khóa biểu trường Đại học Hạ Long",
   "version": "1.0.0",
   "private": true,
@@ -27,6 +28,7 @@
     "exceljs": "^4.2.1",
     "file-saver": "^2.0.5",
     "firebase": "^8.2.1",
+    "gh-pages": "^3.1.0",
     "moment": "^2.29.1",
     "muuri": "^0.9.3",
     "prop-types": "^15.7.2",
@@ -45,7 +47,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [

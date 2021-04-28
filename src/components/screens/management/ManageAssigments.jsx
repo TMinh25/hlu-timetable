@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from 'react';
 
 // import components
 import {
@@ -7,24 +7,24 @@ import {
   getAllClasses,
   setNewAssignment,
   getAssignmentsOfLecture,
-} from "../../../firebase";
-import { exists, titleCase } from "../../../utils";
+} from '../../../firebase';
+import { exists, titleCase } from '../../../utils';
 // import { confirmAlert } from "react-confirm-alert";
-import { Loading } from "../../Components";
-import { AgGridReact } from "ag-grid-react";
-import NumbericEditor from "./NumbericEditor";
-import Select from "react-select";
+import { Loading } from '../../Components';
+import { AgGridReact } from 'ag-grid-react';
+import NumbericEditor from './NumbericEditor';
+import Select from 'react-select';
 
 // import styles
-import "ag-grid-enterprise";
-import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
+import 'ag-grid-enterprise';
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css';
 
-import "./Manage.css";
-import { useMemo } from "react";
-import { SemContext } from "../timetable/provider/SemProvider";
+import './Manage.css';
+import { useMemo } from 'react';
+import { SemContext } from '../timetable/provider/SemProvider';
 
-const ManageAssignments = (props) => {
+const ManageAssignments = props => {
   //#region Component State
   const [gridApi, setGridApi] = useState(null);
   // const [gridColumnApi, setGridColumnApi] = useState(null);
@@ -37,78 +37,78 @@ const ManageAssignments = (props) => {
   const [subjectObj, setSubjectObj] = useState({});
   // const [facultyObj, setFacultiesObj] = useState({});
   const [currentLectureID, setCurrentLectureID] = useState();
-  const [lectureListFilter, setLectureListFilter] = useState("");
-  const [subjectGridFilter, setSubjectGridFilter] = useState("");
+  const [lectureListFilter, setLectureListFilter] = useState('');
+  const [subjectGridFilter, setSubjectGridFilter] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   const columnDefs = [
     {
-      field: "id",
-      headerName: "STT",
-      type: "number",
+      field: 'id',
+      headerName: 'STT',
+      type: 'number',
       checkboxSelection: true,
       headerCheckboxSelection: true,
       editable: false,
       maxWidth: 120,
     },
     {
-      field: "subjectName",
-      headerName: "Tên môn học",
-      type: "string",
+      field: 'subjectName',
+      headerName: 'Tên môn học',
+      type: 'string',
       editable: false,
     },
     {
-      field: "credit",
-      headerName: "Số Tín Chỉ",
-      type: "number",
+      field: 'credit',
+      headerName: 'Số Tín Chỉ',
+      type: 'number',
       editable: false,
     },
     {
-      field: "periods",
-      headerName: "Số Tiết",
-      type: "number",
+      field: 'periods',
+      headerName: 'Số Tiết',
+      type: 'number',
       editable: false,
     },
     {
-      field: "classID",
-      headerName: "Lớp Giảng Dạy",
+      field: 'classID',
+      headerName: 'Lớp Giảng Dạy',
       editable: !!Object.keys(classObj).length,
-      cellEditor: "agRichSelectCellEditor",
+      cellEditor: 'agRichSelectCellEditor',
       // cellRenderer: "classesSelectComponent",
       // cellEditor: "classesSelectComponent",
       cellEditorParams: {
         values: Object.keys(classObj),
       },
-      valueFormatter: (params) => {
+      valueFormatter: params => {
         // lấy tên lớp cho vào select
         if (Object.keys(classObj).length > 0) {
           const classID = params?.value;
 
           // console.log(classID, classObj, classObj[classID]);
 
-          return classID === "Chọn Lớp" || classID === ""
-            ? "Chọn Lớp"
+          return classID === 'Chọn Lớp' || classID === ''
+            ? 'Chọn Lớp'
             : classObj[classID]?.className;
         } else {
-          return "Chưa có lớp học";
+          return 'Chưa có lớp học';
         }
       },
     },
     {
-      field: "numberOfTests",
-      headerName: "Số Bài Kiểm Tra",
-      type: "number",
+      field: 'numberOfTests',
+      headerName: 'Số Bài Kiểm Tra',
+      type: 'number',
       editable: true,
       // chỉ chấp nhận số
       valueSetter: numberValueSetter,
     },
   ];
 
-  const contextMenuItems = (params) => [
-    "copy",
-    "copyWithHeaders",
-    "separator",
-    "export",
+  const contextMenuItems = params => [
+    'copy',
+    'copyWithHeaders',
+    'separator',
+    'export',
   ];
 
   //#endregion
@@ -116,7 +116,7 @@ const ManageAssignments = (props) => {
   //#region Hooks
 
   useEffect(() => {
-    console.log("classObj", "=>", classObj);
+    console.log('classObj', '=>', classObj);
   }, [classObj]);
 
   // Lấy dữ liệu từ firebase (async)
@@ -161,71 +161,71 @@ const ManageAssignments = (props) => {
       return {
         id: index + 1,
         subjectId: subjectKey,
-        subjectName: titleCase(subjectObj[subjectKey]["subject-name"]),
-        credit: subjectObj[subjectKey]["credit"],
-        periods: subjectObj[subjectKey]["periods"],
-        classID: "",
+        subjectName: titleCase(subjectObj[subjectKey]['subject-name']),
+        credit: subjectObj[subjectKey]['credit'],
+        periods: subjectObj[subjectKey]['periods'],
+        classID: '',
         numberOfTests: 0,
       };
     });
   }, [subjectObj]);
 
   useEffect(() => {
-    const li = document.getElementsByClassName("list__container-li_item");
+    const li = document.getElementsByClassName('list__container-li_item');
     for (let i = 0; i < li.length; i++) {
-      const items = li[i].querySelectorAll(".li__item-search");
+      const items = li[i].querySelectorAll('.li__item-search');
       let isInclude = [];
-      items.forEach((item) => {
+      items.forEach(item => {
         let txtValue = item.textContent || item.innerHTML;
         isInclude.push(
           txtValue.toLowerCase().includes(lectureListFilter.toLowerCase())
             ? true
-            : false
+            : false,
         );
       });
-      if (isInclude.some((item) => item === true)) {
-        li[i].style.display = "";
+      if (isInclude.some(item => item === true)) {
+        li[i].style.display = '';
       } else {
-        li[i].style.display = "none";
+        li[i].style.display = 'none';
       }
     }
   }, [lectureListFilter]); // search for text in list when searchString change
 
   useEffect(() => {
     if (currentLectureID && gridApi) {
-      getAssignmentsOfLecture(props.semId, currentLectureID).then((result) => {
+      getAssignmentsOfLecture(props.semId, currentLectureID).then(result => {
         if (result.length > 0) {
           let allAssignmentsOfLecture = {};
           console.log(result);
 
-          result.forEach((value) => {
+          result.forEach(value => {
             allAssignmentsOfLecture = {
               ...allAssignmentsOfLecture,
-              [value["subjectId"]]: value,
+              [value['subjectId']]: value,
             };
           });
 
           console.log(allAssignmentsOfLecture);
 
-          gridApi.forEachNode((rowNode) => {
+          gridApi.forEachNode(rowNode => {
             if (rowNode?.data?.subjectId in allAssignmentsOfLecture) {
               rowNode.setData(allAssignmentsOfLecture[rowNode.data.subjectId]);
               rowNode.setSelected(true, false);
             } else {
               rowNode.setData({
                 ...rowNode.data,
-                classID: "Chọn Lớp",
-                numberOfTests: "0",
+                classID: 'Chọn Lớp',
+                numberOfTests: '0',
               });
               rowNode.setSelected(false, false);
             }
           });
         } else {
-          gridApi.forEachNode((rowNode) => {
+          gridApi.forEachNode(rowNode => {
             rowNode.setData({
               ...rowNode.data,
-              classID: "Chọn Lớp",
-              numberOfTests: "0",
+              classID: 'Chọn Lớp',
+              numberOfTests: '0',
             });
           });
           gridApi.deselectAll();
@@ -262,7 +262,7 @@ const ManageAssignments = (props) => {
       props.semId,
       currentLectureID,
       selectedRows,
-      semesterInfo?.numberOfWeeks
+      semesterInfo?.numberOfWeeks,
     );
   }
 
@@ -273,26 +273,37 @@ const ManageAssignments = (props) => {
   ) : (
     <>
       <div className="form-list__container">
-        <div style={{ flex: "1" }}>
+        <div style={{ flex: '1' }}>
           <div className="list__container-search" style={{ marginBottom: 10 }}>
             <input
               style={{ marginBottom: 10 }}
               className="search-input-assignments"
               placeholder="Lọc Giảng Viên..."
               value={lectureListFilter}
-              onChange={(e) => setLectureListFilter(e.target.value)}
+              onChange={e => setLectureListFilter(e.target.value)}
             />
           </div>
           <ul>
-            {Object.keys(lecturesObj).map((key) => {
+            {Object.keys(lecturesObj).map(key => {
               return (
                 <>
                   <li
                     className="list__container-li_item items-body-content"
-                    onClick={() => setCurrentLectureID(key)}
+                    onClick={event => {
+                      setCurrentLectureID(key);
+                      const listActive = document.getElementsByClassName(
+                        'list__container-active',
+                      );
+                      listActive[0]?.classList?.remove(
+                        'list__container-active',
+                      );
+                      event.currentTarget.classList.add(
+                        'list__container-active',
+                      );
+                    }}
                   >
                     <span className="li__item-search">
-                      {lecturesObj[key]["lecture-name"]}
+                      {lecturesObj[key]['lecture-name']}
                     </span>
                     <i className="fa fa-angle-right" />
                   </li>
@@ -301,13 +312,13 @@ const ManageAssignments = (props) => {
             })}
           </ul>
         </div>
-        <div style={{ marginLeft: 30, flex: "3" }}>
+        <div style={{ marginLeft: 30, flex: '3' }}>
           <input
-            style={{ marginBottom: "10 !important" }}
+            style={{ marginBottom: '10 !important' }}
             className="search-input-assignments"
             placeholder="Tìm Môn Học..."
             value={subjectGridFilter}
-            onChange={(e) => {
+            onChange={e => {
               setSubjectGridFilter(e.target.value);
               gridApi.setQuickFilter(e.target.value);
             }}
@@ -315,7 +326,7 @@ const ManageAssignments = (props) => {
 
           <div
             className="ag-theme-alpine-dark"
-            style={{ height: "calc(100% - 47px)" }}
+            style={{ height: 'calc(100% - 47px)' }}
           >
             {(!rowData.length && !exists(classObj)) || (
               <AgGridReact
@@ -327,7 +338,7 @@ const ManageAssignments = (props) => {
                   resizable: true,
                 }}
                 frameworkComponents={{
-                  classesSelectComponent: Select
+                  classesSelectComponent: Select,
                 }}
                 components={{
                   numbericCellEditor: NumbericEditor,
@@ -338,7 +349,7 @@ const ManageAssignments = (props) => {
                 suppressDragLeaveHidesColumns={true}
                 getContextMenuItems={contextMenuItems}
                 overlayNoRowsTemplate={
-                  "Bạn chưa có dữ liệu nào trong cơ sở dữ liệu"
+                  'Bạn chưa có dữ liệu nào trong cơ sở dữ liệu'
                 }
                 onSelectionChanged={handleAddToDB}
                 onCellEditingStopped={handleAddToDB}
